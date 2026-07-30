@@ -29,6 +29,7 @@ function App() {
       accessToken:
         "pk.eyJ1IjoiYW5odG9udCIsImEiOiJjbXM2c2o4NDIwNWI4MzBvbzMzaGRzNjF5In0.q0dcFpdPMRLIoTuWtWQzKA",
       container: mapContainerRef.current,
+      style: 'mapbox://styles/mapbox/standard-satellite',
       center: center,
       zoom: zoom
     });

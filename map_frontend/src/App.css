@@ -10,7 +10,7 @@
   height: 100%;
   width: 100%;
   /* temporarily set the background color so we can tell where the map container is positioned */
-  background-color: rgb(255, 218, 218);
+  background-color: rgb(177, 177, 177);
 }
 
 .sidebar {
