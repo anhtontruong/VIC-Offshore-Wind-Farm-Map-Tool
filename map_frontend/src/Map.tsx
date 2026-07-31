@@ -94,7 +94,7 @@ export default function Map() {
 
         console.log(e.feature.properties);
         // TODO, reformat tileset so cell details is a object
-        new mapboxgl.Popup()
+        new mapboxgl.Popup({ closeOnClick: false })
           .setLngLat(e.lngLat)
           .setHTML(
             `<div>
