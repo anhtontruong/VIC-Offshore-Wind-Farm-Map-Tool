@@ -33,6 +33,34 @@ export default function Map() {
       zoom: zoom
     });
 
+    mapRef.current?.on("load", () => {
+      console.log("LOADED");
+      // TODO: Change off of on load if do scenario exploration sliders
+      mapRef.current?.addSource("grid-heatmap", {
+        type: "vector",
+        url: "mapbox://anhtont.d37ftirb2f95"
+      });
+
+      mapRef.current?.addLayer({
+        id: "grid-fill",
+        type: "fill",
+        source: "grid-heatmap",
+        "source-layer": "e72f97beb2a44f25eb86",
+        paint: {
+          "fill-color": [
+            "step",
+            ["get", "value"],
+            "rgba(0,0,0,0)", // transparent or "#fa2828"
+            0.6,
+            "#fac000",
+            0.8,
+            "#78db00"
+          ],
+          "fill-opacity": 0.3
+        }
+      });
+    });
+
     return () => {
       mapRef.current?.remove();
     };
@@ -50,6 +78,7 @@ export default function Map() {
     setZoom(mapZoom);
   });
 
+  // # Helper Functions
   const handleButtonClick = () => {
     mapRef.current?.flyTo({
       center: INITIAL_CENTER,
