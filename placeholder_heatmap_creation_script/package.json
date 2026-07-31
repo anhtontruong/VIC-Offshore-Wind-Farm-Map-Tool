@@ -1,0 +1,15 @@
+{
+  "name": "placeholder_heatmap_creation_script",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "createplaceholder.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "noisejs": "^2.1.0"
+  }
+}
