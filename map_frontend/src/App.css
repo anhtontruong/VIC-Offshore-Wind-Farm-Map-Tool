@@ -35,3 +35,43 @@
   border-radius: 10px;
   cursor: pointer;
 }
+
+.left-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  border: 1px solid red;
+}
+
+.left-bar-container {
+  height: 100vh;
+  overflow: hidden;
+  transition: width 250ms ease;
+  background-color: #fff;
+}
+
+.left-bar-btn {
+  height: 7em;
+  width: 2em;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+
+  background-color: aqua;
+}
+
+.left-bar-container.expanded {
+  width: 15em;
+}
+
+.left-bar-container.collapsed {
+  width: 0;
+}

@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mantine/core": "^9.5.1",
+    "@tabler/icons-react": "^3.46.0",
     "mapbox-gl": "^3.27.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
