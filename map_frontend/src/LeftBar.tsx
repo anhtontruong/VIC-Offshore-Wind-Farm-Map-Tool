@@ -8,7 +8,6 @@ interface LeftBarProps {
 // TODO: Add slider
 export default function LeftBar({ expanded, setExpanded }: LeftBarProps) {
   function handleClick() {
-    console.log("Clicked");
     setExpanded((value) => !value);
   }
 

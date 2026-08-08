@@ -28,55 +28,24 @@ html {
   background-color: rgb(177, 177, 177);
 }
 
-.info {
-  background-color: rgb(35 55 75 / 90%);
-  color: #fff;
-  padding: 6px 12px;
-  font-family: monospace;
-  z-index: 1;
+.left {
   position: absolute;
   top: 0;
   left: 0;
-  margin: 12px;
-  border-radius: 4px;
-  transition: left 250ms ease;
-}
+  z-index: 2;
 
-/* HACKY SOLUTION, DO WITH REACT COMPONENTS+FLEXBOX PLEASE */
-.info.expanded {
-  left: calc(var(--left-bar-width) + var(--left-bar-btn-width) + 2em) ;
-}
+  pointer-events: none;
 
-.info.collapsed {
-  left: 0;
-}
+  height: 100vh;
 
-.reset-button {
-  position: absolute;
-  top: 50px;
-  z-index: 1;
-  left: 12px;
-  padding: 4px 10px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: left 250ms ease;
-}
+  display: flex;
+  flex-direction: row;
 
-.reset-button.expanded {
-  left: calc(var(--left-bar-width) + 2.3em + var(--left-bar-btn-width));
-}
-
-.reset-button.collapsed {
-  left: 12px;
+  border: 1px solid green;
 }
 
 /* LEFT BAR */
-
 .left-bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10;
   pointer-events: none;
 
   display: flex;
@@ -113,4 +82,48 @@ html {
 
 .left-bar-container.collapsed {
   width: 0;
+}
+
+/* LEFT UI */
+.left-ui {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.left-ui-top {
+  display: row;
+  flex-direction: column;
+}
+
+.left-ui-bottom {
+  display: row;
+  flex-direction: column;
+}
+
+/* UI */
+.info {
+  position: relative;
+
+  font-family: monospace;
+
+  background-color: rgb(35 55 75 / 90%);
+  color: #fff;
+
+  padding: 6px 12px;
+  margin: 12px;
+  border-radius: 4px;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+.reset-button {
+  position: relative;
+  padding: 4px 10px;
+  border-radius: 10px;
+  margin: 12px;
+  cursor: pointer;
+  transition: left 250ms ease;
+  z-index: 1;
+  pointer-events: auto;
 }
