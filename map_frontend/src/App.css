@@ -1,3 +1,18 @@
+:root {
+  --left-bar-width: 15em;
+  --left-bar-btn-width: 2em;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
 #root {
   position: absolute;
   top: 0;
@@ -13,7 +28,7 @@
   background-color: rgb(177, 177, 177);
 }
 
-.sidebar {
+.info {
   background-color: rgb(35 55 75 / 90%);
   color: #fff;
   padding: 6px 12px;
@@ -24,6 +39,16 @@
   left: 0;
   margin: 12px;
   border-radius: 4px;
+  transition: left 250ms ease;
+}
+
+/* HACKY SOLUTION, DO WITH REACT COMPONENTS+FLEXBOX PLEASE */
+.info.expanded {
+  left: calc(var(--left-bar-width) + var(--left-bar-btn-width) + 2em) ;
+}
+
+.info.collapsed {
+  left: 0;
 }
 
 .reset-button {
@@ -34,7 +59,18 @@
   padding: 4px 10px;
   border-radius: 10px;
   cursor: pointer;
+  transition: left 250ms ease;
 }
+
+.reset-button.expanded {
+  left: calc(var(--left-bar-width) + 2.3em + var(--left-bar-btn-width));
+}
+
+.reset-button.collapsed {
+  left: 12px;
+}
+
+/* LEFT BAR */
 
 .left-bar {
   position: absolute;
@@ -60,7 +96,7 @@
 
 .left-bar-btn {
   height: 7em;
-  width: 2em;
+  width: var(--left-bar-btn-width);
 
   display: flex;
   flex-direction: row;
@@ -72,7 +108,7 @@
 }
 
 .left-bar-container.expanded {
-  width: 15em;
+  width: var(--left-bar-width);
 }
 
 .left-bar-container.collapsed {

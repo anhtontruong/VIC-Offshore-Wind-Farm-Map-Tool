@@ -8,10 +8,14 @@ import "mapbox-gl/dist/mapbox-gl.css"; // Associated CSS
 const INITIAL_CENTER: [number, number] = [144.9122, -38.8368];
 const INITIAL_ZOOM: number = 7.45;
 
+interface MapProps {
+  expanded: boolean;
+}
+
 // ================ //
 //     COMPONENT
 // ================ //
-export default function Map() {
+export default function Map({expanded}: MapProps) {
   // # Refs
   const mapRef = useRef<mapboxgl.Map | null>(null); // persists map instance
   const mapContainerRef = useRef<HTMLDivElement | null>(null); // exposes html
@@ -125,7 +129,7 @@ export default function Map() {
   // # JSX
   return (
     <>
-      <div className="sidebar">
+      <div className={`info ${expanded ? "expanded" : "collapsed"}`}>
         Longitude: {center[0].toFixed(4)}
         {" | "}
         Latitude: {center[1].toFixed(4)}
@@ -133,7 +137,7 @@ export default function Map() {
         Zoom: {zoom.toFixed(2)}
       </div>
 
-      <button className="reset-button" onClick={handleButtonClick}>
+      <button className={`reset-button ${expanded ? "expanded" : "collapsed"}`} onClick={handleButtonClick}>
         Reset
       </button>
 
