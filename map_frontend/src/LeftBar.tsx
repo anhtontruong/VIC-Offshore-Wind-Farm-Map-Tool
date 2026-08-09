@@ -6,7 +6,6 @@ interface LeftBarProps {
   setExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-// TODO: Add slider
 export default function LeftBar({ expanded, setExpanded }: LeftBarProps) {
   function handleClick() {
     setExpanded((value) => !value);

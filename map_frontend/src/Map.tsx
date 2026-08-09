@@ -89,7 +89,8 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
         const props = e.feature.properties;
 
         console.log(e.feature.properties);
-        // TODO, reformat tileset so cell details is a object
+        // TODO, reformat tileset so cell details is a object [after Vector TileSet update]
+        // TODO, reformat cell detail UI [after Vector TileSet update]
         new mapboxgl.Popup({ closeOnClick: false })
           .setLngLat(e.lngLat)
           .setHTML(

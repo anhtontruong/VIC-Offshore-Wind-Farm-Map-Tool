@@ -19,6 +19,7 @@ const updatedLines = lines.map(line => {
     const row = feature.properties.row_index;
     const col = feature.properties.col_index;
 
+    // TODO: Update as dense flat array
     // [-1, 1]
     const n = noise.perlin2(
         col * SCALE,
@@ -30,8 +31,10 @@ const updatedLines = lines.map(line => {
 
     feature.properties = {
         ...feature.properties,
-        "Cell Detail A": "description",
-        "Cell Detail B": "description",
+        cell_details: {
+            "Cell Detail A": "description",
+            "Cell Detail B": "description",
+        },
         value: Number(value.toFixed(4))
     };
 
