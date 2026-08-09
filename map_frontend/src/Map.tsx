@@ -91,6 +91,8 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
         console.log(e.feature.properties);
         // TODO, reformat tileset so cell details is a object [after Vector TileSet update]
         // TODO, reformat cell detail UI [after Vector TileSet update]
+
+        // TODO, move cell details into an express backend, keep only style attr for Vector Tiles
         new mapboxgl.Popup({ closeOnClick: false })
           .setLngLat(e.lngLat)
           .setHTML(
@@ -98,8 +100,8 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
                 <b>Longitude:</b> ${e.lngLat.lng}<br/>
                 <b>Latitude:</b> ${e.lngLat.lat}<br/>
                 <b>Value:</b> ${props.value}<br/>
-                <b>Cell Detail A:</b> ${props["Cell Detail A"]}<br/>
-                <b>Cell Detail A:</b> ${props["Cell Detail B"]}<br/>
+                <b>Cell Detail A:</b> details <br/>
+                <b>Cell Detail A:</b> details <br/>
               </div>`
           )
           .addTo(mapRef.current);
