@@ -1,4 +1,4 @@
-import { createContext, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import "./App.css";
 import LeftBar from "./LeftBar";
 import Map from "./Map";
@@ -28,8 +28,6 @@ export default function App() {
   const [expanded, setExpanded] = useState(true);
   const [center, setCenter] = useState(INITIAL_CENTER);
   const [zoom, setZoom] = useState(INITIAL_ZOOM);
-
-  const [param1, setParam1] = useState(0);
 
   const mapRef = useRef<mapboxgl.Map | null>(null); // persists map instance
 
@@ -68,9 +66,9 @@ export default function App() {
             </div>
           </div>
         </div>
-      </ScenarioProvider>
 
-      <Map mapRef={mapRef} setCenter={setCenter} setZoom={setZoom} />
+        <Map mapRef={mapRef} setCenter={setCenter} setZoom={setZoom} />
+      </ScenarioProvider>
     </MantineProvider>
   );
 }

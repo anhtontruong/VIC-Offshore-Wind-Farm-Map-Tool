@@ -6,9 +6,13 @@ export default function LeftBarContent() {
 
   return (
     <div className="left-bar-content">
-      <Title order={1} className="sub-heading">Parameters</Title>
+      <Title order={1} className="sub-heading">
+        Parameters
+      </Title>
 
-      <Title order={6} className="name">Cost</Title>
+      <Title order={6} className="name">
+        Cost
+      </Title>
       <Slider
         className="param-slider"
         restrictToMarks
@@ -21,7 +25,9 @@ export default function LeftBarContent() {
       />
 
       {/* TODO: DRY, extract into reusable components */}
-      <Title order={6} className="name">Param B</Title>
+      <Title order={6} className="name">
+        Param B
+      </Title>
       <Slider
         className="param-slider"
         restrictToMarks
@@ -30,7 +36,6 @@ export default function LeftBarContent() {
           value: index * 10
         }))}
       />
-
     </div>
   );
 }

@@ -1,7 +1,8 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css"; // Associated CSS
 import { INITIAL_CENTER, INITIAL_ZOOM } from "./constants";
+import { useScenarioContext } from "./useScenarioContext";
 
 interface MapProps {
   mapRef: React.RefObject<mapboxgl.Map | null>;
@@ -16,7 +17,11 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
   // # Refs
   const mapContainerRef = useRef<HTMLDivElement | null>(null); // exposes html
 
-  // # Effects
+  const { param1 } = useScenarioContext();
+
+  // ==============
+  //    Map Load
+  // ==============
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -112,6 +117,26 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
       mapRef.current?.remove();
     };
   }, []);
+
+  // ================
+  //    Map Update
+  // ================
+  useEffect(() => {
+    const map = mapRef.current;
+
+    if (!map) return;
+    if (!map.getLayer("grid-fill")) return;
+
+    map.setPaintProperty("grid-fill", "fill-color", [
+      "step",
+      ["get", "value"],
+      "rgba(0,0,0,0)",
+      param1 / 100,
+      "#fac000",
+      0.8,
+      "#78db00"
+    ]);
+  }, [param1]);
 
   // # JSX
   return (
