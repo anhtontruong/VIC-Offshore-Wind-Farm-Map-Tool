@@ -40,20 +40,20 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
       if (!mapRef.current) return;
 
       // TODO: Change off of on load if do scenario exploration sliders
-      mapRef.current.addSource("grid-heatmap", {
+      mapRef.current.addSource("heatmap-grid", {
         type: "vector",
-        url: "mapbox://anhtont.d37ftirb2f95"
+        url: "mapbox://anhtont.4cnl13v3lgt4"
       });
 
       mapRef.current.addLayer({
         id: "grid-fill",
         type: "fill",
-        source: "grid-heatmap",
-        "source-layer": "e72f97beb2a44f25eb86",
+        source: "heatmap-grid",
+        "source-layer": "d1e963f67993893f566b",
         paint: {
           "fill-color": [
             "step",
-            ["get", "value"],
+            ["get", "value_1"],
             "rgba(0,0,0,0)", // transparent or "#fa2828"
             0.6,
             "#fac000",
@@ -104,7 +104,7 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
             `<div>
                 <b>Longitude:</b> ${e.lngLat.lng}<br/>
                 <b>Latitude:</b> ${e.lngLat.lat}<br/>
-                <b>Value:</b> ${props.value}<br/>
+                <b>Value:</b> ${props.value_1}<br/>
                 <b>Cell Detail A:</b> details <br/>
                 <b>Cell Detail A:</b> details <br/>
               </div>`
@@ -127,11 +127,13 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
     if (!map) return;
     if (!map.getLayer("grid-fill")) return;
 
+    const value_i = `value_${(param1/10) + 1}`
+
     map.setPaintProperty("grid-fill", "fill-color", [
       "step",
-      ["get", "value"],
-      "rgba(0,0,0,0)",
-      param1 / 100,
+      ["get", value_i],
+      "rgba(0,0,0,0)", // transparent or "#fa2828"
+      0.6,
       "#fac000",
       0.8,
       "#78db00"
