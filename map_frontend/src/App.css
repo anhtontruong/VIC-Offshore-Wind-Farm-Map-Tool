@@ -84,7 +84,12 @@ html {
   width: 0;
 }
 
-/* LEFT UI */
+/* LEFT BAR CONTENT */
+.left-bar-content {
+  padding: 1em;
+}
+
+/* UI LEFT */
 .left-ui {
   display: flex;
   flex-direction: column;

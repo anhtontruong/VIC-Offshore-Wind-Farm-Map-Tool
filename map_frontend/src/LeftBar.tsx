@@ -1,3 +1,4 @@
+import { Title } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 
 interface LeftBarProps {
@@ -16,7 +17,13 @@ export default function LeftBar({ expanded, setExpanded }: LeftBarProps) {
       <div
         className={`left-bar-container ${expanded ? "expanded" : "collapsed"}`}
       >
-        CONTENT
+        
+        <div className="left-bar-content">
+          <Title order={2}>
+            Parameters
+          </Title>
+        </div>
+
       </div>
       <div className="left-bar-btn" onClick={handleClick}>
         {expanded ? (
