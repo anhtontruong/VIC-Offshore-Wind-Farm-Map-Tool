@@ -21,13 +21,14 @@ const updatedLines = lines.map(line => {
 
     // TODO: Update as dense flat array
     // [-1, 1]
-    const n = noise.perlin2(
+    const n = Array(11).fill(0).map((_, z) => (noise.perlin3(
         col * SCALE,
-        row * SCALE
-    );
+        row * SCALE,
+        z
+    )));
 
     // normalize to [0, 1]
-    const value = (n + 1) / 2;
+    const value = n.map(elem => Number(((elem + 1) / 2).toFixed(4)));
 
     feature.properties = {
         ...feature.properties,
@@ -35,7 +36,7 @@ const updatedLines = lines.map(line => {
             "Cell Detail A": "description",
             "Cell Detail B": "description",
         },
-        value: Number(value.toFixed(4))
+        value: value
     };
 
     return JSON.stringify(feature);
