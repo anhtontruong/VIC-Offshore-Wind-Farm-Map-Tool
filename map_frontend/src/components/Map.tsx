@@ -1,8 +1,8 @@
 import { useRef, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css"; // Associated CSS
-import { INITIAL_CENTER, INITIAL_ZOOM } from "./constants";
-import { useScenarioContext } from "./useScenarioContext";
+import { INITIAL_CENTER, INITIAL_ZOOM } from "../constants/constants";
+import { useScenarioContext } from "../hooks/useScenarioContext";
 
 interface MapProps {
   mapRef: React.RefObject<mapboxgl.Map | null>;

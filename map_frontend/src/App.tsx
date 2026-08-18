@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import "./App.css";
-import LeftBar from "./LeftBar";
-import Map from "./Map";
-import { INITIAL_CENTER, INITIAL_ZOOM } from "./constants";
-import { ScenarioProvider } from "./useScenarioContext";
+import LeftBar from "./components/LeftBar";
+import Map from "./components/Map";
+import { INITIAL_CENTER, INITIAL_ZOOM } from "./constants/constants";
+import { ScenarioProvider } from "./hooks/useScenarioContext";
 
 import { MantineProvider, createTheme } from "@mantine/core";
 import "@mantine/core/styles.css";

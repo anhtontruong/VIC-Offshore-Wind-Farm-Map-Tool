@@ -1,5 +1,5 @@
 import { Slider, Title } from "@mantine/core";
-import { useScenarioContext } from "./useScenarioContext";
+import { useScenarioContext } from "../hooks/useScenarioContext";
 
 export default function LeftBarContent() {
   const { param1, setParam1 } = useScenarioContext();
