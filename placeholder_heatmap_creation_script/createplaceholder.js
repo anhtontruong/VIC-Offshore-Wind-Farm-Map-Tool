@@ -1,5 +1,6 @@
 const fs = require("fs");
 const { Noise } = require("noisejs");
+const sumTo1Combinations = require("./SumTo1Combinations");
 
 const inputFile = "Grid.ldgeojson";
 const outputFile = "FormattedGrid.ldgeojson";
@@ -21,7 +22,7 @@ const updatedLines = lines.map((line) => {
 
   // TODO: Update as dense flat array
   // [-1, 1]
-  const rand_arr = Array(11)
+  const rand_arr = Array(sumTo1Combinations.length)
     .fill(0)
     .map((_, z) => noise.perlin3(col * SCALE, row * SCALE, z));
 
@@ -30,7 +31,9 @@ const updatedLines = lines.map((line) => {
     Number(((elem + 1) / 2).toFixed(4))
   );
 
-  const norm_rand_json = Object.fromEntries(norm_rand_arr.map((value, i) => [`value_${i + 1}`, value]));
+  const norm_rand_json = Object.fromEntries(
+    norm_rand_arr.map((value, i) => [`${sumTo1Combinations[i]}`, value])
+  );
 
   feature.properties = {
     ...feature.properties,
@@ -46,3 +49,5 @@ const updatedLines = lines.map((line) => {
 });
 
 fs.writeFileSync(outputFile, updatedLines.join("\n"), "utf8");
+
+console.log("Finished Generating FormattedGrid.ldgeojson");
