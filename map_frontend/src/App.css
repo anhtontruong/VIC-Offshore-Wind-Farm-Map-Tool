@@ -32,6 +32,19 @@ html {
   background-color: rgb(177, 177, 177);
 }
 
+.nomp {
+  margin: 0;
+  border: 0;
+}
+
+.valid {
+  color: green;
+}
+
+.invalid {
+  color: red;
+}
+
 .left {
   position: absolute;
   top: 0;
@@ -101,19 +114,18 @@ html {
 
   .name {
     margin: 0 0 0 0;
-    transition: opacity 200ms ease;
   }
+}
 
-  .name.collapsed {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: clip;
-    opacity: 0;
-  }
+.content-collapsed {
+  transition: opacity 50ms ease;
+  opacity: 0;
+  pointer-events: none;
+}
 
-  .name.expanded {
-    opacity: 1;
-  }
+.content-expanded {
+  transition: opacity 600ms ease;
+  opacity: 1;
 }
 
 /* SLIDER */
@@ -137,8 +149,10 @@ html {
   flex-shrink: 0;
 }
 
-.invalid {
-  color: red;
+/* SUM 1 STATUS */
+.sum-one-status {
+  font-size: x-large;
+  align-self: center;
 }
 
 /* UI LEFT */

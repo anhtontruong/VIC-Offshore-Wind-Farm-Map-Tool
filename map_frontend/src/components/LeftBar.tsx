@@ -2,7 +2,6 @@ import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import LeftBarContent from "./LeftBarContent";
 import { useExpandedContext } from "../hooks/useExpandedContext";
 
-
 export default function LeftBar() {
   const { expanded, toggleExpanded } = useExpandedContext();
 
