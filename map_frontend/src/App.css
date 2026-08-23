@@ -101,13 +101,15 @@ html {
 
   .name {
     margin: 0 0 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
   }
 
   .param-slider {
     margin: 0 0 1em 0;
   }
 }
-
 
 /* UI LEFT */
 .left-ui {

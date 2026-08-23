@@ -1,9 +1,6 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import "./App.css";
-import LeftBar from "./components/LeftBar";
-import Map from "./components/Map";
 import { INITIAL_CENTER, INITIAL_ZOOM } from "./constants/constants";
-import { ScenarioProvider } from "./hooks/useScenarioContext";
 
 import { MantineProvider, createTheme } from "@mantine/core";
 import "@mantine/core/styles.css";
@@ -15,6 +12,8 @@ import "@fontsource/inter/600.css";
 import "@fontsource/inter/700.css";
 import "@fontsource/inter/800.css";
 import "@fontsource/inter/900.css";
+import { ExpandedProvider } from "./hooks/useExpandedContext";
+import Scenario from "./components/Scenario";
 
 const theme = createTheme({
   fontFamily: "Inter, sans-serif",
@@ -25,50 +24,21 @@ const theme = createTheme({
 
 export default function App() {
   // # States
-  const [expanded, setExpanded] = useState(true);
-  const [center, setCenter] = useState(INITIAL_CENTER);
+  const [center, setCenter] = useState<[number, number]>(INITIAL_CENTER);
   const [zoom, setZoom] = useState(INITIAL_ZOOM);
-
-  const mapRef = useRef<mapboxgl.Map | null>(null); // persists map instance
-
-  // # Helper Functions
-  const handleButtonClick = () => {
-    mapRef.current?.flyTo({
-      center: INITIAL_CENTER,
-      zoom: INITIAL_ZOOM
-    });
-  };
 
   return (
     <MantineProvider theme={theme}>
       <title>VIC Offshore Wind Farm Map Tool</title>
 
-      <ScenarioProvider>
-        <div className="left">
-          <LeftBar expanded={expanded} setExpanded={setExpanded} />
-          <div className="left-ui">
-            <div className="left-ui-top">
-              <div className={`info ${expanded ? "expanded" : "collapsed"}`}>
-                Longitude: {center[0].toFixed(4)}
-                {" | "}
-                Latitude: {center[1].toFixed(4)}
-                {" | "}
-                Zoom: {zoom.toFixed(2)}
-              </div>
-            </div>
-            <div className="left-ui-bottom">
-              <button
-                className={`reset-button ${expanded ? "expanded" : "collapsed"}`}
-                onClick={handleButtonClick}
-              >
-                Reset
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <Map mapRef={mapRef} setCenter={setCenter} setZoom={setZoom} />
-      </ScenarioProvider>
+      <ExpandedProvider>
+        <Scenario
+          center={center}
+          zoom={zoom}
+          setCenter={setCenter}
+          setZoom={setZoom}
+        />
+      </ExpandedProvider>
     </MantineProvider>
   );
 }

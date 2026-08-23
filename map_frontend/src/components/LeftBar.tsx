@@ -1,15 +1,10 @@
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import LeftBarContent from "./LeftBarContent";
+import { useExpandedContext } from "../hooks/useExpandedContext";
 
-interface LeftBarProps {
-  expanded: boolean;
-  setExpanded: React.Dispatch<React.SetStateAction<boolean>>;
-}
 
-export default function LeftBar({ expanded, setExpanded }: LeftBarProps) {
-  function handleClick() {
-    setExpanded((value) => !value);
-  }
+export default function LeftBar() {
+  const { expanded, toggleExpanded } = useExpandedContext();
 
   return (
     <div className="left-bar">
@@ -18,7 +13,7 @@ export default function LeftBar({ expanded, setExpanded }: LeftBarProps) {
       >
         <LeftBarContent />
       </div>
-      <div className="left-bar-btn" onClick={handleClick}>
+      <div className="left-bar-btn" onClick={toggleExpanded}>
         {expanded ? (
           <IconChevronLeft size={50} />
         ) : (
