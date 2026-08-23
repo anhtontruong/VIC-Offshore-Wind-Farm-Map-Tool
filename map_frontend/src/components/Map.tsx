@@ -17,7 +17,7 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
   // # Refs
   const mapContainerRef = useRef<HTMLDivElement | null>(null); // exposes html
 
-  const { param1 } = useScenarioContext();
+  const { params, getParam } = useScenarioContext();
 
   // ==============
   //    Map Load
@@ -42,18 +42,19 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
       // TODO: Change off of on load if do scenario exploration sliders
       mapRef.current.addSource("heatmap-grid", {
         type: "vector",
-        url: "mapbox://anhtont.4cnl13v3lgt4"
+        url: "mapbox://anhtont.k6edsdvvw2x4"
       });
 
       mapRef.current.addLayer({
         id: "grid-fill",
         type: "fill",
         source: "heatmap-grid",
-        "source-layer": "d1e963f67993893f566b",
+        "source-layer": "55e59ee2edfe45515692",
         paint: {
           "fill-color": [
             "step",
-            ["get", "value_1"],
+            // TODO: Update
+            ["get", "0_10_0"],
             "rgba(0,0,0,0)", // transparent or "#fa2828"
             0.6,
             "#fac000",
@@ -94,10 +95,8 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
         const props = e.feature.properties;
 
         console.log(e.feature.properties);
-        // TODO, reformat tileset so cell details is a object [after Vector TileSet update]
         // TODO, reformat cell detail UI [after Vector TileSet update]
 
-        // TODO, move cell details into an express backend, keep only style attr for Vector Tiles
         new mapboxgl.Popup({ closeOnClick: false })
           .setLngLat(e.lngLat)
           .setHTML(
@@ -127,18 +126,18 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
     if (!map) return;
     if (!map.getLayer("grid-fill")) return;
 
-    const value_i = `value_${(param1/10) + 1}`
+    const heatmap_param_value = `${getParam(0)}_10_0`;
 
     map.setPaintProperty("grid-fill", "fill-color", [
       "step",
-      ["get", value_i],
+      ["get", heatmap_param_value],
       "rgba(0,0,0,0)", // transparent or "#fa2828"
       0.6,
       "#fac000",
       0.8,
       "#78db00"
     ]);
-  }, [param1]);
+  }, [params]);
 
   // # JSX
   return (

@@ -1,8 +1,11 @@
-import { Slider, Title } from "@mantine/core";
+import { Title } from "@mantine/core";
 import { useScenarioContext } from "../hooks/useScenarioContext";
+import ParameterSlider from "./ParameterSlider";
 
 export default function LeftBarContent() {
-  const { param1, setParam1 } = useScenarioContext();
+  const { getParam, setParam } = useScenarioContext();
+
+  console.log(`A: ${getParam(0)} B: ${getParam(1)} A: ${getParam(2)}`);
 
   return (
     <div className="left-bar-content">
@@ -10,31 +13,22 @@ export default function LeftBarContent() {
         Parameters
       </Title>
 
-      <Title order={6} className="name">
-        Cost
-      </Title>
-      <Slider
-        className="param-slider"
-        restrictToMarks
-        defaultValue={0}
-        marks={Array.from({ length: 11 }).map((_, index) => ({
-          value: index * 10
-        }))}
-        value={param1}
-        onChange={setParam1}
+      <ParameterSlider
+        name={"Cost Minimisation Weight"}
+        param={getParam(0)}
+        setParam={setParam(0)}
+      />
+      
+      <ParameterSlider
+        name={"Bird Impact Minimisation Weight"}
+        param={getParam(1)}
+        setParam={setParam(1)}
       />
 
-      {/* TODO: DRY, extract into reusable components */}
-      <Title order={6} className="name">
-        Param B
-      </Title>
-      <Slider
-        className="param-slider"
-        restrictToMarks
-        defaultValue={40}
-        marks={Array.from({ length: 11 }).map((_, index) => ({
-          value: index * 10
-        }))}
+      <ParameterSlider
+        name={"Wind Energy Generation Maximisation Weight"}
+        param={getParam(2)}
+        setParam={setParam(2)}
       />
     </div>
   );
