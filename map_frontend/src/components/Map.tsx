@@ -16,13 +16,13 @@ interface MapProps {
 export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
   // # Refs
   const mapContainerRef = useRef<HTMLDivElement | null>(null); // exposes html
+  const paramKeyRef = useRef("");
 
   const { params, getParam } = useScenarioContext();
 
-  const getHeatMapKeyFromParams = () => {
-    const key = `${getParam(0)*10}_${getParam(1)*10}_${getParam(2)*10}`;
-    return key;
-  }
+  paramKeyRef.current = `${Math.round(getParam(0) * 10)}_${Math.round(
+    getParam(1) * 10
+  )}_${Math.round(getParam(2) * 10)}`;
 
   // ==============
   //    Map Load
@@ -59,7 +59,7 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
           "fill-color": [
             "step",
             // TODO: Update
-            ["get", "0_10_0"],
+            ["get", paramKeyRef.current],
             "rgba(0,0,0,0)", // transparent or "#fa2828"
             0.6,
             "#fac000",
@@ -101,6 +101,7 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
 
         console.log(e.feature.properties);
         // TODO, reformat cell detail UI [after Vector TileSet update]
+        // TODO, make it so changing param clears all POPUPS
 
         new mapboxgl.Popup({ closeOnClick: false })
           .setLngLat(e.lngLat)
@@ -108,7 +109,7 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
             `<div>
                 <b>Longitude:</b> ${e.lngLat.lng}<br/>
                 <b>Latitude:</b> ${e.lngLat.lat}<br/>
-                <b>Value:</b> ${props.value_1}<br/>
+                <b>Value:</b> ${props[paramKeyRef.current]}<br/>
                 <b>Cell Detail A:</b> details <br/>
                 <b>Cell Detail A:</b> details <br/>
               </div>`
@@ -133,7 +134,7 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
 
     map.setPaintProperty("grid-fill", "fill-color", [
       "step",
-      ["get", getHeatMapKeyFromParams()],
+      ["get", paramKeyRef.current],
       "rgba(0,0,0,0)", // transparent or "#fa2828"
       0.6,
       "#fac000",
