@@ -5,8 +5,6 @@ import ParameterSlider from "./ParameterSlider";
 export default function LeftBarContent() {
   const { getParam, setParam } = useScenarioContext();
 
-  console.log(`A: ${getParam(0)} B: ${getParam(1)} A: ${getParam(2)}`);
-
   return (
     <div className="left-bar-content">
       <Title order={1} className="sub-heading">

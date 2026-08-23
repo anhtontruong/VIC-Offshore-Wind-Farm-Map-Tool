@@ -101,14 +101,44 @@ html {
 
   .name {
     margin: 0 0 0 0;
+    transition: opacity 200ms ease;
+  }
+
+  .name.collapsed {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: clip;
+    opacity: 0;
   }
 
-  .param-slider {
-    margin: 0 0 1em 0;
+  .name.expanded {
+    opacity: 1;
   }
+}
+
+/* SLIDER */
+.slider {
+  margin: 0 0 1em 0;
+}
+
+.slider-flex {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  width: 100%;
+}
+
+.param-slider {
+  flex: 1;
+}
+
+.slider-value {
+  width: 2ch;
+  flex-shrink: 0;
+}
+
+.invalid {
+  color: red;
 }
 
 /* UI LEFT */

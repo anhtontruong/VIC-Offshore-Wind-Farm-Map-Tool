@@ -19,6 +19,11 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
 
   const { params, getParam } = useScenarioContext();
 
+  const getHeatMapKeyFromParams = () => {
+    const key = `${getParam(0)*10}_${getParam(1)*10}_${getParam(2)*10}`;
+    return key;
+  }
+
   // ==============
   //    Map Load
   // ==============
@@ -126,11 +131,9 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
     if (!map) return;
     if (!map.getLayer("grid-fill")) return;
 
-    const heatmap_param_value = `${getParam(0)}_10_0`;
-
     map.setPaintProperty("grid-fill", "fill-color", [
       "step",
-      ["get", heatmap_param_value],
+      ["get", getHeatMapKeyFromParams()],
       "rgba(0,0,0,0)", // transparent or "#fa2828"
       0.6,
       "#fac000",
