@@ -21,7 +21,6 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
   const { params, getParam } = useScenarioContext();
   const { registerPopup } = useScenarioContext();
 
-
   paramKeyRef.current = `${Math.round(getParam(0) * 10)}_${Math.round(
     getParam(1) * 10
   )}_${Math.round(getParam(2) * 10)}`;
@@ -101,24 +100,55 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
 
         const props = e.feature.properties;
 
-        console.log(e.feature.properties);
-        // TODO, reformat cell detail UI [after Vector TileSet update]
-        // TODO, make it so changing param clears all POPUPS
-
-        const popup = new mapboxgl.Popup({ closeOnClick: false })
+        const popup = new mapboxgl.Popup({ closeOnClick: false, maxWidth: "300px" })
           .setLngLat(e.lngLat)
           .setHTML(
-            `<div>
-                <b>Longitude:</b> ${e.lngLat.lng}<br/>
-                <b>Latitude:</b> ${e.lngLat.lat}<br/>
-                <b>Value:</b> ${props[paramKeyRef.current]}<br/>
-                <b>Cell Detail A:</b> details <br/>
-                <b>Cell Detail A:</b> details <br/>
-              </div>`
+          `<div class="cell-popup">
+            <div class="cell-popup-header">
+              Cell Details
+            </div>
+
+            <div class="cell-popup-row">
+              <span class="cell-popup-label">Longitude</span>
+              <span class="cell-popup-value">${e.lngLat.lng.toFixed(6)}</span>
+            </div>
+
+            <div class="cell-popup-row">
+              <span class="cell-popup-label">Latitude</span>
+              <span class="cell-popup-value">${e.lngLat.lat.toFixed(6)}</span>
+            </div>
+
+            <div class="cell-popup-row">
+              <span class="cell-popup-label">Value</span>
+              <span class="cell-popup-value">${props[paramKeyRef.current] ?? "N/A"}</span>
+            </div>
+
+            <div class="cell-popup-section">
+              <div class="cell-popup-section-title">Additional Information</div>
+
+              <div class="cell-popup-row">
+                <span class="cell-popup-label">Detail A</span>
+                <span class="cell-popup-value">details</span>
+              </div>
+
+              <div class="cell-popup-row">
+                <span class="cell-popup-label">Detail B</span>
+                <span class="cell-popup-value">details</span>
+              </div>
+            </div>
+          </div>`
           )
           .addTo(mapRef.current);
 
         registerPopup(popup);
+
+        const popupElement = popup.getElement();
+        popupElement?.addEventListener("mousedown", () => {
+          const parent = popupElement.parentElement;
+          if (parent) {
+            parent.appendChild(popupElement);
+          }
+        });
       }
     });
 

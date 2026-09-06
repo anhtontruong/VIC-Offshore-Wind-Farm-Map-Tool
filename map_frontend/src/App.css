@@ -209,3 +209,60 @@ html {
   z-index: 1;
   pointer-events: auto;
 }
+
+/* POPUP */
+.cell-popup {
+  width: 180px;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.cell-popup-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.cell-popup-section {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.cell-popup-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.cell-popup-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.cell-popup-label {
+  color: #6b7280;
+  flex: 0 0 60px;
+}
+
+.cell-popup-value {
+  color: #111827;
+  font-weight: 500;
+  text-align: right;
+  flex: 1;
+  min-width: 0;
+}
+
+.mapboxgl-popup-content {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15) !important;
+  padding: 8px 10px;
+  overflow: visible;
+}
