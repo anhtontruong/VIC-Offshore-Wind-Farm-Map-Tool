@@ -25,19 +25,22 @@ export default function LeftBarContent() {
       </Title>
 
       <ParameterSlider
-        name={"Cost Minimisation Weight"}
+        name={"Total Lifetime Cost"}
+        info={"Minimisation Weight"}
         param={getParam(0)}
         setParam={setParam(0)}
       />
 
       <ParameterSlider
-        name={"Bird Impact Minimisation Weight"}
+        name={"Seabird Exposure"}
+        info={"Minimisation Weight"}
         param={getParam(1)}
         setParam={setParam(1)}
       />
 
       <ParameterSlider
-        name={"Wind Energy Generation Maximisation Weight"}
+        name={"Annual Wind Energy Production"}
+        info={"Maximisation Weight"}
         param={getParam(2)}
         setParam={setParam(2)}
       />
@@ -49,6 +52,12 @@ export default function LeftBarContent() {
           <b>{sum.toFixed(1)}</b> {sum === 1 ? "=" : sum > 1 ? ">" : "<"} 1
         </p>
       </div>
+
+      <div className="sum-one-message">
+        SUM OF ALL THREE WEIGHTS <b>MUST EQUAL</b> TO 1
+      </div>
+
+      <div className="section-divider" />
     </div>
   );
 }

@@ -150,9 +150,34 @@ html {
 }
 
 /* SUM 1 STATUS */
-.sum-one-status {
-  font-size: x-large;
+.sum-one-message {
+  margin-top: 0.1em;
+  margin-bottom: 0.6em;
+  width: 100%;
+  
   align-self: center;
+  text-align: center;
+  
+  font-size: small;
+  color: rgb(0, 100, 187);
+  font-weight: 500;
+
+  background-color: rgb(232, 231, 231);
+}
+
+.sum-one-status {
+  font-size: xx-large;
+  align-self: center;
+}
+
+.sum-one-status p {
+  margin-top: 0.1em;
+  margin-bottom: 0.5em;
+}
+
+.section-divider {
+  width: 100%;
+  border-top: 1px solid #5c5c5c;
 }
 
 /* UI LEFT */
