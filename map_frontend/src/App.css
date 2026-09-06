@@ -198,3 +198,14 @@ html {
   z-index: 1;
   pointer-events: auto;
 }
+
+.clear-popup-button {
+  position: relative;
+  padding: 4px 10px;
+  border-radius: 10px;
+  margin: 12px;
+  cursor: pointer;
+  transition: left 250ms ease;
+  z-index: 1;
+  pointer-events: auto;
+}

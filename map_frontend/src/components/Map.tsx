@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import mapboxgl from "mapbox-gl";
+import mapboxgl, { Popup } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css"; // Associated CSS
 import { INITIAL_CENTER, INITIAL_ZOOM } from "../constants/constants";
 import { useScenarioContext } from "../hooks/useScenarioContext";
@@ -8,12 +8,13 @@ interface MapProps {
   mapRef: React.RefObject<mapboxgl.Map | null>;
   setCenter: React.Dispatch<React.SetStateAction<[number, number]>>;
   setZoom: React.Dispatch<React.SetStateAction<number>>;
+  popupsRef: React.RefObject<Popup[]>
 }
 
 // ================ //
 //     COMPONENT
 // ================ //
-export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
+export default function Map({ mapRef, setCenter, setZoom, popupsRef }: MapProps) {
   // # Refs
   const mapContainerRef = useRef<HTMLDivElement | null>(null); // exposes html
   const paramKeyRef = useRef("");
@@ -103,7 +104,7 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
         // TODO, reformat cell detail UI [after Vector TileSet update]
         // TODO, make it so changing param clears all POPUPS
 
-        new mapboxgl.Popup({ closeOnClick: false })
+        const popup = new mapboxgl.Popup({ closeOnClick: false })
           .setLngLat(e.lngLat)
           .setHTML(
             `<div>
@@ -115,6 +116,9 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
               </div>`
           )
           .addTo(mapRef.current);
+
+        popupsRef.current.push(popup);
+        console.log(popupsRef.current);
       }
     });
 
