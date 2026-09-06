@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import mapboxgl, { Popup } from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css"; // Associated CSS
 import { INITIAL_CENTER, INITIAL_ZOOM } from "../constants/constants";
 import { useScenarioContext } from "../hooks/useScenarioContext";
@@ -8,18 +8,19 @@ interface MapProps {
   mapRef: React.RefObject<mapboxgl.Map | null>;
   setCenter: React.Dispatch<React.SetStateAction<[number, number]>>;
   setZoom: React.Dispatch<React.SetStateAction<number>>;
-  popupsRef: React.RefObject<Popup[]>
 }
 
 // ================ //
 //     COMPONENT
 // ================ //
-export default function Map({ mapRef, setCenter, setZoom, popupsRef }: MapProps) {
+export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
   // # Refs
   const mapContainerRef = useRef<HTMLDivElement | null>(null); // exposes html
   const paramKeyRef = useRef("");
 
   const { params, getParam } = useScenarioContext();
+  const { registerPopup } = useScenarioContext();
+
 
   paramKeyRef.current = `${Math.round(getParam(0) * 10)}_${Math.round(
     getParam(1) * 10
@@ -117,8 +118,7 @@ export default function Map({ mapRef, setCenter, setZoom, popupsRef }: MapProps)
           )
           .addTo(mapRef.current);
 
-        popupsRef.current.push(popup);
-        console.log(popupsRef.current);
+        registerPopup(popup);
       }
     });
 

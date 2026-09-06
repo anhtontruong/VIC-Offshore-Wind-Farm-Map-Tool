@@ -14,6 +14,7 @@ import "@fontsource/inter/800.css";
 import "@fontsource/inter/900.css";
 import { ExpandedProvider } from "./hooks/useExpandedContext";
 import Scenario from "./components/Scenario";
+import { ScenarioProvider } from "./hooks/useScenarioContext";
 
 const theme = createTheme({
   fontFamily: "Inter, sans-serif",
@@ -30,15 +31,17 @@ export default function App() {
   return (
     <MantineProvider theme={theme}>
       <title>VIC Offshore Wind Farm Map Tool</title>
-
-      <ExpandedProvider>
-        <Scenario
-          center={center}
-          zoom={zoom}
-          setCenter={setCenter}
-          setZoom={setZoom}
-        />
-      </ExpandedProvider>
+      
+      <ScenarioProvider>
+        <ExpandedProvider>
+          <Scenario
+            center={center}
+            zoom={zoom}
+            setCenter={setCenter}
+            setZoom={setZoom}
+          />
+        </ExpandedProvider>
+      </ScenarioProvider>
     </MantineProvider>
   );
 }

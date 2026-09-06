@@ -8,6 +8,10 @@ type ExpandedContextType = {
 
 export const ExpandedContext = createContext<ExpandedContextType | null>(null);
 
+
+// =========================
+//  CONTEXT HOOK (CONSUMER)
+// =========================
 export function useExpandedContext() {
   const context = useContext(ExpandedContext);
 
@@ -24,6 +28,9 @@ type ExpandedProviderProps = {
   children: ReactNode;
 };
 
+// ==========
+//  PROVIDER
+// ==========
 export function ExpandedProvider({
   children,
 }: ExpandedProviderProps) {

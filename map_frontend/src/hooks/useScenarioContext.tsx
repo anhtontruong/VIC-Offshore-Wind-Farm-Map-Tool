@@ -1,13 +1,27 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import type { Popup } from "mapbox-gl";
+import {
+  createContext,
+  useContext,
+  useRef,
+  useState,
+  type ReactNode
+} from "react";
 
 type ScenarioContextType = {
   params: number[];
   getParam: (index: 0 | 1 | 2) => number;
   setParam: (index: 0 | 1 | 2) => (value: number) => void;
+
+  registerPopup: (popup: Popup) => void;
+  unregisterPopup: (popup: Popup) => void;
+  clearAllPopups: () => void;
 };
 
 export const ScenarioContext = createContext<ScenarioContextType | null>(null);
 
+// =========================
+//  CONTEXT HOOK (CONSUMER)
+// =========================
 export function useScenarioContext() {
   const context = useContext(ScenarioContext);
 
@@ -24,8 +38,13 @@ type ScenarioProviderProps = {
   children: ReactNode;
 };
 
+// ==========
+//  PROVIDER
+// ==========
 export function ScenarioProvider({ children }: ScenarioProviderProps) {
   const [params, setParams] = useState<number[]>([0, 0, 0]);
+
+  const popupsRef = useRef<Popup[]>([]);
 
   const getParam = (index: 0 | 1 | 2) => params[index];
 
@@ -37,12 +56,28 @@ export function ScenarioProvider({ children }: ScenarioProviderProps) {
     });
   };
 
+  const registerPopup = (popup: Popup) => {
+    popupsRef.current.push(popup);
+  };
+
+  const unregisterPopup = (popup: Popup) => {
+    popupsRef.current = popupsRef.current.filter((p) => p !== popup);
+  };
+
+  const clearAllPopups = () => {
+    popupsRef.current.forEach((popup) => popup.remove());
+    popupsRef.current = [];
+  };
+
   return (
     <ScenarioContext.Provider
       value={{
         params,
         getParam,
-        setParam
+        setParam,
+        registerPopup,
+        unregisterPopup,
+        clearAllPopups
       }}
     >
       {children}

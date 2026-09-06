@@ -2,14 +2,24 @@ import { Title } from "@mantine/core";
 import { useScenarioContext } from "../hooks/useScenarioContext";
 import ParameterSlider from "./ParameterSlider";
 import { useExpandedContext } from "../hooks/useExpandedContext";
+import { useEffect, useRef } from "react";
 
 export default function LeftBarContent() {
-  const { getParam, setParam } = useScenarioContext();
+  const { getParam, setParam, params } = useScenarioContext();
   const sum = getParam(0) + getParam(1) + getParam(2);
   const { expanded } = useExpandedContext();
+  const { clearAllPopups } = useScenarioContext();
+
+  // Clear all popups when changing scenario
+  const paramsKey = params.join(",");
+  useEffect(() => {
+    clearAllPopups();
+  }, [paramsKey]);
 
   return (
-    <div className={`left-bar-content ${expanded ? "content-expanded" : "content-collapsed"}`}>
+    <div
+      className={`left-bar-content ${expanded ? "content-expanded" : "content-collapsed"}`}
+    >
       <Title order={1} className="sub-heading">
         Parameters
       </Title>
