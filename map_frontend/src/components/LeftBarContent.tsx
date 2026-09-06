@@ -2,7 +2,7 @@ import { Title } from "@mantine/core";
 import { useScenarioContext } from "../hooks/useScenarioContext";
 import ParameterSlider from "./ParameterSlider";
 import { useExpandedContext } from "../hooks/useExpandedContext";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 export default function LeftBarContent() {
   const { getParam, setParam, params } = useScenarioContext();

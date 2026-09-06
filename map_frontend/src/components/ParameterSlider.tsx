@@ -18,7 +18,8 @@ export default function ParameterSlider({
   const { expanded } = useExpandedContext();
   const { getParam } = useScenarioContext();
 
-  const isSumToOne = getParam(0) + getParam(1) + getParam(2) === 1;
+  const currentSum = getParam(0) + getParam(1) + getParam(2);
+  const isSumToOne = currentSum === 1;
 
   return (
     <div className="slider">
@@ -38,9 +39,13 @@ export default function ParameterSlider({
       <div className="slider-flex">
         <div className="param-slider">
           <Slider
+            domain={[0, 1]}
             min={0}
-            max={1}
+            max={(1 - currentSum) + param}
             step={0.1}
+            marks={[
+              { value: (1 - currentSum) + param, label: "limit" }
+            ]}
             value={param}
             onChange={setParam}
           />
