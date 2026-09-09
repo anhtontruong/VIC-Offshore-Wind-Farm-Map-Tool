@@ -1,2 +1,3 @@
 *.ldgeojson
+*.csv
 node_modules
