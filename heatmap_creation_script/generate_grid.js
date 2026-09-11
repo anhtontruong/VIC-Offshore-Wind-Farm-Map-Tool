@@ -63,6 +63,8 @@ function centredGrid(points) {
 
       features.push(
         turf.polygon([wgsRing], {
+          fid: features.length + 1,
+          id: features.length + 1,
           left: x,
           right: x + 1000,
           bottom: y,

@@ -5,7 +5,7 @@ const csv = require("csv-parser");
 // ============
 //  File Names
 // ============
-const GRID_FILE = "finalised_grid.ldgeojson";
+const GRID_FILE = "grid.ldgeojson";
 const CSV_FILE = "weighted_sum_layouts.csv";
 
 const CSV_OUTPUT_FILE = "weighted_sum_layouts.ldgeojson";
