@@ -3,6 +3,7 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css"; // Associated CSS
 import { INITIAL_CENTER, INITIAL_ZOOM } from "../constants/constants";
 import { useScenarioContext } from "../hooks/useScenarioContext";
+import heatmapLdGeoJson from "../../../heatmap_creation_script/heatmap.ldgeojson?raw";
 
 interface MapProps {
   mapRef: React.RefObject<mapboxgl.Map | null>;
@@ -25,6 +26,14 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
     getParam(1) * 10
   )}_${Math.round(getParam(2) * 10)}`;
 
+  // FILL COLOR
+  const GRID_FILL_COLOR = [
+    "case",
+    [">", ["coalesce", ["get", "0_0_100"], 0], 0],
+    "#00ff00",
+    "rgba(0,0,0,0)" // transparent or "#fa2828"
+  ] satisfies mapboxgl.Expression;
+
   // ==============
   //    Map Load
   // ==============
@@ -45,34 +54,25 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
     mapRef.current.on("load", () => {
       if (!mapRef.current) return;
 
-      // TODO: Change off of on load if do scenario exploration sliders
-      mapRef.current.addSource("heatmap-grid", {
-        type: "vector",
-        url: "mapbox://anhtont.k6edsdvvw2x4"
+      const heatmap = ldGeoJSONToGeoJSON(heatmapLdGeoJson);
+
+      mapRef.current.addSource("heatmap", {
+        type: "geojson",
+        data: heatmap
       });
 
       mapRef.current.addLayer({
-        id: "grid-fill",
+        id: "heatmap-fill",
         type: "fill",
-        source: "heatmap-grid",
-        "source-layer": "55e59ee2edfe45515692",
+        source: "heatmap",
         paint: {
-          "fill-color": [
-            "step",
-            // TODO: Update
-            ["get", paramKeyRef.current],
-            "rgba(0,0,0,0)", // transparent or "#fa2828"
-            0.6,
-            "#fac000",
-            0.8,
-            "#78db00"
-          ],
+          "fill-color": GRID_FILL_COLOR,
           "fill-opacity": 0.3
         }
       });
     });
 
-    mapRef.current.on("click", "grid-fill", (e) => {
+    mapRef.current.on("click", "heatmap-fill", (e) => {
       console.log("clicked");
       const feature = e.features?.[0];
 
@@ -94,16 +94,19 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
 
     mapRef.current.addInteraction("places-click-interaction", {
       type: "click",
-      target: { layerId: "grid-fill" },
+      target: { layerId: "heatmap-fill" },
       handler: (e) => {
         if (!e.feature || !mapRef.current || !e.lngLat) return;
 
         const props = e.feature.properties;
 
-        const popup = new mapboxgl.Popup({ closeOnClick: false, maxWidth: "300px" })
+        const popup = new mapboxgl.Popup({
+          closeOnClick: false,
+          maxWidth: "300px"
+        })
           .setLngLat(e.lngLat)
           .setHTML(
-          `<div class="cell-popup">
+            `<div class="cell-popup">
             <div class="cell-popup-header">
               Cell Details
             </div>
@@ -157,24 +160,16 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
     };
   }, []);
 
-  // ================
-  //    Map Update
-  // ================
+  // =====================
+  //    Map Slider Update
+  // =====================
   useEffect(() => {
     const map = mapRef.current;
 
     if (!map) return;
-    if (!map.getLayer("grid-fill")) return;
+    if (!map.getLayer("heatmap-fill")) return;
 
-    map.setPaintProperty("grid-fill", "fill-color", [
-      "step",
-      ["get", paramKeyRef.current],
-      "rgba(0,0,0,0)", // transparent or "#fa2828"
-      0.6,
-      "#fac000",
-      0.8,
-      "#78db00"
-    ]);
+    map.setPaintProperty("heatmap-fill", "fill-color", GRID_FILL_COLOR);
   }, [params]);
 
   // # JSX
@@ -184,4 +179,20 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
       <div id="map-container" ref={mapContainerRef} />
     </>
   );
+}
+
+// =================
+//  Helper Function
+// =================
+function ldGeoJSONToGeoJSON(ldgeojson: string) {
+  const features = ldgeojson
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => JSON.parse(line));
+
+  return {
+    type: "FeatureCollection" as const,
+    features
+  };
 }
