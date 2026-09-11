@@ -183,7 +183,7 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
               </div>
 
               <div class="cell-popup-row">
-                <span class="cell-popup-label">Average Wind Speed (150m above MSL)</span>
+                <span class="cell-popup-label">Average Wind Speed (150m AMSL)</span>
                 <span class="cell-popup-value">${
                   typeof wind_speed_m_s === "number"
                     ? `${wind_speed_m_s.toFixed(2)} m/s`
