@@ -33,9 +33,17 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
   // FILL COLOR
   const GRID_FILL_COLOR = [
     "case",
-    [">", ["coalesce", ["get", paramKeyRef.current], 0], 0],
-    "#00ff00",
-    "rgba(0,0,0,0)" // transparent or "#fa2828"
+    ["==", ["get", paramKeyRef.current], null],
+    "rgba(0, 0, 0, 0)",
+    [
+      "step",
+      ["get", paramKeyRef.current],
+      "rgba(255, 0, 0, 0.5)",
+      0.0000001,
+      "#ffff3d",
+      120,
+      "#70ff3c"
+    ]
   ] satisfies mapboxgl.Expression;
 
   // ==============
@@ -118,6 +126,20 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
 
         const props = e.feature.properties;
 
+        // Cell Details
+        const capacity = props[paramKeyRef.current];
+
+        const depth_m = props.depth_m;
+        const wind_speed_m_s = props.wind_speed_m_s;
+        const shore_km = props.shore_km;
+        const e_w = props.e_w;
+        const n_surveys = props.n_surveys;
+
+        // don't show popup if undefined
+        if (capacity === undefined) {
+          return;
+        }
+
         const popup = new mapboxgl.Popup({
           closeOnClick: false,
           maxWidth: "300px"
@@ -140,22 +162,62 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
             </div>
 
             <div class="cell-popup-row">
-              <span class="cell-popup-label">Value</span>
-              <span class="cell-popup-value">${props[paramKeyRef.current] ?? "N/A"}</span>
+              <span class="cell-popup-label">Installed Capacity</span>
+              <span class="cell-popup-value">${
+                typeof capacity === "number"
+                  ? `${capacity.toFixed(2)} MW`
+                  : "Error"
+              }</span>
             </div>
 
             <div class="cell-popup-section">
               <div class="cell-popup-section-title">Additional Information</div>
 
               <div class="cell-popup-row">
-                <span class="cell-popup-label">Detail A</span>
-                <span class="cell-popup-value">details</span>
+                <span class="cell-popup-label">Sea Depth</span>
+                <span class="cell-popup-value">${
+                  typeof depth_m === "number"
+                    ? `${depth_m.toFixed(2)} m`
+                    : "Error"
+                }</span>
               </div>
 
               <div class="cell-popup-row">
-                <span class="cell-popup-label">Detail B</span>
-                <span class="cell-popup-value">details</span>
+                <span class="cell-popup-label">Average Wind Speed (150m above MSL)</span>
+                <span class="cell-popup-value">${
+                  typeof wind_speed_m_s === "number"
+                    ? `${wind_speed_m_s.toFixed(2)} m/s`
+                    : "Error"
+                }</span>
               </div>
+
+              <div class="cell-popup-row">
+                <span class="cell-popup-label">Distance to Shore</span>
+                <span class="cell-popup-value">${
+                  typeof shore_km === "number"
+                    ? `${shore_km.toFixed(2)} km`
+                    : "Error"
+                }</span>
+              </div>
+
+              <div class="cell-popup-row">
+                <span class="cell-popup-label">Sea Bird Exposure Score for Cell</span>
+                <span class="cell-popup-value">${
+                  typeof e_w === "number"
+                    ? `${e_w.toFixed(2)}`
+                    : "Error"
+                }</span>
+              </div>
+
+              <div class="cell-popup-row">
+                <span class="cell-popup-label">Number of Bird Surveys</span>
+                <span class="cell-popup-value">${
+                  typeof n_surveys === "number"
+                    ? `${n_surveys.toFixed(0)}`
+                    : "Error"
+                }</span>
+              </div>
+
             </div>
           </div>`
           )
