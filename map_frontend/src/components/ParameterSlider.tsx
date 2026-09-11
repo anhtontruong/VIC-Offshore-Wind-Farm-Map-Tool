@@ -19,7 +19,7 @@ export default function ParameterSlider({
   const { getParam } = useScenarioContext();
 
   const currentSum = getParam(0) + getParam(1) + getParam(2);
-  const isSumToOne = currentSum === 1;
+  const isSumToOne = Math.abs(currentSum - 1) < 1e-10;
 
   return (
     <div className="slider">
@@ -41,17 +41,20 @@ export default function ParameterSlider({
           <Slider
             domain={[0, 1]}
             min={0}
-            max={(1 - currentSum) + param}
-            step={0.1}
+            max={1 - currentSum + param}
+            step={1 / 3}
             marks={[
-              { value: (1 - currentSum) + param, label: "limit" }
+              { value: 1 - currentSum + param, label: "limit" },
+              { value: 1 / 3 },
+              { value: 2 / 3 },
             ]}
             value={param}
+            label={(value) => value.toFixed(2)}
             onChange={setParam}
           />
         </div>
         <p className={`nomp slider-value ${isSumToOne ? "" : "invalid"}`}>
-          {param}
+          {param.toFixed(2)}
         </p>
       </div>
     </div>

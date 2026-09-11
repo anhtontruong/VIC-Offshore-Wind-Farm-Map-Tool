@@ -49,7 +49,7 @@ export default function LeftBarContent() {
         className={`nomp sum-one-status ${sum === 1 ? "valid" : "invalid"} ${expanded ? "content-expanded" : "content-collapsed"}`}
       >
         <p>
-          <b>{sum.toFixed(1)}</b> {sum === 1 ? "=" : sum > 1 ? ">" : "<"} 1
+          <b>{sum.toFixed(2)}</b> {sum === 1 ? "=" : sum > 1 ? ">" : "<"} 1
         </p>
       </div>
 

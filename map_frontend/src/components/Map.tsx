@@ -22,14 +22,18 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
   const { params, getParam } = useScenarioContext();
   const { registerPopup } = useScenarioContext();
 
-  paramKeyRef.current = `${Math.round(getParam(0) * 10)}_${Math.round(
-    getParam(1) * 10
-  )}_${Math.round(getParam(2) * 10)}`;
+  const toThirdsPercent = (value: number) => Math.round(value * 3) * (100 / 3);
+
+  const indices = [0, 1, 2] as const;
+
+  paramKeyRef.current = indices
+    .map((i) => Math.round(toThirdsPercent(getParam(i))))
+    .join("_");
 
   // FILL COLOR
   const GRID_FILL_COLOR = [
     "case",
-    [">", ["coalesce", ["get", "0_0_100"], 0], 0],
+    [">", ["coalesce", ["get", paramKeyRef.current], 0], 0],
     "#00ff00",
     "rgba(0,0,0,0)" // transparent or "#fa2828"
   ] satisfies mapboxgl.Expression;
@@ -61,6 +65,7 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
         data: heatmap
       });
 
+      // CELL COLOUR
       mapRef.current.addLayer({
         id: "heatmap-fill",
         type: "fill",
@@ -70,8 +75,21 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
           "fill-opacity": 0.3
         }
       });
+
+      // OUTLINE
+      mapRef.current.addLayer({
+        id: "heatmap-outline",
+        type: "line",
+        source: "heatmap",
+        paint: {
+          "line-color": "#000000",
+          "line-width": 0.5,
+          "line-opacity": ["interpolate", ["linear"], ["zoom"], 8, 0, 12, 1]
+        }
+      });
     });
 
+    // FOR DEBUGGING
     mapRef.current.on("click", "heatmap-fill", (e) => {
       console.log("clicked");
       const feature = e.features?.[0];
