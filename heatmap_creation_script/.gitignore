@@ -1,3 +1,4 @@
-*.ldgeojson
+grid.ldgeojson
+optimisation_data.ldgeojson
 *.csv
 node_modules
