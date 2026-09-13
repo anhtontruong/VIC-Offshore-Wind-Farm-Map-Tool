@@ -103,29 +103,32 @@ html {
 
 /* LEFT BAR CONTENT */
 .left-bar-content {
-  padding: 1em;
+  height: 100%;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
 
   display: flex;
   flex-direction: column;
 
-  .sub-heading {
-    margin: 0 0 0.3em 0;
-  }
-
-  .name {
-    margin: 0 0 0 0;
-  }
+  padding: 0;
 }
 
-.content-collapsed {
-  transition: opacity 50ms ease;
-  opacity: 0;
-  pointer-events: none;
+.left-bar-inner {
+  padding: 1em;
+  padding-right: 0.75em;
 }
 
-.content-expanded {
-  transition: opacity 600ms ease;
-  opacity: 1;
+.left-bar-scroll {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.sub-heading {
+  margin: 0 0 0.5em 0;
 }
 
 /* SLIDER */
@@ -142,6 +145,7 @@ html {
 
 .param-slider {
   flex: 1;
+  min-width: 0;
 }
 
 .slider-value {
@@ -178,6 +182,7 @@ html {
 .section-divider {
   width: 100%;
   border-top: 1px solid #5c5c5c;
+  margin-bottom: 1em;
 }
 
 /* UI LEFT */
