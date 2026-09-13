@@ -1,4 +1,5 @@
 grid.ldgeojson
 optimisation_data.ldgeojson
 *.csv
+!range.csv
 node_modules

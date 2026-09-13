@@ -1,11 +1,12 @@
-import { ScrollArea, Title } from "@mantine/core";
-import { useScenarioContext } from "../hooks/useScenarioContext";
+import { Button, ScrollArea, Title } from "@mantine/core";
+import { useScenarioContext, Viewing } from "../hooks/useScenarioContext";
 import ParameterSlider from "./ParameterSlider";
 import { useExpandedContext } from "../hooks/useExpandedContext";
 import { useEffect } from "react";
 
 export default function LeftBarContent() {
-  const { getParam, setParam, params } = useScenarioContext();
+  const { getParam, setParam, params, viewing, setViewing } =
+    useScenarioContext();
   const sum = getParam(0) + getParam(1) + getParam(2);
   const { expanded } = useExpandedContext();
   const { clearAllPopups } = useScenarioContext();
@@ -70,8 +71,42 @@ export default function LeftBarContent() {
           <div className="section-divider" />
 
           <Title order={1} className="sub-heading">
-            Filters
+            Data
           </Title>
+
+          <div className="data-buttons">
+            <Button
+              className="data-button"
+              variant={viewing === Viewing.Heatmap ? "filled" : "light"}
+              onClick={() => setViewing(Viewing.Heatmap)}
+            >
+              Heatmap
+            </Button>
+
+            <Button
+              className="data-button"
+              variant={viewing === Viewing.Water_Depth ? "filled" : "light"}
+              onClick={() => setViewing(Viewing.Water_Depth)}
+            >
+              Water Depth
+            </Button>
+
+            <Button
+              className="data-button"
+              variant={viewing === Viewing.Wind_Speed ? "filled" : "light"}
+              onClick={() => setViewing(Viewing.Wind_Speed)}
+            >
+              Wind Speed
+            </Button>
+
+            <Button
+              className="data-button"
+              variant={viewing === Viewing.Bird_Risk ? "filled" : "light"}
+              onClick={() => setViewing(Viewing.Bird_Risk)}
+            >
+              Bird Risk
+            </Button>
+          </div>
         </div>
       </ScrollArea>
     </div>

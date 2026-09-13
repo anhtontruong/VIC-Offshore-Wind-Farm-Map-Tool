@@ -1,4 +1,5 @@
 import type { Popup } from "mapbox-gl";
+
 import {
   createContext,
   useContext,
@@ -7,11 +8,21 @@ import {
   type ReactNode
 } from "react";
 
+export const Viewing = {
+  Heatmap: "HEATMAP",
+  Water_Depth: "WATER_DEPTH",
+  Wind_Speed: "WIND_SPEED",
+  Bird_Risk: "BIRD_RISK"
+} as const;
+
+type Viewing = (typeof Viewing)[keyof typeof Viewing];
+
 type ScenarioContextType = {
   params: number[];
   getParam: (index: 0 | 1 | 2) => number;
   setParam: (index: 0 | 1 | 2) => (value: number) => void;
-
+  viewing: Viewing;
+  setViewing: (state: Viewing) => void;
   registerPopup: (popup: Popup) => void;
   unregisterPopup: (popup: Popup) => void;
   clearAllPopups: () => void;
@@ -22,6 +33,7 @@ export const ScenarioContext = createContext<ScenarioContextType | null>(null);
 // =========================
 //  CONTEXT HOOK (CONSUMER)
 // =========================
+
 export function useScenarioContext() {
   const context = useContext(ScenarioContext);
 
@@ -41,8 +53,10 @@ type ScenarioProviderProps = {
 // ==========
 //  PROVIDER
 // ==========
+
 export function ScenarioProvider({ children }: ScenarioProviderProps) {
   const [params, setParams] = useState<number[]>([1, 0, 0]);
+  const [viewing, setViewing] = useState<Viewing>(Viewing.Heatmap);
 
   const popupsRef = useRef<Popup[]>([]);
 
@@ -75,6 +89,8 @@ export function ScenarioProvider({ children }: ScenarioProviderProps) {
         params,
         getParam,
         setParam,
+        viewing,
+        setViewing,
         registerPopup,
         unregisterPopup,
         clearAllPopups

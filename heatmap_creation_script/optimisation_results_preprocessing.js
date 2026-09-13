@@ -8,13 +8,25 @@ const proj4 = require("proj4");
 // ============
 const DATA_CSV_FILE = process.argv[2];
 if (!DATA_CSV_FILE) {
-  console.error("MISSING csv file as argument! Should be: node optimisation_results_preprocessing.js <csv-file>");
+  console.error(
+    "MISSING csv file as argument! Should be: node optimisation_results_preprocessing.js <csv-file>"
+  );
   process.exit(1);
 }
 
 const GRID_FILE = "grid.ldgeojson";
 const DATA_LDGEOJSON_FILE = "optimisation_data.ldgeojson";
 const OUTPUT_FILE = "heatmap.ldgeojson";
+
+const RANGE_FILE = "range.csv";
+
+const ranges = {
+  depth_m: { min: Infinity, max: -Infinity },
+  wind_speed_m_s: { min: Infinity, max: -Infinity },
+  shore_km: { min: Infinity, max: -Infinity },
+  e_w: { min: Infinity, max: -Infinity },
+  n_surveys: { min: Infinity, max: -Infinity }
+};
 
 // =====================
 //  1) CSV to ldgeojson
@@ -30,6 +42,11 @@ fs.createReadStream(DATA_CSV_FILE)
     for (const [key, value] of Object.entries(row)) {
       const n = Number(value);
       props[key] = Number.isNaN(n) ? value : n;
+    }
+
+    for (const key of Object.keys(ranges)) {
+      ranges[key].min = Math.min(ranges[key].min, props[key]);
+      ranges[key].max = Math.max(ranges[key].max, props[key]);
     }
 
     const feature = {
@@ -50,6 +67,16 @@ fs.createReadStream(DATA_CSV_FILE)
     const output = ldgeojsonLine.map((f) => JSON.stringify(f)).join("\n");
 
     fs.writeFileSync(DATA_LDGEOJSON_FILE, output);
+    
+    fs.writeFileSync(
+      RANGE_FILE,
+      [
+        "data_name,min,max",
+        ...Object.entries(ranges).map(
+          ([name, r]) => `${name},${r.min},${r.max}`
+        )
+      ].join("\n")
+    );
 
     console.log(
       `SUCCESS! Wrote ${ldgeojsonLine.length} features to ${DATA_LDGEOJSON_FILE}\n`
