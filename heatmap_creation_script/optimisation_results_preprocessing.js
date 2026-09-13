@@ -18,7 +18,7 @@ const GRID_FILE = "grid.ldgeojson";
 const DATA_LDGEOJSON_FILE = "optimisation_data.ldgeojson";
 const OUTPUT_FILE = "heatmap.ldgeojson";
 
-const RANGE_FILE = "range.csv";
+const RANGE_FILE = "range.json";
 
 const ranges = {
   depth_m: { min: Infinity, max: -Infinity },
@@ -45,6 +45,11 @@ fs.createReadStream(DATA_CSV_FILE)
     }
 
     for (const key of Object.keys(ranges)) {
+      if (typeof props[key] !== "number") {
+        console.error(`Invalid/missing range value for ${key}:`, props[key]);
+        continue;
+      }
+
       ranges[key].min = Math.min(ranges[key].min, props[key]);
       ranges[key].max = Math.max(ranges[key].max, props[key]);
     }
@@ -67,15 +72,16 @@ fs.createReadStream(DATA_CSV_FILE)
     const output = ldgeojsonLine.map((f) => JSON.stringify(f)).join("\n");
 
     fs.writeFileSync(DATA_LDGEOJSON_FILE, output);
-    
+
     fs.writeFileSync(
       RANGE_FILE,
-      [
-        "data_name,min,max",
-        ...Object.entries(ranges).map(
-          ([name, r]) => `${name},${r.min},${r.max}`
-        )
-      ].join("\n")
+      JSON.stringify(
+        Object.fromEntries(
+          Object.entries(ranges).map(([name, r]) => [name, [r.min, r.max]])
+        ),
+        null,
+        2
+      )
     );
 
     console.log(

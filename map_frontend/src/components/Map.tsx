@@ -2,8 +2,9 @@ import { useRef, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css"; // Associated CSS
 import { INITIAL_CENTER, INITIAL_ZOOM } from "../constants/constants";
-import { useScenarioContext } from "../hooks/useScenarioContext";
+import { useScenarioContext, Viewing } from "../hooks/useScenarioContext";
 import heatmapLdGeoJson from "../../../heatmap_creation_script/heatmap.ldgeojson?raw";
+import rangeJSON from "../../../heatmap_creation_script/range.json";
 
 interface MapProps {
   mapRef: React.RefObject<mapboxgl.Map | null>;
@@ -19,8 +20,7 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null); // exposes html
   const paramKeyRef = useRef("");
 
-  const { params, getParam } = useScenarioContext();
-  const { registerPopup } = useScenarioContext();
+  const { params, getParam, registerPopup, viewing } = useScenarioContext();
 
   const toThirdsPercent = (value: number) => Math.round(value * 3) * (100 / 3);
 
@@ -245,17 +245,67 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
     };
   }, []);
 
-  // =====================
-  //    Map Slider Update
-  // =====================
+  // ===================
+  //  Map Slider Update
+  // ===================
+  useEffect(() => {
+    const map = mapRef.current;
+
+    if (!map) return;
+    if (!map.getLayer("heatmap-fill")) return;
+    if (viewing !== Viewing.Heatmap) return;
+
+    map.setPaintProperty("heatmap-fill", "fill-color", GRID_FILL_COLOR);
+  }, [params]);
+
+  // =============
+  //  Data Update
+  // =============
   useEffect(() => {
     const map = mapRef.current;
 
     if (!map) return;
     if (!map.getLayer("heatmap-fill")) return;
 
-    map.setPaintProperty("heatmap-fill", "fill-color", GRID_FILL_COLOR);
-  }, [params]);
+    // CASE: Viewing Heatmap
+    if (viewing === Viewing.Heatmap) {
+      map.setPaintProperty("heatmap-fill", "fill-color", GRID_FILL_COLOR);
+    }
+
+    // CASE: Viewing Water Depth
+    else if (viewing === Viewing.Water_Depth) {
+      map.setPaintProperty("heatmap-fill", "fill-color", [
+        "interpolate",
+        ["linear"],
+        ["get", "depth_m"],
+        rangeJSON.depth_m[0], "#96fcff",
+        rangeJSON.depth_m[1], "#00106a"
+      ]);
+    }
+
+    // CASE: Viewing Water Depth
+    else if (viewing === Viewing.Wind_Speed) {
+      map.setPaintProperty("heatmap-fill", "fill-color", [
+        "interpolate",
+        ["linear"],
+        ["get", "wind_speed_m_s"],
+        rangeJSON.wind_speed_m_s[0], "#65006a",
+        rangeJSON.wind_speed_m_s[1], "#ffa13d"
+      ]);
+    }
+
+    // CASE: Viewing Bird Risk
+    else if (viewing === Viewing.Bird_Risk) {
+      map.setPaintProperty("heatmap-fill", "fill-color", [
+        "interpolate",
+        ["linear"],
+        ["get", "e_w"],
+        rangeJSON.e_w[0], "#ffecb7",
+        rangeJSON.e_w[1], "#ff3939"
+      ]);
+    }
+
+  }, [viewing]);
 
   // # JSX
   return (
