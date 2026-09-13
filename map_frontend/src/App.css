@@ -5,6 +5,8 @@
 :root {
   --left-bar-width: 15em;
   --left-bar-btn-width: 2em;
+  --font-family-base:
+    Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 html {
@@ -57,8 +59,6 @@ html {
 
   display: flex;
   flex-direction: row;
-
-  border: 1px solid green;
 }
 
 /* LEFT BAR */
@@ -68,8 +68,6 @@ html {
   display: flex;
   flex-direction: row;
   align-items: center;
-
-  border: 1px solid red;
 }
 
 .left-bar-container {
@@ -81,16 +79,36 @@ html {
 }
 
 .left-bar-btn {
-  height: 7em;
   width: var(--left-bar-btn-width);
+  height: 7em;
 
   display: flex;
-  flex-direction: row;
   align-items: center;
+  justify-content: center;
+
   cursor: pointer;
   pointer-events: auto;
 
-  background-color: aqua;
+  background-color: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-left: 0;
+  border-radius: 0 6px 6px 0;
+
+  color: #374151;
+
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.left-bar-btn:hover {
+  background-color: #f1f5f9;
+  color: #111827;
+}
+
+.left-bar-btn:active {
+  background-color: #e5e7eb;
 }
 
 .left-bar-container.expanded {
@@ -112,6 +130,17 @@ html {
   flex-direction: column;
 
   padding: 0;
+}
+
+.content-collapsed {
+  transition: opacity 50ms ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.content-expanded {
+  transition: opacity 600ms ease;
+  opacity: 1;
 }
 
 .left-bar-inner {
@@ -158,10 +187,10 @@ html {
   margin-top: 0.1em;
   margin-bottom: 0.6em;
   width: 100%;
-  
+
   align-self: center;
   text-align: center;
-  
+
   font-size: small;
   color: rgb(0, 100, 187);
   font-weight: 500;
@@ -171,6 +200,7 @@ html {
 
 .sum-one-status {
   font-size: xx-large;
+  text-align: center;
   align-self: center;
 }
 
@@ -206,45 +236,102 @@ html {
 .info {
   position: relative;
 
-  font-family: monospace;
-
-  background-color: rgb(35 55 75 / 90%);
-  color: #fff;
-
-  padding: 6px 12px;
   margin: 12px;
-  border-radius: 4px;
+  padding: 8px 12px;
+
+  font-family: var(--font-family-base);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+
+  color: #f3f4f6;
+  background-color: rgb(17 24 39 / 90%);
+
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 6px;
+
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 10%),
+    0 4px 10px rgb(0 0 0 / 8%);
+
   z-index: 1;
   pointer-events: auto;
 }
 
+/* ACTION BUTTONS */
+.action-button {
+  position: relative;
+
+  margin: 12px;
+  padding: 8px 14px;
+
+  font-family: var(--font-family-base);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #111827;
+
+  border: 1px solid;
+  border-radius: 3px;
+
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 1;
+
+  box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+
+/* RESET POSITION */
 .reset-button {
-  position: relative;
-  padding: 4px 10px;
-  border-radius: 10px;
-  margin: 12px;
-  cursor: pointer;
-  transition: left 250ms ease;
-  z-index: 1;
-  pointer-events: auto;
+  background: #f8fafc;
+  border-color: #cbd5e1;
 }
 
-.clear-popup-button {
-  position: relative;
-  padding: 4px 10px;
-  border-radius: 10px;
-  margin: 12px;
-  cursor: pointer;
-  transition: left 250ms ease;
-  z-index: 1;
-  pointer-events: auto;
+.reset-button:hover {
+  color: #000000;
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 8%);
 }
+
+.reset-button:active {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+  box-shadow: none;
+}
+
+
+/* CLEAR POPUP */
+.clear-popup-button {
+  background: #fafafa;
+  border-color: #d1d5db;
+}
+
+.clear-popup-button:hover {
+  color: #000000;
+  background: #f8f7f4;
+  border-color: #b8b5ae;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 8%);
+}
+
+.clear-popup-button:active {
+  background: #eeece7;
+  border-color: #a8a49c;
+  box-shadow: none;
+}
+
 
 /* POPUP */
 .cell-popup {
   width: 240px;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  font-family: var(--font-family-base);
   font-size: 11px;
   line-height: 1.3;
   color: #111827;

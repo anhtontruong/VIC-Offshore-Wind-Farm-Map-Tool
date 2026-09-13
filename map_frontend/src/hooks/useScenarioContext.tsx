@@ -42,7 +42,7 @@ type ScenarioProviderProps = {
 //  PROVIDER
 // ==========
 export function ScenarioProvider({ children }: ScenarioProviderProps) {
-  const [params, setParams] = useState<number[]>([0, 0, 0]);
+  const [params, setParams] = useState<number[]>([1, 0, 0]);
 
   const popupsRef = useRef<Popup[]>([]);
 

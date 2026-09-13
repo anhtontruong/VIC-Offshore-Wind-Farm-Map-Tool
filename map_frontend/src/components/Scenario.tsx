@@ -37,23 +37,19 @@ export default function Scenario({
         <div className="left-ui">
           <div className="left-ui-top">
             <div className={`info ${expanded ? "expanded" : "collapsed"}`}>
-              Longitude: {center[0].toFixed(4)}
-              {" | "}
-              Latitude: {center[1].toFixed(4)}
-              {" | "}
-              Zoom: {zoom.toFixed(2)}
+              {`Longitude: ${center[0].toFixed(4)}  |  Latitude: ${center[1].toFixed(4)}  |  Zoom: ${zoom.toFixed(2)}`}
             </div>
           </div>
           <div className="left-ui-bottom">
             <button
-              className={`reset-button ${expanded ? "expanded" : "collapsed"}`}
+              className={`action-button reset-button ${expanded ? "expanded" : "collapsed"}`}
               onClick={handleButtonClickReset}
             >
-              Reset
+              Reset Position
             </button>
 
             <button
-              className={`clear-popup-button ${expanded ? "expanded" : "collapsed"}`}
+              className={`action-button clear-popup-button ${expanded ? "expanded" : "collapsed"}`}
               onClick={clearAllPopups}
             >
               Clear All Popups

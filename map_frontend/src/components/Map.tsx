@@ -46,6 +46,12 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
     ]
   ] satisfies mapboxgl.Expression;
 
+  // Map Bounds
+  const mapBounds: mapboxgl.LngLatBoundsLike = [
+    [140.9, -44.0], // Southwest
+    [150.5, -33.9] // Northeast
+  ];
+
   // ==============
   //    Map Load
   // ==============
@@ -58,7 +64,8 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/standard-satellite",
       center: INITIAL_CENTER,
-      zoom: INITIAL_ZOOM
+      zoom: INITIAL_ZOOM,
+      maxBounds: mapBounds
     });
 
     // # Listeners
@@ -203,9 +210,7 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
               <div class="cell-popup-row">
                 <span class="cell-popup-label">Sea Bird Exposure Score for Cell</span>
                 <span class="cell-popup-value">${
-                  typeof e_w === "number"
-                    ? `${e_w.toFixed(2)}`
-                    : "Error"
+                  typeof e_w === "number" ? `${e_w.toFixed(2)}` : "Error"
                 }</span>
               </div>
 
