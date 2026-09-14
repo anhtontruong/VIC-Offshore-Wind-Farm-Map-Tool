@@ -11,8 +11,8 @@ export const ScreenMode = {
 type ScreenMode = (typeof ScreenMode)[keyof typeof ScreenMode];
 
 type AppContextType = {
-  screenmode: ScreenMode;
-  setScreenmode: (state: ScreenMode) => void;
+  screenMode: ScreenMode;
+  setScreenMode: (state: ScreenMode) => void;
   center: [number, number];
   setCenter: (center: [number, number]) => void;
   zoom: number;
@@ -48,7 +48,7 @@ type AppProviderProps = {
 // ==========
 
 export function AppProvider({ children }: AppProviderProps) {
-  const [screenmode, setScreenmode] = useState<ScreenMode>(
+  const [screenMode, setScreenMode] = useState<ScreenMode>(
     ScreenMode.One_Screen
   );
 
@@ -59,8 +59,8 @@ export function AppProvider({ children }: AppProviderProps) {
   return (
     <AppContext.Provider
       value={{
-        screenmode,
-        setScreenmode,
+        screenMode,
+        setScreenMode,
         center,
         setCenter,
         zoom,

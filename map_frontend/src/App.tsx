@@ -1,7 +1,4 @@
-import { useState } from "react";
 import "./App.css";
-import { INITIAL_CENTER, INITIAL_ZOOM } from "./constants/constants";
-
 import { MantineProvider, createTheme } from "@mantine/core";
 import "@mantine/core/styles.css";
 
@@ -16,6 +13,7 @@ import { ExpandedProvider } from "./hooks/useExpandedContext";
 import { ScenarioProvider } from "./hooks/useScenarioContext";
 import { AppProvider } from "./hooks/useAppContext";
 import Scenario from "./components/Scenario";
+import TopBar from "./components/TopBar";
 
 const theme = createTheme({
   fontFamily: "Inter, sans-serif",
@@ -30,6 +28,8 @@ export default function App() {
       <title>VIC Offshore Wind Farm Map Tool</title>
 
       <AppProvider>
+
+        <TopBar/>
 
         <ScenarioProvider>
           <ExpandedProvider>
