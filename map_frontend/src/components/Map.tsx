@@ -5,20 +5,20 @@ import { INITIAL_CENTER, INITIAL_ZOOM } from "../constants/constants";
 import { useScenarioContext, Viewing } from "../hooks/useScenarioContext";
 import heatmapLdGeoJson from "../../../heatmap_creation_script/heatmap.ldgeojson?raw";
 import rangeJSON from "../../../heatmap_creation_script/range.json";
+import { useAppContext } from "../hooks/useAppContext";
 
 interface MapProps {
   mapRef: React.RefObject<mapboxgl.Map | null>;
-  setCenter: React.Dispatch<React.SetStateAction<[number, number]>>;
-  setZoom: React.Dispatch<React.SetStateAction<number>>;
 }
 
 // ================ //
 //     COMPONENT
 // ================ //
-export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
+export default function Map({ mapRef }: MapProps) {
   // # Refs
   const mapContainerRef = useRef<HTMLDivElement | null>(null); // exposes html
   const paramKeyRef = useRef("");
+  const { setCenter, setZoom } = useAppContext();
 
   const { params, getParam, registerPopup, viewing } = useScenarioContext();
 
@@ -278,8 +278,10 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
         "interpolate",
         ["linear"],
         ["get", "depth_m"],
-        rangeJSON.depth_m[0], "#96fcff",
-        rangeJSON.depth_m[1], "#00106a"
+        rangeJSON.depth_m[0],
+        "#96fcff",
+        rangeJSON.depth_m[1],
+        "#00106a"
       ]);
     }
 
@@ -289,8 +291,10 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
         "interpolate",
         ["linear"],
         ["get", "wind_speed_m_s"],
-        rangeJSON.wind_speed_m_s[0], "#65006a",
-        rangeJSON.wind_speed_m_s[1], "#ffa13d"
+        rangeJSON.wind_speed_m_s[0],
+        "#65006a",
+        rangeJSON.wind_speed_m_s[1],
+        "#ffa13d"
       ]);
     }
 
@@ -300,11 +304,12 @@ export default function Map({ mapRef, setCenter, setZoom }: MapProps) {
         "interpolate",
         ["linear"],
         ["get", "e_w"],
-        rangeJSON.e_w[0], "#ffecb7",
-        rangeJSON.e_w[1], "#ff3939"
+        rangeJSON.e_w[0],
+        "#ffecb7",
+        rangeJSON.e_w[1],
+        "#ff3939"
       ]);
     }
-
   }, [viewing]);
 
   // # JSX

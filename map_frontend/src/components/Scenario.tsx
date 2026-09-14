@@ -4,23 +4,13 @@ import { INITIAL_CENTER, INITIAL_ZOOM } from "../constants/constants";
 import { useScenarioContext } from "../hooks/useScenarioContext";
 import LeftBar from "./LeftBar";
 import Map from "./Map";
+import { useAppContext } from "../hooks/useAppContext";
 
-interface ScenarioProps {
-  center: number[];
-  zoom: number;
-  setCenter: React.Dispatch<React.SetStateAction<[number, number]>>;
-  setZoom: React.Dispatch<React.SetStateAction<number>>;
-}
-
-export default function Scenario({
-  center,
-  zoom,
-  setCenter,
-  setZoom
-}: ScenarioProps) {
+export default function Scenario() {
   const { expanded } = useExpandedContext();
   const mapRef = useRef<mapboxgl.Map | null>(null); // persists map instance
   const { clearAllPopups } = useScenarioContext();
+  const { center, zoom } = useAppContext();
 
   // # Helper Functions
   const handleButtonClickReset = () => {
@@ -37,7 +27,7 @@ export default function Scenario({
         <div className="left-ui">
           <div className="left-ui-top">
             <div className={`info ${expanded ? "expanded" : "collapsed"}`}>
-              {`Longitude: ${center[0].toFixed(4)}  |  Latitude: ${center[1].toFixed(4)}  |  Zoom: ${zoom.toFixed(2)}`}
+              {`Longitude: ${center[0].toFixed(4)}  | Latitude: ${center[1].toFixed(4)}  |  Zoom: ${zoom.toFixed(2)}`}
             </div>
           </div>
           <div className="left-ui-bottom">
@@ -58,7 +48,7 @@ export default function Scenario({
         </div>
       </div>
 
-      <Map mapRef={mapRef} setCenter={setCenter} setZoom={setZoom} />
+      <Map mapRef={mapRef} />
     </>
   );
 }
