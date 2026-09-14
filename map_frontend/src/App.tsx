@@ -28,15 +28,15 @@ export default function App() {
       <title>VIC Offshore Wind Farm Map Tool</title>
 
       <AppProvider>
+        <TopBar />
 
-        <TopBar/>
-
-        <ScenarioProvider>
-          <ExpandedProvider>
-            <Scenario/>
-          </ExpandedProvider>
-        </ScenarioProvider>
-
+        <div className="map-grid">
+          <ScenarioProvider>
+            <ExpandedProvider>
+              <Scenario />
+            </ExpandedProvider>
+          </ScenarioProvider>
+        </div>
       </AppProvider>
     </MantineProvider>
   );

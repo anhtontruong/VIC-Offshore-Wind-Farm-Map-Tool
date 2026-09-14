@@ -21,7 +21,7 @@ export default function Scenario() {
   };
 
   return (
-    <>
+    <div className="map-panel">
       <div className="left">
         <LeftBar />
         <div className="left-ui">
@@ -49,6 +49,6 @@ export default function Scenario() {
       </div>
 
       <Map mapRef={mapRef} />
-    </>
+    </div>
   );
 }
