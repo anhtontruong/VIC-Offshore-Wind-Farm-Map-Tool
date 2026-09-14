@@ -119,7 +119,7 @@ html {
 }
 
 .left-bar-container {
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
   transition: width 250ms ease;
   pointer-events: auto;

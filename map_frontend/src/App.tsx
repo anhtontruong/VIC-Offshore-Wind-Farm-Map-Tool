@@ -9,11 +9,9 @@ import "@fontsource/inter/600.css";
 import "@fontsource/inter/700.css";
 import "@fontsource/inter/800.css";
 import "@fontsource/inter/900.css";
-import { ExpandedProvider } from "./hooks/useExpandedContext";
-import { ScenarioProvider } from "./hooks/useScenarioContext";
 import { AppProvider } from "./hooks/useAppContext";
-import Scenario from "./components/Scenario";
 import TopBar from "./components/TopBar";
+import Screens from "./components/Screens";
 
 const theme = createTheme({
   fontFamily: "Inter, sans-serif",
@@ -30,13 +28,7 @@ export default function App() {
       <AppProvider>
         <TopBar />
 
-        <div className="map-grid">
-          <ScenarioProvider>
-            <ExpandedProvider>
-              <Scenario />
-            </ExpandedProvider>
-          </ScenarioProvider>
-        </div>
+        <Screens/>
       </AppProvider>
     </MantineProvider>
   );
