@@ -1,7 +1,6 @@
 import { useRef, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css"; // Associated CSS
-import { INITIAL_CENTER, INITIAL_ZOOM } from "../constants/constants";
 import { useScenarioContext, Viewing } from "../hooks/useScenarioContext";
 import heatmapLdGeoJson from "../../../heatmap_creation_script/heatmap.ldgeojson?raw";
 import rangeJSON from "../../../heatmap_creation_script/range.json";
@@ -18,7 +17,14 @@ export default function Map({ mapRef }: MapProps) {
   // # Refs
   const mapContainerRef = useRef<HTMLDivElement | null>(null); // exposes html
   const paramKeyRef = useRef("");
-  const { setCenter, setZoom } = useAppContext();
+  const syncingRef = useRef(false); // true while this map moves itself programmatically
+  const interactingRef = useRef(false); // true while this map owns the camera
+  const publishedRef = useRef<{
+    center: [number, number];
+    zoom: number;
+  } | null>(null);
+
+  const { center, zoom, setCenter, setZoom } = useAppContext();
 
   const { params, getParam, registerPopup, viewing } = useScenarioContext();
 
@@ -63,8 +69,8 @@ export default function Map({ mapRef }: MapProps) {
         "pk.eyJ1IjoiYW5odG9udCIsImEiOiJjbXM2c2o4NDIwNWI4MzBvbzMzaGRzNjF5In0.q0dcFpdPMRLIoTuWtWQzKA",
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/standard-satellite",
-      center: INITIAL_CENTER,
-      zoom: INITIAL_ZOOM,
+      center: center,
+      zoom: zoom,
       maxBounds: mapBounds
     });
 
@@ -114,12 +120,29 @@ export default function Map({ mapRef }: MapProps) {
       console.log((feature as any).properties);
     });
 
+    // ===== CAMERA OWNERSHIP =====
+    mapRef.current.on("movestart", () => {
+      if (syncingRef.current) return; // we're following, not driving
+      interactingRef.current = true;
+    });
+
+    mapRef.current.on("moveend", () => {
+      if (syncingRef.current) return;
+      interactingRef.current = false;
+    });
+
     mapRef.current.on("move", () => {
       if (!mapRef.current) return;
+      if (syncingRef.current) return; // this move came from another screen
 
       // get the current center coords and zoom
       const mapCenter = mapRef.current.getCenter();
       const mapZoom = mapRef.current.getZoom();
+
+      publishedRef.current = {
+        center: [mapCenter.lng, mapCenter.lat],
+        zoom: mapZoom
+      };
 
       setCenter([mapCenter.lng, mapCenter.lat]);
       setZoom(mapZoom);
@@ -245,6 +268,52 @@ export default function Map({ mapRef }: MapProps) {
     };
   }, []);
 
+  // =====================
+  //   Shared Camera Sync
+  // =====================
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    // this map is driving — never fight the gesture in progress
+    if (interactingRef.current) return;
+
+    // this is the value we published ourselves — nothing to follow
+    const mine = publishedRef.current;
+    if (
+      mine &&
+      mine.center[0] === center[0] &&
+      mine.center[1] === center[1] &&
+      mine.zoom === zoom
+    )
+      return;
+
+    syncingRef.current = true;
+    map.jumpTo({ center, zoom });
+    syncingRef.current = false;
+  }, [center, zoom]);
+
+  // ==================
+  //   Container Size
+  // ==================
+  useEffect(() => {
+    const container = mapContainerRef.current;
+    if (!container) return;
+
+    const observer = new ResizeObserver(() => {
+      const map = mapRef.current;
+      if (!map) return;
+
+      // resize re-fires move — don't let it publish or claim the camera
+      syncingRef.current = true;
+      map.resize();
+      syncingRef.current = false;
+    });
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
   // ===================
   //  Map Slider Update
   // ===================
@@ -285,7 +354,7 @@ export default function Map({ mapRef }: MapProps) {
       ]);
     }
 
-    // CASE: Viewing Water Depth
+    // CASE: Viewing Wind Speed
     else if (viewing === Viewing.Wind_Speed) {
       map.setPaintProperty("heatmap-fill", "fill-color", [
         "interpolate",
@@ -316,7 +385,7 @@ export default function Map({ mapRef }: MapProps) {
   return (
     <>
       {/* map, change CSS for position and size */}
-      <div id="map-container" ref={mapContainerRef} />
+      <div className="map-container" ref={mapContainerRef} />
     </>
   );
 }
