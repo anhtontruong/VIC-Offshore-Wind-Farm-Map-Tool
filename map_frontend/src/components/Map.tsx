@@ -47,7 +47,7 @@ export default function Map({ mapRef }: MapProps) {
       "rgba(255, 0, 0, 0.5)",
       0.0000001,
       "#ffff3d",
-      120,
+      30,
       "#70ff3c"
     ]
   ] satisfies mapboxgl.Expression;
