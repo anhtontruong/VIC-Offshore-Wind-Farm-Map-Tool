@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import { useExpandedContext } from "../hooks/useExpandedContext";
 import { INITIAL_CENTER, INITIAL_ZOOM } from "../constants/constants";
-import { useScenarioContext } from "../hooks/useScenarioContext";
 import LeftBar from "./LeftBar";
 import Map from "./Map";
 import { useAppContext } from "../hooks/useAppContext";
@@ -9,8 +8,7 @@ import { useAppContext } from "../hooks/useAppContext";
 export default function Scenario() {
   const { expanded } = useExpandedContext();
   const mapRef = useRef<mapboxgl.Map | null>(null); // persists map instance
-  const { clearAllPopups } = useScenarioContext();
-  const { center, zoom } = useAppContext();
+  const { center, zoom, clearAllPopups } = useAppContext();
 
   // # Helper Functions
   const handleButtonClickReset = () => {

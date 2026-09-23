@@ -2,18 +2,24 @@ import { Button, ScrollArea, Title } from "@mantine/core";
 import { useScenarioContext, Viewing } from "../hooks/useScenarioContext";
 import ParameterSlider from "./ParameterSlider";
 import { useExpandedContext } from "../hooks/useExpandedContext";
-import { useEffect } from "react";
+import { useAppContext } from "../hooks/useAppContext";
+import { useEffect, useRef } from "react";
 
 export default function LeftBarContent() {
   const { getParam, setParam, params, viewing, setViewing } =
     useScenarioContext();
   const sum = getParam(0) + getParam(1) + getParam(2);
   const { expanded } = useExpandedContext();
-  const { clearAllPopups } = useScenarioContext();
+  const { clearAllPopups } = useAppContext();
 
-  // Clear all popups when changing scenario
+  // Clear all popups (in every screen) when changing scenario but not on mount (otherwise split screen wipes popups)
   const paramsKey = params.join(",");
+  const firstRun = useRef(true);
   useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    }
     clearAllPopups();
   }, [paramsKey]);
 

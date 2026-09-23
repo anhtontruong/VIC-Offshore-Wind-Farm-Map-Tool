@@ -1,9 +1,6 @@
-import type { Popup } from "mapbox-gl";
-
 import {
   createContext,
   useContext,
-  useRef,
   useState,
   type ReactNode
 } from "react";
@@ -23,9 +20,6 @@ type ScenarioContextType = {
   setParam: (index: 0 | 1 | 2) => (value: number) => void;
   viewing: Viewing;
   setViewing: (state: Viewing) => void;
-  registerPopup: (popup: Popup) => void;
-  unregisterPopup: (popup: Popup) => void;
-  clearAllPopups: () => void;
 };
 
 export const ScenarioContext = createContext<ScenarioContextType | null>(null);
@@ -58,8 +52,6 @@ export function ScenarioProvider({ children }: ScenarioProviderProps) {
   const [params, setParams] = useState<number[]>([1, 0, 0]);
   const [viewing, setViewing] = useState<Viewing>(Viewing.Heatmap);
 
-  const popupsRef = useRef<Popup[]>([]);
-
   const getParam = (index: 0 | 1 | 2) => params[index];
 
   const setParam = (index: 0 | 1 | 2) => (value: number) => {
@@ -70,19 +62,6 @@ export function ScenarioProvider({ children }: ScenarioProviderProps) {
     });
   };
 
-  const registerPopup = (popup: Popup) => {
-    popupsRef.current.push(popup);
-  };
-
-  const unregisterPopup = (popup: Popup) => {
-    popupsRef.current = popupsRef.current.filter((p) => p !== popup);
-  };
-
-  const clearAllPopups = () => {
-    popupsRef.current.forEach((popup) => popup.remove());
-    popupsRef.current = [];
-  };
-
   return (
     <ScenarioContext.Provider
       value={{
@@ -90,10 +69,7 @@ export function ScenarioProvider({ children }: ScenarioProviderProps) {
         getParam,
         setParam,
         viewing,
-        setViewing,
-        registerPopup,
-        unregisterPopup,
-        clearAllPopups
+        setViewing
       }}
     >
       {children}

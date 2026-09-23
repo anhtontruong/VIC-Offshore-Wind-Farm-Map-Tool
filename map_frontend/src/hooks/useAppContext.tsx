@@ -10,6 +10,13 @@ export const ScreenMode = {
 
 type ScreenMode = (typeof ScreenMode)[keyof typeof ScreenMode];
 
+// Cell user clicked, shared by every screen
+export type OpenCell = {
+  id: number;
+  lngLat: [number, number]; // exact click point, used as popup anchor
+  props: Record<string, any>; // properties with all slider weightings
+};
+
 type AppContextType = {
   screenMode: ScreenMode;
   setScreenMode: (state: ScreenMode) => void;
@@ -17,6 +24,14 @@ type AppContextType = {
   setCenter: (center: [number, number]) => void;
   zoom: number;
   setZoom: (zoom: number) => void;
+  hoveredCellId: number | null;
+  setHoveredCellId: (id: number | null) => void;
+  selectedCellId: number | null;
+  setSelectedCellId: (id: number | null) => void;
+  openCells: OpenCell[];
+  openCell: (cell: OpenCell) => void;
+  closeCell: (id: number) => void;
+  clearAllPopups: () => void;
 };
 
 export const AppContext = createContext<AppContextType | null>(
@@ -56,6 +71,29 @@ export function AppProvider({ children }: AppProviderProps) {
 
   const [zoom, setZoom] = useState(INITIAL_ZOOM);
 
+  const [hoveredCellId, setHoveredCellId] = useState<number | null>(null);
+
+  const [selectedCellId, setSelectedCellId] = useState<number | null>(null);
+
+  const [openCells, setOpenCells] = useState<OpenCell[]>([]);
+
+  const openCell = (cell: OpenCell) =>
+    setOpenCells((prev) =>
+      prev.some((c) => c.id === cell.id) ? prev : [...prev, cell]
+    );
+
+  const closeCell = (id: number) => {
+    setOpenCells((prev) =>
+      prev.some((c) => c.id === id) ? prev.filter((c) => c.id !== id) : prev
+    );
+    setSelectedCellId((prev) => (prev === id ? null : prev));
+  };
+
+  const clearAllPopups = () => {
+    setOpenCells([]);
+    setSelectedCellId(null);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -64,7 +102,15 @@ export function AppProvider({ children }: AppProviderProps) {
         center,
         setCenter,
         zoom,
-        setZoom
+        setZoom,
+        hoveredCellId,
+        setHoveredCellId,
+        selectedCellId,
+        setSelectedCellId,
+        openCells,
+        openCell,
+        closeCell,
+        clearAllPopups
       }}
     >
       {children}

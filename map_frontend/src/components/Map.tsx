@@ -1,10 +1,10 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css"; // Associated CSS
 import { useScenarioContext, Viewing } from "../hooks/useScenarioContext";
 import heatmapLdGeoJson from "../../../heatmap_creation_script/heatmap.ldgeojson?raw";
 import rangeJSON from "../../../heatmap_creation_script/range.json";
-import { useAppContext } from "../hooks/useAppContext";
+import { useAppContext, type OpenCell } from "../hooks/useAppContext";
 
 interface MapProps {
   mapRef: React.RefObject<mapboxgl.Map | null>;
@@ -23,10 +23,29 @@ export default function Map({ mapRef }: MapProps) {
     center: [number, number];
     zoom: number;
   } | null>(null);
+  const hoverPublishedRef = useRef<number | null>(null); // last hover id this screen published
+  const prevHoverRef = useRef<number | null>(null); // last hover id this screen applied to feature-state
+  const prevSelectedRef = useRef<number | null>(null); // last selected id this screen applied to feature-state
+  const popupsRef = useRef<Record<number, mapboxgl.Popup>>({});
 
-  const { center, zoom, setCenter, setZoom } = useAppContext();
+  // true once this screen's map has finished loading the heatmap source/layers
+  const [mapLoaded, setMapLoaded] = useState(false);
 
-  const { params, getParam, registerPopup, viewing } = useScenarioContext();
+  const {
+    center,
+    zoom,
+    setCenter,
+    setZoom,
+    hoveredCellId,
+    setHoveredCellId,
+    selectedCellId,
+    setSelectedCellId,
+    openCells,
+    openCell,
+    closeCell
+  } = useAppContext();
+
+  const { params, getParam, viewing } = useScenarioContext();
 
   const toThirdsPercent = (value: number) => Math.round(value * 3) * (100 / 3);
 
@@ -83,7 +102,8 @@ export default function Map({ mapRef }: MapProps) {
 
       mapRef.current.addSource("heatmap", {
         type: "geojson",
-        data: heatmap
+        data: heatmap,
+        promoteId: "id" // required hover/selected highlight
       });
 
       // CELL COLOUR
@@ -108,16 +128,71 @@ export default function Map({ mapRef }: MapProps) {
           "line-opacity": ["interpolate", ["linear"], ["zoom"], 8, 0, 12, 1]
         }
       });
+
+      // HOVER FILL
+      mapRef.current.addLayer({
+        id: "heatmap-hover-fill",
+        type: "fill",
+        source: "heatmap",
+        paint: {
+          "fill-color": "#ffffff",
+          "fill-opacity": [
+            "case",
+            ["boolean", ["feature-state", "hover"], false],
+            0.3,
+            0
+          ]
+        }
+      });
+
+      // HOVER OUTLINE
+      mapRef.current.addLayer({
+        id: "heatmap-hover-line",
+        type: "line",
+        source: "heatmap",
+        paint: {
+          "line-color": "#ffffff",
+          "line-width": 2.5,
+          "line-opacity": [
+            "case",
+            ["boolean", ["feature-state", "hover"], false],
+            1,
+            0
+          ]
+        }
+      });
+
+      // SELECTED OUTLINE
+      mapRef.current.addLayer({
+        id: "heatmap-selected-line",
+        type: "line",
+        source: "heatmap",
+        paint: {
+          "line-color": "#00e5ff",
+          "line-width": 4,
+          "line-opacity": [
+            "case",
+            ["boolean", ["feature-state", "selected"], false],
+            1,
+            0
+          ]
+        }
+      });
+
+      setMapLoaded(true);
     });
 
-    // FOR DEBUGGING
-    mapRef.current.on("click", "heatmap-fill", (e) => {
-      console.log("clicked");
-      const feature = e.features?.[0];
+    // ===== HOVER =====
+    mapRef.current.on("mousemove", "heatmap-fill", (e) => {
+      const id = (e.features?.[0] as any)?.properties?.id;
+      if (id == null || id === hoverPublishedRef.current) return; // same-cell guard
+      hoverPublishedRef.current = id;
+      setHoveredCellId(id);
+    });
 
-      if (!feature) return;
-
-      console.log((feature as any).properties);
+    mapRef.current.on("mouseleave", "heatmap-fill", () => {
+      hoverPublishedRef.current = null;
+      setHoveredCellId(null);
     });
 
     // ===== CAMERA OWNERSHIP =====
@@ -154,116 +229,29 @@ export default function Map({ mapRef }: MapProps) {
       handler: (e) => {
         if (!e.feature || !mapRef.current || !e.lngLat) return;
 
-        const props = e.feature.properties;
+        const props = e.feature.properties as Record<string, any>;
 
-        // Cell Details
-        const capacity = props[paramKeyRef.current];
-
-        const depth_m = props.depth_m;
-        const wind_speed_m_s = props.wind_speed_m_s;
-        const shore_km = props.shore_km;
-        const e_w = props.e_w;
-        const n_surveys = props.n_surveys;
-
-        // don't show popup if undefined
-        if (capacity === undefined) {
+        // don't open a popup (anywhere) if this screen's weighting has no
+        // capacity for the clicked cell — matches the previous behaviour
+        if (props[paramKeyRef.current] === undefined) {
           return;
         }
 
-        const popup = new mapboxgl.Popup({
-          closeOnClick: false,
-          maxWidth: "300px"
-        })
-          .setLngLat(e.lngLat)
-          .setHTML(
-            `<div class="cell-popup">
-            <div class="cell-popup-header">
-              Cell Details
-            </div>
+        const id = props.id;
 
-            <div class="cell-popup-row">
-              <span class="cell-popup-label">Longitude</span>
-              <span class="cell-popup-value">${e.lngLat.lng.toFixed(6)}</span>
-            </div>
-
-            <div class="cell-popup-row">
-              <span class="cell-popup-label">Latitude</span>
-              <span class="cell-popup-value">${e.lngLat.lat.toFixed(6)}</span>
-            </div>
-
-            <div class="cell-popup-row">
-              <span class="cell-popup-label">Installed Capacity</span>
-              <span class="cell-popup-value">${
-                typeof capacity === "number"
-                  ? `${capacity.toFixed(2)} MW`
-                  : "Error"
-              }</span>
-            </div>
-
-            <div class="cell-popup-section">
-              <div class="cell-popup-section-title">Additional Information</div>
-
-              <div class="cell-popup-row">
-                <span class="cell-popup-label">Sea Depth</span>
-                <span class="cell-popup-value">${
-                  typeof depth_m === "number"
-                    ? `${depth_m.toFixed(2)} m`
-                    : "Error"
-                }</span>
-              </div>
-
-              <div class="cell-popup-row">
-                <span class="cell-popup-label">Average Wind Speed (150m AMSL)</span>
-                <span class="cell-popup-value">${
-                  typeof wind_speed_m_s === "number"
-                    ? `${wind_speed_m_s.toFixed(2)} m/s`
-                    : "Error"
-                }</span>
-              </div>
-
-              <div class="cell-popup-row">
-                <span class="cell-popup-label">Distance to Shore</span>
-                <span class="cell-popup-value">${
-                  typeof shore_km === "number"
-                    ? `${shore_km.toFixed(2)} km`
-                    : "Error"
-                }</span>
-              </div>
-
-              <div class="cell-popup-row">
-                <span class="cell-popup-label">Sea Bird Exposure Score for Cell</span>
-                <span class="cell-popup-value">${
-                  typeof e_w === "number" ? `${e_w.toFixed(2)}` : "Error"
-                }</span>
-              </div>
-
-              <div class="cell-popup-row">
-                <span class="cell-popup-label">Number of Bird Surveys</span>
-                <span class="cell-popup-value">${
-                  typeof n_surveys === "number"
-                    ? `${n_surveys.toFixed(0)}`
-                    : "Error"
-                }</span>
-              </div>
-
-            </div>
-          </div>`
-          )
-          .addTo(mapRef.current);
-
-        registerPopup(popup);
-
-        const popupElement = popup.getElement();
-        popupElement?.addEventListener("mousedown", () => {
-          const parent = popupElement.parentElement;
-          if (parent) {
-            parent.appendChild(popupElement);
-          }
+        openCell({
+          id,
+          lngLat: [e.lngLat.lng, e.lngLat.lat],
+          props
         });
+        setSelectedCellId(id);
       }
     });
 
     return () => {
+      // remove any popups this screen created before the map itself goes away
+      Object.values(popupsRef.current).forEach((popup) => popup.remove());
+      popupsRef.current = {};
       mapRef.current?.remove();
     };
   }, []);
@@ -313,6 +301,93 @@ export default function Map({ mapRef }: MapProps) {
     observer.observe(container);
     return () => observer.disconnect();
   }, []);
+
+  // =====================
+  //   Shared Cell Hover
+  // =====================
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapLoaded) return;
+
+    const prev = prevHoverRef.current;
+    if (prev != null) {
+      map.setFeatureState({ source: "heatmap", id: prev }, { hover: false });
+    }
+    if (hoveredCellId != null) {
+      map.setFeatureState(
+        { source: "heatmap", id: hoveredCellId },
+        { hover: true }
+      );
+    }
+    prevHoverRef.current = hoveredCellId;
+  }, [hoveredCellId, mapLoaded]);
+
+  // ========================
+  //   Shared Cell Selection
+  // ========================
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapLoaded) return;
+
+    const prev = prevSelectedRef.current;
+    if (prev != null) {
+      map.setFeatureState(
+        { source: "heatmap", id: prev },
+        { selected: false }
+      );
+    }
+    if (selectedCellId != null) {
+      map.setFeatureState(
+        { source: "heatmap", id: selectedCellId },
+        { selected: true }
+      );
+    }
+    prevSelectedRef.current = selectedCellId;
+  }, [selectedCellId, mapLoaded]);
+
+  // =====================
+  //   Shared Cell Popups
+  // =====================
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapLoaded) return;
+
+    // add popups for cells opened elsewhere
+    for (const cell of openCells) {
+      if (popupsRef.current[cell.id]) continue;
+
+      const popup = new mapboxgl.Popup({
+        closeOnClick: false,
+        maxWidth: "300px"
+      })
+        .setLngLat(cell.lngLat)
+        .setHTML(buildPopupHTML(cell, paramKeyRef.current))
+        .addTo(map);
+
+      // x button: close this popup on every screen
+      popup.on("close", () => closeCell(cell.id));
+
+      // latest popup above previous
+      const popupElement = popup.getElement();
+      popupElement?.addEventListener("mousedown", () => {
+        const parent = popupElement.parentElement;
+        if (parent) {
+          parent.appendChild(popupElement);
+        }
+      });
+
+      popupsRef.current[cell.id] = popup;
+    }
+
+    // remove popups for cells that were closed elsewhere
+    for (const key of Object.keys(popupsRef.current)) {
+      const id = Number(key);
+      if (!openCells.some((c) => c.id === id)) {
+        popupsRef.current[id].remove();
+        delete popupsRef.current[id];
+      }
+    }
+  }, [openCells, mapLoaded]);
 
   // ===================
   //  Map Slider Update
@@ -404,4 +479,91 @@ function ldGeoJSONToGeoJSON(ldgeojson: string) {
     type: "FeatureCollection" as const,
     features
   };
+}
+
+// ============
+//  Popup HTML
+// ============
+function buildPopupHTML(cell: OpenCell, paramKey: string) {
+  const { lngLat, props } = cell;
+  const capacity = props[paramKey];
+
+  const depth_m = props.depth_m;
+  const wind_speed_m_s = props.wind_speed_m_s;
+  const shore_km = props.shore_km;
+  const e_w = props.e_w;
+  const n_surveys = props.n_surveys;
+
+  return `<div class="cell-popup">
+            <div class="cell-popup-header">
+              Cell Details
+            </div>
+
+            <div class="cell-popup-row">
+              <span class="cell-popup-label">Longitude</span>
+              <span class="cell-popup-value">${lngLat[0].toFixed(6)}</span>
+            </div>
+
+            <div class="cell-popup-row">
+              <span class="cell-popup-label">Latitude</span>
+              <span class="cell-popup-value">${lngLat[1].toFixed(6)}</span>
+            </div>
+
+            <div class="cell-popup-row">
+              <span class="cell-popup-label">Installed Capacity</span>
+              <span class="cell-popup-value">${
+                typeof capacity === "number"
+                  ? `${capacity.toFixed(2)} MW`
+                  : "No data"
+              }</span>
+            </div>
+
+            <div class="cell-popup-section">
+              <div class="cell-popup-section-title">Additional Information</div>
+
+              <div class="cell-popup-row">
+                <span class="cell-popup-label">Sea Depth</span>
+                <span class="cell-popup-value">${
+                  typeof depth_m === "number"
+                    ? `${depth_m.toFixed(2)} m`
+                    : "Error"
+                }</span>
+              </div>
+
+              <div class="cell-popup-row">
+                <span class="cell-popup-label">Average Wind Speed (150m AMSL)</span>
+                <span class="cell-popup-value">${
+                  typeof wind_speed_m_s === "number"
+                    ? `${wind_speed_m_s.toFixed(2)} m/s`
+                    : "Error"
+                }</span>
+              </div>
+
+              <div class="cell-popup-row">
+                <span class="cell-popup-label">Distance to Shore</span>
+                <span class="cell-popup-value">${
+                  typeof shore_km === "number"
+                    ? `${shore_km.toFixed(2)} km`
+                    : "Error"
+                }</span>
+              </div>
+
+              <div class="cell-popup-row">
+                <span class="cell-popup-label">Sea Bird Exposure Score for Cell</span>
+                <span class="cell-popup-value">${
+                  typeof e_w === "number" ? `${e_w.toFixed(2)}` : "Error"
+                }</span>
+              </div>
+
+              <div class="cell-popup-row">
+                <span class="cell-popup-label">Number of Bird Surveys</span>
+                <span class="cell-popup-value">${
+                  typeof n_surveys === "number"
+                    ? `${n_surveys.toFixed(0)}`
+                    : "Error"
+                }</span>
+              </div>
+
+            </div>
+          </div>`;
 }
