@@ -90,8 +90,14 @@ export default function Map({ mapRef }: MapProps) {
       style: "mapbox://styles/mapbox/standard-satellite",
       center: center,
       zoom: zoom,
-      maxBounds: mapBounds
+      maxBounds: mapBounds,
+      dragRotate: false,
+      touchPitch: false,
+      pitchWithRotate: false,
+      touchZoomRotate: { around: "center" }
     });
+    mapRef.current.touchZoomRotate.disableRotation();
+    mapRef.current.keyboard.disableRotation();
 
     // # Listeners
     // HEATMAP
