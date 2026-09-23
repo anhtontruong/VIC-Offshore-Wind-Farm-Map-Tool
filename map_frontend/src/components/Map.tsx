@@ -10,6 +10,17 @@ interface MapProps {
   mapRef: React.RefObject<mapboxgl.Map | null>;
 }
 
+// # Layer Colours (shared by paint expressions + legend)
+const HEATMAP_COLORS = {
+  zero: "rgba(255, 0, 0, 0.5)",
+  low: "#ffff3d",
+  high: "#70ff3c"
+};
+const HEATMAP_THRESHOLD_MW = 30;
+const DEPTH_COLORS = { min: "#96fcff", max: "#00106a" };
+const WIND_COLORS = { min: "#65006a", max: "#ffa13d" };
+const BIRD_COLORS = { min: "#ffecb7", max: "#ff3939" };
+
 // ================ //
 //     COMPONENT
 // ================ //
@@ -63,11 +74,11 @@ export default function Map({ mapRef }: MapProps) {
     [
       "step",
       ["get", paramKeyRef.current],
-      "rgba(255, 0, 0, 0.5)",
+      HEATMAP_COLORS.zero,
       0.0000001,
-      "#ffff3d",
-      30,
-      "#70ff3c"
+      HEATMAP_COLORS.low,
+      HEATMAP_THRESHOLD_MW,
+      HEATMAP_COLORS.high
     ]
   ] satisfies mapboxgl.Expression;
 
@@ -429,9 +440,9 @@ export default function Map({ mapRef }: MapProps) {
         ["linear"],
         ["get", "depth_m"],
         rangeJSON.depth_m[0],
-        "#96fcff",
+        DEPTH_COLORS.min,
         rangeJSON.depth_m[1],
-        "#00106a"
+        DEPTH_COLORS.max
       ]);
     }
 
@@ -442,9 +453,9 @@ export default function Map({ mapRef }: MapProps) {
         ["linear"],
         ["get", "wind_speed_m_s"],
         rangeJSON.wind_speed_m_s[0],
-        "#65006a",
+        WIND_COLORS.min,
         rangeJSON.wind_speed_m_s[1],
-        "#ffa13d"
+        WIND_COLORS.max
       ]);
     }
 
@@ -455,18 +466,104 @@ export default function Map({ mapRef }: MapProps) {
         ["linear"],
         ["get", "e_w"],
         rangeJSON.e_w[0],
-        "#ffecb7",
+        BIRD_COLORS.min,
         rangeJSON.e_w[1],
-        "#ff3939"
+        BIRD_COLORS.max
       ]);
     }
   }, [viewing]);
+
+  // ==============
+  //  Legend
+  // ==============
+  function renderLegend() {
+    // CASE: Discrete categories
+    if (viewing === Viewing.Heatmap) {
+      return (
+        <div className="map-legend">
+          <div className="map-legend-title">Heatmap</div>
+          <div className="map-legend-row">
+            <span
+              className="map-legend-swatch"
+              style={{ backgroundColor: HEATMAP_COLORS.high }}
+            />
+            <span>{`≥ ${HEATMAP_THRESHOLD_MW} MW`}</span>
+          </div>
+          <div className="map-legend-row">
+            <span
+              className="map-legend-swatch"
+              style={{ backgroundColor: HEATMAP_COLORS.low }}
+            />
+            <span>{`0 - ${HEATMAP_THRESHOLD_MW} MW`}</span>
+          </div>
+          <div className="map-legend-row">
+            <span
+              className="map-legend-swatch"
+              style={{ backgroundColor: HEATMAP_COLORS.zero }}
+            />
+            <span>0 MW</span>
+          </div>
+        </div>
+      );
+    }
+
+    // CASE: Continuous range
+    let title: string;
+    let unit: string;
+    let range: [number, number];
+    let colors: { min: string; max: string };
+    let invert = false; // true: min on top, max on bottom
+
+    if (viewing === Viewing.Water_Depth) {
+      title = "Water Depth";
+      unit = "m";
+      range = rangeJSON.depth_m as [number, number];
+      colors = DEPTH_COLORS;
+      invert = true;
+    } else if (viewing === Viewing.Wind_Speed) {
+      title = "Wind Speed";
+      unit = "m/s";
+      range = rangeJSON.wind_speed_m_s as [number, number];
+      colors = WIND_COLORS;
+    } else {
+      title = "Bird Risk";
+      unit = "";
+      range = rangeJSON.e_w as [number, number];
+      colors = BIRD_COLORS;
+    }
+
+    const [min, max] = range;
+    const topValue = invert ? min : max;
+    const bottomValue = invert ? max : min;
+    const gradient = invert
+      ? `linear-gradient(to bottom, ${colors.min}, ${colors.max})`
+      : `linear-gradient(to top, ${colors.min}, ${colors.max})`;
+    const formatValue = (value: number) =>
+      unit ? `${value.toFixed(2)} ${unit}` : value.toFixed(2);
+
+    return (
+      <div className="map-legend">
+        <div className="map-legend-title">{title}</div>
+        <div className="map-legend-gradient-row">
+          <div
+            className="map-legend-gradient"
+            style={{ background: gradient }}
+          />
+          <div className="map-legend-labels">
+            <span>{formatValue(topValue)}</span>
+            <span>{formatValue(bottomValue)}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // # JSX
   return (
     <>
       {/* map, change CSS for position and size */}
       <div className="map-container" ref={mapContainerRef} />
+      {mapLoaded && renderLegend()}
     </>
   );
 }
@@ -528,7 +625,7 @@ function buildPopupHTML(cell: OpenCell, paramKey: string) {
               <div class="cell-popup-section-title">Additional Information</div>
 
               <div class="cell-popup-row">
-                <span class="cell-popup-label">Sea Depth</span>
+                <span class="cell-popup-label">Water Depth</span>
                 <span class="cell-popup-value">${
                   typeof depth_m === "number"
                     ? `${depth_m.toFixed(2)} m`

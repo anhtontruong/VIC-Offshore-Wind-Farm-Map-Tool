@@ -385,6 +385,73 @@ html {
   box-shadow: none;
 }
 
+/* MAP LEGEND */
+.map-legend {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+
+  padding: 8px 12px;
+
+  font-family: var(--font-family-base);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #f3f4f6;
+
+  background-color: rgb(17 24 39 / 90%);
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 6px;
+
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 10%),
+    0 4px 10px rgb(0 0 0 / 8%);
+
+  pointer-events: auto;
+}
+
+.map-legend-title {
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.map-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
+}
+
+.map-legend-swatch {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgb(255 255 255 / 40%);
+  border-radius: 2px;
+}
+
+.map-legend-gradient-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.map-legend-gradient {
+  flex-shrink: 0;
+  width: 12px;
+  height: 120px;
+  border: 1px solid rgb(255 255 255 / 40%);
+  border-radius: 2px;
+}
+
+.map-legend-labels {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 120px;
+}
+
 /* POPUP */
 .cell-popup {
   width: 240px;
