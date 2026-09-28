@@ -533,12 +533,22 @@ html {
 }
 
 /* MAP LEGEND */
-.map-legend {
+/* vertical stack of legend cards, gaps pass clicks through to the map */
+.map-legend-stack {
   position: absolute;
   top: 12px;
   right: 12px;
   z-index: 3;
 
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+
+  pointer-events: none;
+}
+
+.map-legend {
   padding: 8px 12px;
 
   font-family: var(--font-family-base);

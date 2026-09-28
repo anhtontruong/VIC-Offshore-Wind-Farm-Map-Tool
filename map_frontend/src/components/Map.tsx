@@ -9,7 +9,7 @@ import {
 import heatmapLdGeoJson from "../../../heatmap_creation_script/heatmap.ldgeojson?raw";
 import rangeJSON from "../../../heatmap_creation_script/range.json";
 import { useAppContext, type OpenCell } from "../hooks/useAppContext";
-import { LAYER_KEYS, type LayerKey } from "../constants/constants";
+import { LAYER_INFO, LAYER_KEYS, type LayerKey } from "../constants/constants";
 
 interface MapProps {
   mapRef: React.RefObject<mapboxgl.Map | null>;
@@ -622,29 +622,14 @@ export default function Map({ mapRef }: MapProps) {
       colors = BIRD_COLORS;
     }
 
-    const [min, max] = range;
-    const topValue = invert ? min : max;
-    const bottomValue = invert ? max : min;
-    const gradient = invert
-      ? `linear-gradient(to bottom, ${colors.min}, ${colors.max})`
-      : `linear-gradient(to top, ${colors.min}, ${colors.max})`;
-    const formatValue = (value: number) =>
-      unit ? `${value.toFixed(2)} ${unit}` : value.toFixed(2);
-
     return (
-      <div className="map-legend">
-        <div className="map-legend-title">{title}</div>
-        <div className="map-legend-gradient-row">
-          <div
-            className="map-legend-gradient"
-            style={{ background: gradient }}
-          />
-          <div className="map-legend-labels">
-            <span>{formatValue(topValue)}</span>
-            <span>{formatValue(bottomValue)}</span>
-          </div>
-        </div>
-      </div>
+      <GradientLegend
+        title={title}
+        unit={unit}
+        range={range}
+        colors={colors}
+        invert={invert}
+      />
     );
   }
 
@@ -653,8 +638,66 @@ export default function Map({ mapRef }: MapProps) {
     <>
       {/* map, change CSS for position and size */}
       <div className="map-container" ref={mapContainerRef} />
-      {mapLoaded && renderLegend()}
+      {mapLoaded && (
+        <div className="map-legend-stack">
+          {renderLegend()}
+          {/* drawn layer stack overlays, in stack order */}
+          {layers
+            .filter((layer) => layer.visible && !layer.masking)
+            .map((layer) => (
+              <GradientLegend
+                key={layer.key}
+                title={LAYER_INFO[layer.key].name}
+                unit={LAYER_INFO[layer.key].unit}
+                range={rangeJSON[layer.key] as [number, number]}
+                colors={LAYER_COLORS[layer.key]}
+                invert={layer.key === "depth_m"} // same as base depth legend
+              />
+            ))}
+        </div>
+      )}
     </>
+  );
+}
+
+// =================
+//  Gradient Legend
+// =================
+interface GradientLegendProps {
+  title: string;
+  unit: string;
+  range: [number, number];
+  colors: { min: string; max: string };
+  invert?: boolean; // true: min on top, max on bottom
+}
+
+function GradientLegend({
+  title,
+  unit,
+  range,
+  colors,
+  invert = false
+}: GradientLegendProps) {
+  const [min, max] = range;
+  const topValue = invert ? min : max;
+  const bottomValue = invert ? max : min;
+  const gradient = invert
+    ? `linear-gradient(to bottom, ${colors.min}, ${colors.max})`
+    : `linear-gradient(to top, ${colors.min}, ${colors.max})`;
+  const formatValue = (value: number) =>
+    unit ? `${value.toFixed(2)} ${unit}` : value.toFixed(2);
+
+  return (
+    <div className="map-legend">
+      <div className="map-legend-title">{title}</div>
+      <div className="map-legend-gradient-row">
+        <div className="map-legend-gradient" style={{ background: gradient }} />
+        <div className="map-legend-labels">
+          <span>{formatValue(topValue)}</span>
+          <span>{formatValue(bottomValue)}</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
