@@ -321,17 +321,23 @@ html {
     0 4px 10px rgb(0 0 0 / 10%);
 }
 
+/* hidden layers sink into the tray (before .dragging so a lifted card keeps its shadow) */
+.layer-card.hidden-layer {
+  background-color: #f1f5f9;
+  border-color: #e2e8f0;
+  box-shadow: none;
+}
+
+.layer-card.hidden-layer:hover {
+  border-color: #cbd5e1;
+}
+
 .layer-card.dragging {
   z-index: 2;
   cursor: grabbing;
   box-shadow:
     0 2px 4px rgb(0 0 0 / 8%),
     0 8px 20px rgb(0 0 0 / 18%);
-}
-
-.layer-card.hidden-layer .layer-card-name,
-.layer-card.hidden-layer .layer-card-body {
-  opacity: 0.55;
 }
 
 /* fixed "floor" of the stack */
@@ -420,6 +426,44 @@ html {
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+/* masking layers paint their selected range as a dark cut-out */
+.layer-card.masking-layer .mantine-RangeSlider-root {
+  --slider-color: #334155;
+}
+
+/* hidden layers wash out to grey (after masking so hidden wins) */
+.layer-card.hidden-layer .layer-grip {
+  color: #cbd5e1;
+  border-right-color: #e2e8f0;
+}
+
+.layer-card.hidden-layer .layer-grip:hover {
+  color: #64748b;
+  background-color: #e2e8f0;
+}
+
+.layer-card.hidden-layer .layer-card-name,
+.layer-card.hidden-layer .layer-control-label,
+.layer-card.hidden-layer .layer-control-value {
+  color: #94a3b8;
+}
+
+/* active invert/mask toggles lose their colour too */
+.layer-card.hidden-layer .layer-card-actions [aria-pressed="true"] {
+  filter: grayscale(1);
+}
+
+.layer-card.hidden-layer .mantine-Slider-root,
+.layer-card.hidden-layer .mantine-RangeSlider-root {
+  --slider-color: #cbd5e1;
+  --slider-track-bg: #e2e8f0;
+}
+
+.layer-card.hidden-layer .mantine-Slider-thumb,
+.layer-card.hidden-layer .mantine-RangeSlider-thumb {
+  background-color: #f8fafc;
 }
 
 /* UI LEFT */

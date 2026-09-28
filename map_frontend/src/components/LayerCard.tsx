@@ -54,7 +54,7 @@ export default function LayerCard({
       style={style}
       className={`layer-card ${layer ? "" : "base"} ${
         layer && !layer.visible ? "hidden-layer" : ""
-      } ${dragging ? "dragging" : ""} ${
+      } ${layer?.masking ? "masking-layer" : ""} ${dragging ? "dragging" : ""} ${
         expanded ? "content-expanded" : "content-collapsed"
       }`}
     >
@@ -120,7 +120,8 @@ export default function LayerCard({
                 <ActionIcon
                   size="sm"
                   variant={layer.masking ? "light" : "subtle"}
-                  color={layer.masking ? "blue" : "gray"}
+                  // matches the masking slider colour in App.css
+                  color={layer.masking ? "#334155" : "gray"}
                   aria-label="Mask out layers below"
                   aria-pressed={layer.masking}
                   onClick={() => onChange({ masking: !layer.masking })}
