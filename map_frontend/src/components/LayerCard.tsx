@@ -138,7 +138,7 @@ export default function LayerCard({
             <div className="layer-control-label">
               <span>Range</span>
               <span className="layer-control-value">
-                {`${formatValue(layer.range[0])} – ${formatValue(layer.range[1])}${unit}`}
+                {`${formatValue(layer.range[0])} - ${formatValue(layer.range[1])}${unit}`}
               </span>
             </div>
             <RangeSlider
@@ -147,6 +147,7 @@ export default function LayerCard({
               max={layerInfo.max}
               step={layerInfo.step}
               minRange={layerInfo.step}
+              inverted={layer.inverted}
               value={layer.range}
               label={(value) => `${formatValue(value)}${unit}`}
               onChange={(range) => onChange({ range })}
