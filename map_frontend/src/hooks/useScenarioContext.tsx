@@ -4,6 +4,8 @@ import {
   useState,
   type ReactNode
 } from "react";
+import { arrayMove } from "@dnd-kit/sortable";
+import { LAYER_INFO, LAYER_KEYS, type LayerKey } from "../constants/constants";
 
 export const Viewing = {
   Heatmap: "HEATMAP",
@@ -12,7 +14,16 @@ export const Viewing = {
   Bird_Risk: "BIRD_RISK"
 } as const;
 
-type Viewing = (typeof Viewing)[keyof typeof Viewing];
+export type Viewing = (typeof Viewing)[keyof typeof Viewing];
+
+export type Layer = {
+  key: LayerKey;
+  range: [number, number];
+  opacity: number;
+  visible: boolean;
+  inverted: boolean;
+  masking: boolean;
+};
 
 type ScenarioContextType = {
   params: number[];
@@ -20,6 +31,9 @@ type ScenarioContextType = {
   setParam: (index: 0 | 1 | 2) => (value: number) => void;
   viewing: Viewing;
   setViewing: (state: Viewing) => void;
+  layers: Layer[]; // top -> bottom, base heatmap is implicit below
+  setLayer: (key: LayerKey) => (patch: Partial<Layer>) => void;
+  reorderLayers: (fromKey: LayerKey, toKey: LayerKey) => void;
 };
 
 export const ScenarioContext = createContext<ScenarioContextType | null>(null);
@@ -51,6 +65,16 @@ type ScenarioProviderProps = {
 export function ScenarioProvider({ children }: ScenarioProviderProps) {
   const [params, setParams] = useState<number[]>([1, 0, 0]);
   const [viewing, setViewing] = useState<Viewing>(Viewing.Heatmap);
+  const [layers, setLayers] = useState<Layer[]>(() =>
+    LAYER_KEYS.map((key) => ({
+      key,
+      range: [LAYER_INFO[key].min, LAYER_INFO[key].max],
+      opacity: 0.3,
+      visible: false,
+      inverted: false,
+      masking: false
+    }))
+  );
 
   const getParam = (index: 0 | 1 | 2) => params[index];
 
@@ -62,6 +86,22 @@ export function ScenarioProvider({ children }: ScenarioProviderProps) {
     });
   };
 
+  const setLayer = (key: LayerKey) => (patch: Partial<Layer>) => {
+    setLayers((prev) =>
+      prev.map((layer) => (layer.key === key ? { ...layer, ...patch } : layer))
+    );
+  };
+
+  const reorderLayers = (fromKey: LayerKey, toKey: LayerKey) => {
+    setLayers((prev) =>
+      arrayMove(
+        prev,
+        prev.findIndex((layer) => layer.key === fromKey),
+        prev.findIndex((layer) => layer.key === toKey)
+      )
+    );
+  };
+
   return (
     <ScenarioContext.Provider
       value={{
@@ -69,7 +109,10 @@ export function ScenarioProvider({ children }: ScenarioProviderProps) {
         getParam,
         setParam,
         viewing,
-        setViewing
+        setViewing,
+        layers,
+        setLayer,
+        reorderLayers
       }}
     >
       {children}

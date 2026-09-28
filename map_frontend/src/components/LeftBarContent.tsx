@@ -1,6 +1,7 @@
 import { Button, ScrollArea, Title } from "@mantine/core";
 import { useScenarioContext, Viewing } from "../hooks/useScenarioContext";
 import ParameterSlider from "./ParameterSlider";
+import LayerStack from "./LayerStack";
 import { useExpandedContext } from "../hooks/useExpandedContext";
 import { useAppContext } from "../hooks/useAppContext";
 import { useEffect, useRef } from "react";
@@ -113,6 +114,14 @@ export default function LeftBarContent() {
               Bird Risk
             </Button>
           </div>
+
+          <br />
+          <div className="section-divider" />
+
+          <Title order={1} className="sub-heading">
+            Layer Stack
+          </Title>
+          <LayerStack />
         </div>
       </ScrollArea>
     </div>

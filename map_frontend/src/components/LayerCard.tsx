@@ -1,0 +1,170 @@
+import { ActionIcon, RangeSlider, Slider, Title, Tooltip } from "@mantine/core";
+import {
+  IconEye,
+  IconEyeOff,
+  IconGripVertical,
+  IconMask,
+  IconSquareToggle
+} from "@tabler/icons-react";
+import type {
+  DraggableAttributes,
+  DraggableSyntheticListeners
+} from "@dnd-kit/core";
+import type { CSSProperties, Ref } from "react";
+import { LAYER_INFO } from "../constants/constants";
+import type { Layer } from "../hooks/useScenarioContext";
+import { useExpandedContext } from "../hooks/useExpandedContext";
+
+interface LayerCardProps {
+  name: string;
+  info?: string;
+  layer?: Layer; // omitted for the fixed base layer (no controls)
+  onChange?: (patch: Partial<Layer>) => void;
+  // sortable wiring (from useSortable), omitted for the fixed base layer
+  cardRef?: Ref<HTMLDivElement>;
+  handleRef?: Ref<HTMLDivElement>;
+  style?: CSSProperties;
+  dragging?: boolean;
+  handleAttributes?: DraggableAttributes;
+  handleListeners?: DraggableSyntheticListeners;
+}
+
+export default function LayerCard({
+  name,
+  info,
+  layer,
+  onChange,
+  cardRef,
+  handleRef,
+  style,
+  dragging,
+  handleAttributes,
+  handleListeners
+}: LayerCardProps) {
+  const { expanded } = useExpandedContext();
+
+  const layerInfo = layer ? LAYER_INFO[layer.key] : null;
+  const format = (value: number) =>
+    layerInfo
+      ? `${value.toFixed(layerInfo.decimals)}${layerInfo.unit ? ` ${layerInfo.unit}` : ""}`
+      : "";
+
+  return (
+    <div
+      ref={cardRef}
+      style={style}
+      className={`layer-card ${layer ? "" : "base"} ${
+        layer && !layer.visible ? "hidden-layer" : ""
+      } ${dragging ? "dragging" : ""} ${
+        expanded ? "content-expanded" : "content-collapsed"
+      }`}
+    >
+      {/* HEADER */}
+      <div className="layer-card-header">
+        {layer && (
+          <div
+            ref={handleRef}
+            className="layer-grip"
+            aria-label={`Reorder ${name}`}
+            {...handleAttributes}
+            {...handleListeners}
+          >
+            <IconGripVertical size={16} />
+          </div>
+        )}
+
+        <div className="layer-card-name">
+          <Title order={5} className="name">
+            {name}
+          </Title>
+          {info && (
+            <Title size={12} c={"grey"} className="name">
+              <i>{info}</i>
+            </Title>
+          )}
+        </div>
+
+        {layer && onChange && (
+          <div className="layer-card-actions">
+            <Tooltip label={layer.visible ? "Hide layer" : "Show layer"}>
+              <ActionIcon
+                size="sm"
+                variant="subtle"
+                color="dark"
+                aria-label={layer.visible ? "Hide layer" : "Show layer"}
+                onClick={() => onChange({ visible: !layer.visible })}
+              >
+                {layer.visible ? <IconEye size={16} /> : <IconEyeOff size={16} />}
+              </ActionIcon>
+            </Tooltip>
+
+            <Tooltip label="Invert range">
+              <ActionIcon
+                size="sm"
+                variant={layer.inverted ? "filled" : "subtle"}
+                color="dark"
+                aria-label="Invert range"
+                aria-pressed={layer.inverted}
+                onClick={() => onChange({ inverted: !layer.inverted })}
+              >
+                <IconSquareToggle size={16} />
+              </ActionIcon>
+            </Tooltip>
+
+            <Tooltip label="Mask out layers below">
+              <ActionIcon
+                size="sm"
+                variant={layer.masking ? "filled" : "subtle"}
+                color="dark"
+                aria-label="Mask out layers below"
+                aria-pressed={layer.masking}
+                onClick={() => onChange({ masking: !layer.masking })}
+              >
+                <IconMask size={16} />
+              </ActionIcon>
+            </Tooltip>
+          </div>
+        )}
+      </div>
+
+      {/* SLIDERS */}
+      {layer && layerInfo && onChange && (
+        <div className="layer-card-body">
+          <RangeSlider
+            size="sm"
+            min={layerInfo.min}
+            max={layerInfo.max}
+            step={layerInfo.step}
+            minRange={layerInfo.step}
+            value={layer.range}
+            label={format}
+            onChange={(range) => onChange({ range })}
+          />
+          <div className="layer-range-values">
+            <span>{format(layer.range[0])}</span>
+            <span>{format(layer.range[1])}</span>
+          </div>
+
+          <div className="layer-opacity-label">Opacity</div>
+          <div className="slider-flex">
+            <div className="param-slider">
+              <Slider
+                size="sm"
+                min={0}
+                max={1}
+                step={0.01}
+                value={layer.opacity}
+                disabled={layer.masking}
+                label={(value) => value.toFixed(2)}
+                onChange={(opacity) => onChange({ opacity })}
+              />
+            </div>
+            <p className="nomp layer-opacity-value">
+              {layer.opacity.toFixed(2)}
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

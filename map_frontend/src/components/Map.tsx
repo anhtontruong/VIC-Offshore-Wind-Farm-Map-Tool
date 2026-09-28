@@ -1,10 +1,15 @@
 import { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css"; // Associated CSS
-import { useScenarioContext, Viewing } from "../hooks/useScenarioContext";
+import {
+  useScenarioContext,
+  Viewing,
+  type Layer
+} from "../hooks/useScenarioContext";
 import heatmapLdGeoJson from "../../../heatmap_creation_script/heatmap.ldgeojson?raw";
 import rangeJSON from "../../../heatmap_creation_script/range.json";
 import { useAppContext, type OpenCell } from "../hooks/useAppContext";
+import { LAYER_KEYS, type LayerKey } from "../constants/constants";
 
 interface MapProps {
   mapRef: React.RefObject<mapboxgl.Map | null>;
@@ -20,6 +25,22 @@ const HEATMAP_THRESHOLD_MW = 30;
 const DEPTH_COLORS = { min: "#96fcff", max: "#00106a" };
 const WIND_COLORS = { min: "#65006a", max: "#ffa13d" };
 const BIRD_COLORS = { min: "#ffecb7", max: "#ff3939" };
+const SHORE_COLORS = { min: "#d9f99d", max: "#0f5257" };
+const LAYER_COLORS: Record<LayerKey, { min: string; max: string }> = {
+  depth_m: DEPTH_COLORS,
+  wind_speed_m_s: WIND_COLORS,
+  shore_km: SHORE_COLORS,
+  e_w: BIRD_COLORS
+};
+
+// base heatmap layers that get cut out by layer stack masks
+const BASE_LAYER_IDS = [
+  "heatmap-fill",
+  "heatmap-outline",
+  "heatmap-hover-fill",
+  "heatmap-hover-line",
+  "heatmap-selected-line"
+];
 
 // ================ //
 //     COMPONENT
@@ -56,7 +77,7 @@ export default function Map({ mapRef }: MapProps) {
     closeCell
   } = useAppContext();
 
-  const { params, getParam, viewing } = useScenarioContext();
+  const { params, getParam, viewing, layers } = useScenarioContext();
 
   const toThirdsPercent = (value: number) => Math.round(value * 3) * (100 / 3);
 
@@ -195,6 +216,30 @@ export default function Map({ mapRef }: MapProps) {
           ]
         }
       });
+
+      // LAYER STACK (above base fill, below grid/hover/selected)
+      for (const key of LAYER_KEYS) {
+        mapRef.current.addLayer(
+          {
+            id: `layer-${key}`,
+            type: "fill",
+            source: "heatmap",
+            layout: { visibility: "none" },
+            paint: {
+              "fill-color": [
+                "interpolate",
+                ["linear"],
+                ["get", key],
+                rangeJSON[key][0],
+                LAYER_COLORS[key].min,
+                rangeJSON[key][1],
+                LAYER_COLORS[key].max
+              ]
+            }
+          },
+          "heatmap-outline"
+        );
+      }
 
       setMapLoaded(true);
     });
@@ -473,6 +518,51 @@ export default function Map({ mapRef }: MapProps) {
     }
   }, [viewing]);
 
+  // ====================
+  //  Layer Stack Update
+  // ====================
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapLoaded) return;
+
+    const activeMasks = (stack: Layer[]) =>
+      stack.filter((layer) => layer.visible && layer.masking);
+
+    // hide cells selected by any of the given masks (null = no filter)
+    const notMaskedFilter = (masks: Layer[]) =>
+      masks.length
+        ? (["!", ["any", ...masks.map(selectedFilter)]] as mapboxgl.Expression)
+        : null;
+
+    // order: walk bottom -> top, each moved to just under the grid outline
+    for (const layer of [...layers].reverse()) {
+      map.moveLayer(`layer-${layer.key}`, "heatmap-outline");
+    }
+
+    // overlays: own selection minus masks above them
+    layers.forEach((layer, index) => {
+      const id = `layer-${layer.key}`;
+      const masked = notMaskedFilter(activeMasks(layers.slice(0, index)));
+
+      map.setFilter(
+        id,
+        masked ? ["all", selectedFilter(layer), masked] : selectedFilter(layer)
+      );
+      map.setPaintProperty(id, "fill-opacity", layer.opacity);
+      map.setLayoutProperty(
+        id,
+        "visibility",
+        layer.visible && !layer.masking ? "visible" : "none"
+      );
+    });
+
+    // base heatmap: minus every mask
+    const baseFilter = notMaskedFilter(activeMasks(layers));
+    for (const id of BASE_LAYER_IDS) {
+      map.setFilter(id, baseFilter);
+    }
+  }, [layers, mapLoaded]);
+
   // ==============
   //  Legend
   // ==============
@@ -582,6 +672,18 @@ function ldGeoJSONToGeoJSON(ldgeojson: string) {
     type: "FeatureCollection" as const,
     features
   };
+}
+
+// cells within a layer's range (or outside it, if inverted)
+function selectedFilter(layer: Layer): mapboxgl.Expression {
+  const value = ["get", layer.key];
+  const inRange = [
+    "all",
+    [">=", value, layer.range[0]],
+    ["<=", value, layer.range[1]]
+  ];
+
+  return ["all", ["has", layer.key], layer.inverted ? ["!", inRange] : inRange];
 }
 
 // ============
