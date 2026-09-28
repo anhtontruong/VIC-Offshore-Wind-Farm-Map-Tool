@@ -115,7 +115,6 @@ export default function LeftBarContent() {
             </Button>
           </div>
 
-          <br />
           <div className="section-divider" />
 
           <Title order={1} className="sub-heading">

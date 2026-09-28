@@ -26,7 +26,6 @@ import {
   type Layer
 } from "../hooks/useScenarioContext";
 import { LAYER_INFO, type LayerKey } from "../constants/constants";
-import { useExpandedContext } from "../hooks/useExpandedContext";
 
 const VIEWING_LABELS: Record<Viewing, string> = {
   [Viewing.Heatmap]: "Heatmap",
@@ -37,7 +36,6 @@ const VIEWING_LABELS: Record<Viewing, string> = {
 
 export default function LayerStack() {
   const { layers, setLayer, reorderLayers, viewing } = useScenarioContext();
-  const { expanded } = useExpandedContext();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
@@ -55,35 +53,33 @@ export default function LayerStack() {
   };
 
   return (
-    <>
-      <div className="layer-stack">
-        {/* sortable layers (top of list = drawn on top) */}
-        <div className="layer-stack-sortable">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-            onDragEnd={handleDragEnd}
+    <div className="layer-stack">
+      {/* sortable layers (top of list = drawn on top) */}
+      <div className="layer-stack-sortable">
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={layers.map((layer) => layer.key)}
+            strategy={verticalListSortingStrategy}
           >
-            <SortableContext
-              items={layers.map((layer) => layer.key)}
-              strategy={verticalListSortingStrategy}
-            >
-              {layers.map((layer) => (
-                <SortableLayerCard
-                  key={layer.key}
-                  layer={layer}
-                  onChange={setLayer(layer.key)}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
-        </div>
-
-        {/* base layer, fixed at the bottom */}
-        <LayerCard name="Base Layer" info={VIEWING_LABELS[viewing]} />
+            {layers.map((layer) => (
+              <SortableLayerCard
+                key={layer.key}
+                layer={layer}
+                onChange={setLayer(layer.key)}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
       </div>
-    </>
+
+      {/* base layer, fixed at the bottom */}
+      <LayerCard name="Base Layer" info={VIEWING_LABELS[viewing]} />
+    </div>
   );
 }
 
@@ -113,7 +109,11 @@ function SortableLayerCard({ layer, onChange }: SortableLayerCardProps) {
       onChange={onChange}
       cardRef={setNodeRef}
       handleRef={setActivatorNodeRef}
-      style={{ transform: CSS.Translate.toString(transform), transition }}
+      style={{
+        // lift the card while it's being dragged
+        transform: `${CSS.Translate.toString(transform) ?? ""}${isDragging ? " scale(1.02)" : ""}`,
+        transition
+      }}
       dragging={isDragging}
       handleAttributes={attributes}
       handleListeners={listeners}

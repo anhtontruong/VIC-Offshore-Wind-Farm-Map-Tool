@@ -3,7 +3,7 @@
 */
 
 :root {
-  --left-bar-width: 15em;
+  --left-bar-width: 17em;
   --left-bar-btn-width: 2em;
   --font-family-base:
     Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -263,6 +263,7 @@ html {
   flex-direction: column;
   gap: 0.5em;
   width: 100%;
+  margin-bottom: 1em;
 }
 
 .data-button {
@@ -276,35 +277,56 @@ html {
 }
 
 /* LAYER STACK */
+/* tray the cards sit in */
+.layer-stack {
+  margin-bottom: 1em;
+  padding: 0.4em;
+
+  background-color: #f1f5f9;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
 .layer-stack,
 .layer-stack-sortable {
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
+  gap: 0.4em;
   width: 100%;
-}
-
-.layer-stack {
-  margin-bottom: 1em;
 }
 
 .layer-card {
   position: relative;
 
-  padding: 0.5em 0.6em 0.6em 0.4em;
+  display: flex;
+  align-items: stretch;
+
+  overflow: hidden;
 
   background-color: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
 
-  box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 6%),
+    0 2px 6px rgb(0 0 0 / 6%);
+
+  /* shadow only: transform is owned by dnd-kit */
+  transition: box-shadow 150ms ease;
+}
+
+.layer-card:hover {
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 8%),
+    0 4px 10px rgb(0 0 0 / 10%);
 }
 
 .layer-card.dragging {
   z-index: 2;
+  cursor: grabbing;
   box-shadow:
-    0 3px 6px rgb(0 0 0 / 10%),
-    0 8px 16px rgb(0 0 0 / 10%);
+    0 2px 4px rgb(0 0 0 / 8%),
+    0 8px 20px rgb(0 0 0 / 18%);
 }
 
 .layer-card.hidden-layer .layer-card-name,
@@ -312,47 +334,59 @@ html {
   opacity: 0.55;
 }
 
+/* fixed "floor" of the stack */
 .layer-card.base {
-  padding-left: 0.6em;
+  padding-left: 20px;
+
   background-color: #f8fafc;
-  border-style: dashed;
-  border-color: #cbd5e1;
+  border: 1px dashed #cbd5e1;
+  box-shadow: none;
 }
 
-.layer-card-header {
-  display: flex;
-  align-items: center;
-  gap: 0.25em;
-}
-
+/* full-height drag handle rail */
 .layer-grip {
-  flex-shrink: 0;
+  flex: 0 0 20px;
+
   display: flex;
   align-items: center;
+  justify-content: center;
 
   color: #9ca3af;
+  border-right: 1px solid #f1f5f9;
+
   cursor: grab;
   touch-action: none;
-  border-radius: 3px;
+
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
 }
 
 .layer-grip:hover {
   color: #374151;
+  background-color: #f8fafc;
 }
 
 .layer-card.dragging .layer-grip {
   cursor: grabbing;
 }
 
+.layer-card-main {
+  flex: 1;
+  min-width: 0;
+  padding: 0.45em 0.6em 0.55em 0.5em;
+}
+
+.layer-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  min-height: 22px;
+}
+
 .layer-card-name {
   flex: 1;
   min-width: 0;
-}
-
-.layer-card-name > * {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .layer-card-actions {
@@ -362,29 +396,30 @@ html {
 }
 
 .layer-card-body {
-  padding: 0.5em 0 0 calc(16px + 0.25em);
+  padding-top: 0.35em;
 }
 
-.layer-range-values {
+/* label + value row above each slider */
+.layer-control-label {
   display: flex;
   justify-content: space-between;
-  margin-top: 0.3em;
+  align-items: baseline;
+  gap: 0.5em;
+  margin: 0.15em 0 0.3em;
 
-  font-size: 11px;
-  color: #5f636b;
-}
-
-.layer-opacity-label {
-  margin-top: 0.4em;
   font-size: 12px;
   color: #5f636b;
 }
 
-.layer-opacity-value {
-  width: 4ch;
-  flex-shrink: 0;
-  font-size: 12px;
-  text-align: right;
+.layer-control-label ~ .layer-control-label {
+  margin-top: 0.5em;
+}
+
+.layer-control-value {
+  color: #111827;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 /* UI LEFT */

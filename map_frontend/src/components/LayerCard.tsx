@@ -1,4 +1,4 @@
-import { ActionIcon, RangeSlider, Slider, Title, Tooltip } from "@mantine/core";
+import { ActionIcon, RangeSlider, Slider, Text, Tooltip } from "@mantine/core";
 import {
   IconEye,
   IconEyeOff,
@@ -44,10 +44,9 @@ export default function LayerCard({
   const { expanded } = useExpandedContext();
 
   const layerInfo = layer ? LAYER_INFO[layer.key] : null;
-  const format = (value: number) =>
-    layerInfo
-      ? `${value.toFixed(layerInfo.decimals)}${layerInfo.unit ? ` ${layerInfo.unit}` : ""}`
-      : "";
+  const unit = layerInfo?.unit ? ` ${layerInfo.unit}` : "";
+  const formatValue = (value: number) =>
+    layerInfo ? value.toFixed(layerInfo.decimals) : "";
 
   return (
     <div
@@ -59,112 +58,119 @@ export default function LayerCard({
         expanded ? "content-expanded" : "content-collapsed"
       }`}
     >
-      {/* HEADER */}
-      <div className="layer-card-header">
-        {layer && (
-          <div
-            ref={handleRef}
-            className="layer-grip"
-            aria-label={`Reorder ${name}`}
-            {...handleAttributes}
-            {...handleListeners}
-          >
-            <IconGripVertical size={16} />
-          </div>
-        )}
+      {/* GRIP RAIL (drag handle) */}
+      {layer && (
+        <div
+          ref={handleRef}
+          className="layer-grip"
+          aria-label={`Reorder ${name}`}
+          {...handleAttributes}
+          {...handleListeners}
+        >
+          <IconGripVertical size={16} />
+        </div>
+      )}
 
-        <div className="layer-card-name">
-          <Title order={5} className="name">
-            {name}
-          </Title>
-          {info && (
-            <Title size={12} c={"grey"} className="name">
-              <i>{info}</i>
-            </Title>
+      <div className="layer-card-main">
+        {/* HEADER */}
+        <div className="layer-card-header">
+          <div className="layer-card-name">
+            <Text size="sm" fw={600} truncate title={name}>
+              {name}
+            </Text>
+            {info && (
+              <Text size="xs" c="dimmed" fs="italic" truncate>
+                {info}
+              </Text>
+            )}
+          </div>
+
+          {layer && onChange && (
+            <div className="layer-card-actions">
+              <Tooltip label={layer.visible ? "Hide layer" : "Show layer"}>
+                <ActionIcon
+                  size="sm"
+                  variant="subtle"
+                  color="gray"
+                  aria-label={layer.visible ? "Hide layer" : "Show layer"}
+                  onClick={() => onChange({ visible: !layer.visible })}
+                >
+                  {layer.visible ? (
+                    <IconEye size={16} />
+                  ) : (
+                    <IconEyeOff size={16} />
+                  )}
+                </ActionIcon>
+              </Tooltip>
+
+              <Tooltip label="Invert range">
+                <ActionIcon
+                  size="sm"
+                  variant={layer.inverted ? "light" : "subtle"}
+                  color={layer.inverted ? "blue" : "gray"}
+                  aria-label="Invert range"
+                  aria-pressed={layer.inverted}
+                  onClick={() => onChange({ inverted: !layer.inverted })}
+                >
+                  <IconSquareToggle size={16} />
+                </ActionIcon>
+              </Tooltip>
+
+              <Tooltip label="Mask out layers below">
+                <ActionIcon
+                  size="sm"
+                  variant={layer.masking ? "light" : "subtle"}
+                  color={layer.masking ? "blue" : "gray"}
+                  aria-label="Mask out layers below"
+                  aria-pressed={layer.masking}
+                  onClick={() => onChange({ masking: !layer.masking })}
+                >
+                  <IconMask size={16} />
+                </ActionIcon>
+              </Tooltip>
+            </div>
           )}
         </div>
 
-        {layer && onChange && (
-          <div className="layer-card-actions">
-            <Tooltip label={layer.visible ? "Hide layer" : "Show layer"}>
-              <ActionIcon
-                size="sm"
-                variant="subtle"
-                color="dark"
-                aria-label={layer.visible ? "Hide layer" : "Show layer"}
-                onClick={() => onChange({ visible: !layer.visible })}
-              >
-                {layer.visible ? <IconEye size={16} /> : <IconEyeOff size={16} />}
-              </ActionIcon>
-            </Tooltip>
+        {/* SLIDERS */}
+        {layer && layerInfo && onChange && (
+          <div className="layer-card-body">
+            <div className="layer-control-label">
+              <span>Range</span>
+              <span className="layer-control-value">
+                {`${formatValue(layer.range[0])} – ${formatValue(layer.range[1])}${unit}`}
+              </span>
+            </div>
+            <RangeSlider
+              size="sm"
+              min={layerInfo.min}
+              max={layerInfo.max}
+              step={layerInfo.step}
+              minRange={layerInfo.step}
+              value={layer.range}
+              label={(value) => `${formatValue(value)}${unit}`}
+              onChange={(range) => onChange({ range })}
+            />
 
-            <Tooltip label="Invert range">
-              <ActionIcon
-                size="sm"
-                variant={layer.inverted ? "filled" : "subtle"}
-                color="dark"
-                aria-label="Invert range"
-                aria-pressed={layer.inverted}
-                onClick={() => onChange({ inverted: !layer.inverted })}
-              >
-                <IconSquareToggle size={16} />
-              </ActionIcon>
-            </Tooltip>
-
-            <Tooltip label="Mask out layers below">
-              <ActionIcon
-                size="sm"
-                variant={layer.masking ? "filled" : "subtle"}
-                color="dark"
-                aria-label="Mask out layers below"
-                aria-pressed={layer.masking}
-                onClick={() => onChange({ masking: !layer.masking })}
-              >
-                <IconMask size={16} />
-              </ActionIcon>
-            </Tooltip>
+            <div className="layer-control-label">
+              <span>Opacity</span>
+              <span className="layer-control-value">
+                {layer.opacity.toFixed(2)}
+              </span>
+            </div>
+            <Slider
+              size="sm"
+              min={0}
+              max={1}
+              step={0.01}
+              value={layer.opacity}
+              disabled={layer.masking}
+              label={(value) => value.toFixed(2)}
+              onChange={(opacity) => onChange({ opacity })}
+            />
           </div>
         )}
       </div>
-
-      {/* SLIDERS */}
-      {layer && layerInfo && onChange && (
-        <div className="layer-card-body">
-          <RangeSlider
-            size="sm"
-            min={layerInfo.min}
-            max={layerInfo.max}
-            step={layerInfo.step}
-            minRange={layerInfo.step}
-            value={layer.range}
-            label={format}
-            onChange={(range) => onChange({ range })}
-          />
-          <div className="layer-range-values">
-            <span>{format(layer.range[0])}</span>
-            <span>{format(layer.range[1])}</span>
-          </div>
-
-          <div className="layer-opacity-label">Opacity</div>
-          <div className="slider-flex">
-            <div className="param-slider">
-              <Slider
-                size="sm"
-                min={0}
-                max={1}
-                step={0.01}
-                value={layer.opacity}
-                disabled={layer.masking}
-                label={(value) => value.toFixed(2)}
-                onChange={(opacity) => onChange({ opacity })}
-              />
-            </div>
-            <p className="nomp layer-opacity-value">
-              {layer.opacity.toFixed(2)}
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
