@@ -21,7 +21,7 @@ const HEATMAP_COLORS = {
   low: "#ffff3d",
   high: "#70ff3c"
 };
-const HEATMAP_THRESHOLD_MW = 30;
+const HEATMAP_THRESHOLD_MW = 15;
 const DEPTH_COLORS = { min: "#96fcff", max: "#00106a" };
 const WIND_COLORS = { min: "#65006a", max: "#ffa13d" };
 const BIRD_COLORS = { min: "#ffecb7", max: "#ff3939" };
