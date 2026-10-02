@@ -9,7 +9,15 @@ import {
 import heatmapLdGeoJson from "../../../heatmap_creation_script/heatmap.ldgeojson?raw";
 import rangeJSON from "../../../heatmap_creation_script/range.json";
 import { useAppContext, type OpenCell } from "../hooks/useAppContext";
-import { LANDING_POINTS, LAYER_INFO, LAYER_KEYS, type LayerKey} from "../constants/constants";
+import {
+  BIRD_COLORS,
+  DEPTH_COLORS,
+  LANDING_POINTS,
+  LAYER_COLORS,
+  LAYER_INFO,
+  LAYER_KEYS,
+  WIND_COLORS
+} from "../constants/constants";
 
 interface MapProps {
   mapRef: React.RefObject<mapboxgl.Map | null>;
@@ -22,16 +30,6 @@ const HEATMAP_COLORS = {
   high: "#70ff3c"
 };
 const HEATMAP_THRESHOLD_MW = 15;
-const DEPTH_COLORS = { min: "#96fcff", max: "#00106a" };
-const WIND_COLORS = { min: "#65006a", max: "#ffa13d" };
-const BIRD_COLORS = { min: "#ffecb7", max: "#ff3939" };
-const SHORE_COLORS = { min: "#d9f99d", max: "#0f5257" };
-const LAYER_COLORS: Record<LayerKey, { min: string; max: string }> = {
-  depth_m: DEPTH_COLORS,
-  wind_speed_m_s: WIND_COLORS,
-  export_cable_km: SHORE_COLORS,
-  e_w: BIRD_COLORS
-};
 
 // # Landing Point Star (shared by marker + legend, 24x24 viewBox)
 const LANDING_POINT_COLOR = "#facc15";

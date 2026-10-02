@@ -41,6 +41,18 @@ export type LayerKey = keyof typeof LAYER_INFO;
 
 export const LAYER_KEYS = Object.keys(LAYER_INFO) as LayerKey[];
 
+// # Layer Colours (shared by map paint expressions, legends + layer cards)
+export const DEPTH_COLORS = { min: "#96fcff", max: "#00106a" };
+export const WIND_COLORS = { min: "#65006a", max: "#ffa13d" };
+export const BIRD_COLORS = { min: "#ffecb7", max: "#ff3939" };
+const SHORE_COLORS = { min: "#d9f99d", max: "#0f5257" };
+export const LAYER_COLORS: Record<LayerKey, { min: string; max: string }> = {
+  depth_m: DEPTH_COLORS,
+  wind_speed_m_s: WIND_COLORS,
+  export_cable_km: SHORE_COLORS,
+  e_w: BIRD_COLORS
+};
+
 // # Landing Points ([lng, lat])
 export const LANDING_POINTS: { name: string; lngLat: [number, number] }[] = [
   { name: "Loy Yang Power Station", lngLat: [146.577, -38.254] }

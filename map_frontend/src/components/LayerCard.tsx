@@ -11,7 +11,7 @@ import type {
   DraggableSyntheticListeners
 } from "@dnd-kit/core";
 import type { CSSProperties, Ref } from "react";
-import { LAYER_INFO } from "../constants/constants";
+import { LAYER_COLORS, LAYER_INFO } from "../constants/constants";
 import type { Layer } from "../hooks/useScenarioContext";
 import { useExpandedContext } from "../hooks/useExpandedContext";
 
@@ -51,7 +51,10 @@ export default function LayerCard({
   return (
     <div
       ref={cardRef}
-      style={style}
+      style={{
+        ...style,
+        ...(layer && { "--layer-color": LAYER_COLORS[layer.key].max })
+      } as CSSProperties}
       className={`layer-card ${layer ? "" : "base"} ${
         layer && !layer.visible ? "hidden-layer" : ""
       } ${layer?.masking ? "masking-layer" : ""} ${dragging ? "dragging" : ""} ${

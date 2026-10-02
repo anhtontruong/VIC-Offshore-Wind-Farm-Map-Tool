@@ -303,7 +303,8 @@ html {
 
   overflow: hidden;
 
-  background-color: #fff;
+  /* --layer-color is set per card (LayerCard.tsx); falls back to white */
+  background-color: color-mix(in srgb, var(--layer-color, #fff) 10%, #fff);
   border: 1px solid #e2e8f0;
   border-radius: 8px;
 
@@ -357,8 +358,9 @@ html {
   align-items: center;
   justify-content: center;
 
-  color: #9ca3af;
-  border-right: 1px solid #f1f5f9;
+  color: rgb(255 255 255 / 85%);
+  background-color: var(--layer-color);
+  border-right: 1px solid transparent;
 
   cursor: grab;
   touch-action: none;
@@ -369,8 +371,8 @@ html {
 }
 
 .layer-grip:hover {
-  color: #374151;
-  background-color: #f8fafc;
+  color: #fff;
+  background-color: color-mix(in srgb, var(--layer-color) 85%, #000);
 }
 
 .layer-card.dragging .layer-grip {
@@ -428,6 +430,11 @@ html {
   white-space: nowrap;
 }
 
+/* range bar takes the layer's map colour */
+.layer-card .mantine-RangeSlider-root {
+  --slider-color: var(--layer-color);
+}
+
 /* masking layers paint their selected range as a dark cut-out */
 .layer-card.masking-layer .mantine-RangeSlider-root {
   --slider-color: #334155;
@@ -436,6 +443,7 @@ html {
 /* hidden layers wash out to grey (after masking so hidden wins) */
 .layer-card.hidden-layer .layer-grip {
   color: #cbd5e1;
+  background-color: transparent;
   border-right-color: #e2e8f0;
 }
 
