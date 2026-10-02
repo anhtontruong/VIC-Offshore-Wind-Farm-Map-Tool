@@ -33,7 +33,7 @@ function layerInfo(
 export const LAYER_INFO = {
   depth_m: layerInfo("Water Depth", "m", 1, rangeJSON.depth_m),
   wind_speed_m_s: layerInfo("Wind Speed", "m/s", 2, rangeJSON.wind_speed_m_s),
-  shore_km: layerInfo("Distance to Shore", "km", 1, rangeJSON.shore_km),
+  export_cable_km: layerInfo("Export Cable Length", "km", 1, rangeJSON.export_cable_km),
   e_w: layerInfo("Sea Bird Exposure", "", 3, rangeJSON.e_w)
 };
 

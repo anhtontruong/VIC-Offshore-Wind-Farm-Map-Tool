@@ -29,7 +29,7 @@ const SHORE_COLORS = { min: "#d9f99d", max: "#0f5257" };
 const LAYER_COLORS: Record<LayerKey, { min: string; max: string }> = {
   depth_m: DEPTH_COLORS,
   wind_speed_m_s: WIND_COLORS,
-  shore_km: SHORE_COLORS,
+  export_cable_km: SHORE_COLORS,
   e_w: BIRD_COLORS
 };
 
@@ -738,7 +738,7 @@ function buildPopupHTML(cell: OpenCell, paramKey: string) {
 
   const depth_m = props.depth_m;
   const wind_speed_m_s = props.wind_speed_m_s;
-  const shore_km = props.shore_km;
+  const export_cable_km = props.export_cable_km;
   const e_w = props.e_w;
   const n_surveys = props.n_surveys;
 
@@ -788,10 +788,10 @@ function buildPopupHTML(cell: OpenCell, paramKey: string) {
               </div>
 
               <div class="cell-popup-row">
-                <span class="cell-popup-label">Distance to Shore</span>
+                <span class="cell-popup-label">Export Cable Length</span>
                 <span class="cell-popup-value">${
-                  typeof shore_km === "number"
-                    ? `${shore_km.toFixed(2)} km`
+                  typeof export_cable_km === "number"
+                    ? `${export_cable_km.toFixed(2)} km`
                     : "Error"
                 }</span>
               </div>

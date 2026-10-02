@@ -23,7 +23,7 @@ const RANGE_FILE = "range.json";
 const ranges = {
   depth_m: { min: Infinity, max: -Infinity },
   wind_speed_m_s: { min: Infinity, max: -Infinity },
-  shore_km: { min: Infinity, max: -Infinity },
+  export_cable_km: { min: Infinity, max: -Infinity },
   e_w: { min: Infinity, max: -Infinity },
   n_surveys: { min: Infinity, max: -Infinity }
 };
@@ -147,10 +147,10 @@ fs.createReadStream(DATA_CSV_FILE)
           longitude: props.longitude,
           latitude: props.latitude,
           cell_id: props.cell_id,
-          cf: props.cf,
+          cf: props.CF,
           depth_m: props.depth_m,
           wind_speed_m_s: props.wind_speed_m_s,
-          shore_km: props.shore_km,
+          export_cable_km: props.export_cable_km,
           e_w: props.e_w,
           n_surveys: props.n_surveys
         });
