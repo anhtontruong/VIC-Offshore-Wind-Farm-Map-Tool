@@ -653,6 +653,19 @@ html {
   min-height: 120px;
 }
 
+/* LANDING POINT */
+.landing-point-marker {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.landing-point-marker svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 /* POPUP */
 .cell-popup {
   width: 240px;

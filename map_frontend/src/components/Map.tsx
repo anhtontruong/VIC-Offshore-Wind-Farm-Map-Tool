@@ -9,7 +9,7 @@ import {
 import heatmapLdGeoJson from "../../../heatmap_creation_script/heatmap.ldgeojson?raw";
 import rangeJSON from "../../../heatmap_creation_script/range.json";
 import { useAppContext, type OpenCell } from "../hooks/useAppContext";
-import { LAYER_INFO, LAYER_KEYS, type LayerKey } from "../constants/constants";
+import { LANDING_POINTS, LAYER_INFO, LAYER_KEYS, type LayerKey} from "../constants/constants";
 
 interface MapProps {
   mapRef: React.RefObject<mapboxgl.Map | null>;
@@ -32,6 +32,11 @@ const LAYER_COLORS: Record<LayerKey, { min: string; max: string }> = {
   export_cable_km: SHORE_COLORS,
   e_w: BIRD_COLORS
 };
+
+// # Landing Point Star (shared by marker + legend, 24x24 viewBox)
+const LANDING_POINT_COLOR = "#facc15";
+const STAR_PATH =
+  "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z";
 
 // base heatmap layers that get cut out by layer stack masks
 const BASE_LAYER_IDS = [
@@ -59,6 +64,7 @@ export default function Map({ mapRef }: MapProps) {
   const prevHoverRef = useRef<number | null>(null); // last hover id this screen applied to feature-state
   const prevSelectedRef = useRef<number | null>(null); // last selected id this screen applied to feature-state
   const popupsRef = useRef<Record<number, mapboxgl.Popup>>({});
+  const landingPopupsRef = useRef<mapboxgl.Popup[]>([]); // local to this screen
 
   // true once this screen's map has finished loading the heatmap source/layers
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -310,10 +316,55 @@ export default function Map({ mapRef }: MapProps) {
       }
     });
 
+    // ===== LANDING POINTS =====
+    for (const point of LANDING_POINTS) {
+      const map = mapRef.current;
+
+      const element = document.createElement("div");
+      element.className = "landing-point-marker";
+      element.innerHTML = `<svg viewBox="0 0 24 24"><path d="${STAR_PATH}" fill="${LANDING_POINT_COLOR}" stroke="#111827" stroke-width="1.5" stroke-linejoin="round" /></svg>`;
+
+      new mapboxgl.Marker({ element }).setLngLat(point.lngLat).addTo(map);
+
+      const popupOptions = {
+        closeOnClick: false,
+        offset: 14,
+        maxWidth: "300px"
+      };
+      const html = buildLandingPointPopupHTML(point.name);
+
+      // hover: shown while the mouse is over the star
+      const hoverPopup = new mapboxgl.Popup({
+        ...popupOptions,
+        closeButton: false
+      })
+        .setLngLat(point.lngLat)
+        .setHTML(html);
+
+      // click: stays open until closed
+      const pinnedPopup = new mapboxgl.Popup(popupOptions)
+        .setLngLat(point.lngLat)
+        .setHTML(html);
+
+      element.addEventListener("mouseenter", () => {
+        if (!pinnedPopup.isOpen()) hoverPopup.addTo(map);
+      });
+      element.addEventListener("mouseleave", () => hoverPopup.remove());
+      element.addEventListener("click", (e) => {
+        e.stopPropagation(); // don't also open the cell underneath
+        hoverPopup.remove();
+        if (!pinnedPopup.isOpen()) pinnedPopup.addTo(map);
+      });
+
+      landingPopupsRef.current.push(hoverPopup, pinnedPopup);
+    }
+
     return () => {
       // remove any popups this screen created before the map itself goes away
       Object.values(popupsRef.current).forEach((popup) => popup.remove());
       popupsRef.current = {};
+      landingPopupsRef.current.forEach((popup) => popup.remove());
+      landingPopupsRef.current = [];
       mapRef.current?.remove();
     };
   }, []);
@@ -393,10 +444,7 @@ export default function Map({ mapRef }: MapProps) {
 
     const prev = prevSelectedRef.current;
     if (prev != null) {
-      map.setFeatureState(
-        { source: "heatmap", id: prev },
-        { selected: false }
-      );
+      map.setFeatureState({ source: "heatmap", id: prev }, { selected: false });
     }
     if (selectedCellId != null) {
       map.setFeatureState(
@@ -654,6 +702,20 @@ export default function Map({ mapRef }: MapProps) {
                 invert={layer.key === "depth_m"} // same as base depth legend
               />
             ))}
+          <div className="map-legend">
+            <div className="map-legend-row">
+              <svg width="14" height="14" viewBox="0 0 24 24">
+                <path
+                  d={STAR_PATH}
+                  fill={LANDING_POINT_COLOR}
+                  stroke="#111827"
+                  strokeWidth="1.5"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span>Landing Point</span>
+            </div>
+          </div>
         </div>
       )}
     </>
@@ -727,6 +789,19 @@ function selectedFilter(layer: Layer): mapboxgl.Expression {
   ];
 
   return ["all", ["has", layer.key], layer.inverted ? ["!", inRange] : inRange];
+}
+
+// ===========================
+//  Landing Point Popup HTML
+// ===========================
+function buildLandingPointPopupHTML(name: string) {
+  return `<div class="cell-popup">
+            <div class="cell-popup-header">${name}</div>
+            <div class="cell-popup-row">
+              <span class="cell-popup-label">Type</span>
+              <span class="cell-popup-value">Landing Point</span>
+            </div>
+          </div>`;
 }
 
 // ============

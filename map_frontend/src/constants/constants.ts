@@ -40,3 +40,8 @@ export const LAYER_INFO = {
 export type LayerKey = keyof typeof LAYER_INFO;
 
 export const LAYER_KEYS = Object.keys(LAYER_INFO) as LayerKey[];
+
+// # Landing Points ([lng, lat])
+export const LANDING_POINTS: { name: string; lngLat: [number, number] }[] = [
+  { name: "Loy Yang Power Station", lngLat: [146.577, -38.254] }
+];
