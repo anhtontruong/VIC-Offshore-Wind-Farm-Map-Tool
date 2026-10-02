@@ -77,42 +77,44 @@ export default function LeftBarContent() {
 
           <div className="section-divider" />
 
-          <Title order={1} className="sub-heading">
-            Data
-          </Title>
+          <div className="data-section">
+            <Title order={1} className="sub-heading">
+              Data
+            </Title>
 
-          <div className="data-buttons">
-            <Button
-              className="data-button"
-              variant={viewing === Viewing.Heatmap ? "filled" : "light"}
-              onClick={() => setViewing(Viewing.Heatmap)}
-            >
-              Heatmap
-            </Button>
+            <div className="data-buttons">
+              <Button
+                className="data-button"
+                variant={viewing === Viewing.Heatmap ? "filled" : "light"}
+                onClick={() => setViewing(Viewing.Heatmap)}
+              >
+                Heatmap
+              </Button>
 
-            <Button
-              className="data-button"
-              variant={viewing === Viewing.Water_Depth ? "filled" : "light"}
-              onClick={() => setViewing(Viewing.Water_Depth)}
-            >
-              Water Depth
-            </Button>
+              <Button
+                className="data-button"
+                variant={viewing === Viewing.Water_Depth ? "filled" : "light"}
+                onClick={() => setViewing(Viewing.Water_Depth)}
+              >
+                Water Depth
+              </Button>
 
-            <Button
-              className="data-button"
-              variant={viewing === Viewing.Wind_Speed ? "filled" : "light"}
-              onClick={() => setViewing(Viewing.Wind_Speed)}
-            >
-              Wind Speed
-            </Button>
+              <Button
+                className="data-button"
+                variant={viewing === Viewing.Wind_Speed ? "filled" : "light"}
+                onClick={() => setViewing(Viewing.Wind_Speed)}
+              >
+                Wind Speed
+              </Button>
 
-            <Button
-              className="data-button"
-              variant={viewing === Viewing.Bird_Risk ? "filled" : "light"}
-              onClick={() => setViewing(Viewing.Bird_Risk)}
-            >
-              Bird Risk
-            </Button>
+              <Button
+                className="data-button"
+                variant={viewing === Viewing.Bird_Risk ? "filled" : "light"}
+                onClick={() => setViewing(Viewing.Bird_Risk)}
+              >
+                Bird Risk
+              </Button>
+            </div>
           </div>
 
           <div className="section-divider" />

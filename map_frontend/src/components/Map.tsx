@@ -1,6 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css"; // Associated CSS
+import mapboxgl from "mapbox-gl";import "mapbox-gl/dist/mapbox-gl.css"; // Associated CSS
 import {
   useScenarioContext,
   Viewing,
@@ -518,6 +517,20 @@ export default function Map({ mapRef }: MapProps) {
 
     if (!map) return;
     if (!map.getLayer("heatmap-fill")) return;
+
+    // Base layers are fully transparent where the value is 0
+    // (cells with no data have the property missing, which counts as 0)
+    const zeroProp: Partial<Record<Viewing, string>> = {
+      [Viewing.Water_Depth]: "depth_m",
+      [Viewing.Wind_Speed]: "wind_speed_m_s",
+      [Viewing.Bird_Risk]: "e_w"
+    };
+    const prop = zeroProp[viewing];
+    map.setPaintProperty(
+      "heatmap-fill",
+      "fill-opacity",
+      prop ? ["case", ["==", ["to-number", ["get", prop], 0], 0], 0, 0.3] : 0.3
+    );
 
     // CASE: Viewing Heatmap
     if (viewing === Viewing.Heatmap) {
