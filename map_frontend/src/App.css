@@ -753,6 +753,19 @@ html {
   margin-bottom: 3px;
 }
 
+/* Mapbox logo: moved from bottom-left (clashes with the action buttons)
+   to bottom-right, above the attribution */
+.map-container .mapboxgl-ctrl-bottom-left {
+  left: auto;
+  right: 0;
+  bottom: 24px; /* clears the attribution (text bar or compact "i" button) */
+}
+
+.map-container .mapboxgl-ctrl-bottom-left .mapboxgl-ctrl {
+  margin: 0 10px 4px 0;
+  float: right;
+}
+
 /* Mapbox popup container */
 .mapboxgl-popup-content {
   padding: 8px 10px !important;

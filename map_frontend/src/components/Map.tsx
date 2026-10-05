@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useId, useState } from "react";
 import mapboxgl from "mapbox-gl";import "mapbox-gl/dist/mapbox-gl.css"; // Associated CSS
 import {
   useScenarioContext,
@@ -52,11 +52,7 @@ export default function Map({ mapRef }: MapProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null); // exposes html
   const paramKeyRef = useRef("");
   const syncingRef = useRef(false); // true while this map moves itself programmatically
-  const interactingRef = useRef(false); // true while this map owns the camera
-  const publishedRef = useRef<{
-    center: [number, number];
-    zoom: number;
-  } | null>(null);
+  const screenId = useId(); // identifies this screen as a camera owner
   const hoverPublishedRef = useRef<number | null>(null); // last hover id this screen published
   const prevHoverRef = useRef<number | null>(null); // last hover id this screen applied to feature-state
   const prevSelectedRef = useRef<number | null>(null); // last selected id this screen applied to feature-state
@@ -71,6 +67,7 @@ export default function Map({ mapRef }: MapProps) {
     zoom,
     setCenter,
     setZoom,
+    cameraOwnerRef,
     hoveredCellId,
     setHoveredCellId,
     selectedCellId,
@@ -261,28 +258,27 @@ export default function Map({ mapRef }: MapProps) {
     });
 
     // ===== CAMERA OWNERSHIP =====
+    // last screen to start a move owns the camera until another screen claims it
     mapRef.current.on("movestart", () => {
       if (syncingRef.current) return; // we're following, not driving
-      interactingRef.current = true;
+      cameraOwnerRef.current = screenId;
     });
 
-    mapRef.current.on("moveend", () => {
-      if (syncingRef.current) return;
-      interactingRef.current = false;
-    });
-
-    mapRef.current.on("move", () => {
+    mapRef.current.on("move", (e) => {
       if (!mapRef.current) return;
       if (syncingRef.current) return; // this move came from another screen
+
+      // a live drag/wheel (not inertia or a fly) takes the camera back
+      if (e.originalEvent && !mapRef.current.isEasing()) {
+        cameraOwnerRef.current = screenId;
+      }
+
+      // superseded by another screen — leftover inertia must not fight it
+      if (cameraOwnerRef.current !== screenId) return;
 
       // get the current center coords and zoom
       const mapCenter = mapRef.current.getCenter();
       const mapZoom = mapRef.current.getZoom();
-
-      publishedRef.current = {
-        center: [mapCenter.lng, mapCenter.lat],
-        zoom: mapZoom
-      };
 
       setCenter([mapCenter.lng, mapCenter.lat]);
       setZoom(mapZoom);
@@ -373,19 +369,10 @@ export default function Map({ mapRef }: MapProps) {
     const map = mapRef.current;
     if (!map) return;
 
-    // this map is driving — never fight the gesture in progress
-    if (interactingRef.current) return;
+    // this map is driving — the shared value is our own
+    if (cameraOwnerRef.current === screenId) return;
 
-    // this is the value we published ourselves — nothing to follow
-    const mine = publishedRef.current;
-    if (
-      mine &&
-      mine.center[0] === center[0] &&
-      mine.center[1] === center[1] &&
-      mine.zoom === zoom
-    )
-      return;
-
+    // jumpTo also stops any leftover inertia/fly on this map
     syncingRef.current = true;
     map.jumpTo({ center, zoom });
     syncingRef.current = false;

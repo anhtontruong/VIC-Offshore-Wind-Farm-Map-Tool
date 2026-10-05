@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useRef,
+  useState,
+  type ReactNode,
+  type RefObject
+} from "react";
 
 import { INITIAL_CENTER, INITIAL_ZOOM } from "../constants/constants";
 
@@ -24,6 +31,7 @@ type AppContextType = {
   setCenter: (center: [number, number]) => void;
   zoom: number;
   setZoom: (zoom: number) => void;
+  cameraOwnerRef: RefObject<string | null>; // id of the screen driving the shared camera
   hoveredCellId: number | null;
   setHoveredCellId: (id: number | null) => void;
   selectedCellId: number | null;
@@ -71,6 +79,9 @@ export function AppProvider({ children }: AppProviderProps) {
 
   const [zoom, setZoom] = useState(INITIAL_ZOOM);
 
+  // a ref, not state: read synchronously inside map event handlers
+  const cameraOwnerRef = useRef<string | null>(null);
+
   const [hoveredCellId, setHoveredCellId] = useState<number | null>(null);
 
   const [selectedCellId, setSelectedCellId] = useState<number | null>(null);
@@ -103,6 +114,7 @@ export function AppProvider({ children }: AppProviderProps) {
         setCenter,
         zoom,
         setZoom,
+        cameraOwnerRef,
         hoveredCellId,
         setHoveredCellId,
         selectedCellId,
