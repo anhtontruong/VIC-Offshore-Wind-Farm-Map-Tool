@@ -4,6 +4,7 @@ import {
   IconEyeOff,
   IconGripVertical,
   IconMask,
+  IconRefresh,
   IconSquareToggle
 } from "@tabler/icons-react";
 import type {
@@ -12,7 +13,11 @@ import type {
 } from "@dnd-kit/core";
 import type { CSSProperties, Ref } from "react";
 import { LAYER_COLORS, LAYER_INFO } from "../constants/constants";
-import type { Layer } from "../hooks/useScenarioContext";
+import {
+  fullRange,
+  isFullRange,
+  type Layer
+} from "../hooks/useScenarioContext";
 import { useExpandedContext } from "../hooks/useExpandedContext";
 
 interface LayerCardProps {
@@ -140,7 +145,22 @@ export default function LayerCard({
         {layer && layerInfo && onChange && (
           <div className="layer-card-body">
             <div className="layer-control-label">
-              <span>Range</span>
+              <span className="layer-control-name">
+                Range
+                <Tooltip label="Reset range">
+                  <ActionIcon
+                    className="layer-reset"
+                    size="xs"
+                    variant="light"
+                    color="red"
+                    aria-label="Reset range"
+                    disabled={isFullRange(layer)}
+                    onClick={() => onChange(fullRange(layer.key))}
+                  >
+                    <IconRefresh size={12} />
+                  </ActionIcon>
+                </Tooltip>
+              </span>
               <span className="layer-control-value">
                 {`${formatValue(layer.range[0])} - ${formatValue(layer.range[1])}${unit}`}
               </span>

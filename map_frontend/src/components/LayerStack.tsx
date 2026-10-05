@@ -19,8 +19,12 @@ import {
   restrictToVerticalAxis
 } from "@dnd-kit/modifiers";
 import { CSS } from "@dnd-kit/utilities";
+import { Button } from "@mantine/core";
+import { IconRefresh } from "@tabler/icons-react";
 import LayerCard from "./LayerCard";
 import {
+  fullRange,
+  isFullRange,
   useScenarioContext,
   Viewing,
   type Layer
@@ -53,33 +57,50 @@ export default function LayerStack() {
   };
 
   return (
-    <div className="layer-stack">
-      {/* sortable layers (top of list = drawn on top) */}
-      <div className="layer-stack-sortable">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-          onDragEnd={handleDragEnd}
+    <>
+      {/* resets range + invert on every layer */}
+      <div className="layer-stack-toolbar">
+        <Button
+          size="compact-xs"
+          variant="default"
+          leftSection={<IconRefresh size={14} />}
+          disabled={layers.every(isFullRange)}
+          onClick={() =>
+            layers.forEach((layer) => setLayer(layer.key)(fullRange(layer.key)))
+          }
         >
-          <SortableContext
-            items={layers.map((layer) => layer.key)}
-            strategy={verticalListSortingStrategy}
-          >
-            {layers.map((layer) => (
-              <SortableLayerCard
-                key={layer.key}
-                layer={layer}
-                onChange={setLayer(layer.key)}
-              />
-            ))}
-          </SortableContext>
-        </DndContext>
+          Reset all ranges
+        </Button>
       </div>
 
-      {/* base layer, fixed at the bottom */}
-      <LayerCard name="Base Layer" info={VIEWING_LABELS[viewing]} />
-    </div>
+      <div className="layer-stack">
+        {/* sortable layers (top of list = drawn on top) */}
+        <div className="layer-stack-sortable">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={layers.map((layer) => layer.key)}
+              strategy={verticalListSortingStrategy}
+            >
+              {layers.map((layer) => (
+                <SortableLayerCard
+                  key={layer.key}
+                  layer={layer}
+                  onChange={setLayer(layer.key)}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
+        </div>
+
+        {/* base layer, fixed at the bottom */}
+        <LayerCard name="Base Layer" info={VIEWING_LABELS[viewing]} />
+      </div>
+    </>
   );
 }
 

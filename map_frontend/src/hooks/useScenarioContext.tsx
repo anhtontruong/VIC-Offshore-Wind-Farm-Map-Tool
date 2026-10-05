@@ -25,6 +25,19 @@ export type Layer = {
   masking: boolean;
 };
 
+// full range + not inverted (what the layer stack reset buttons restore)
+export const fullRange = (
+  key: LayerKey
+): Pick<Layer, "range" | "inverted"> => ({
+  range: [LAYER_INFO[key].min, LAYER_INFO[key].max],
+  inverted: false
+});
+
+export const isFullRange = (layer: Layer) =>
+  !layer.inverted &&
+  layer.range[0] === LAYER_INFO[layer.key].min &&
+  layer.range[1] === LAYER_INFO[layer.key].max;
+
 type ScenarioContextType = {
   params: number[];
   getParam: (index: 0 | 1 | 2) => number;

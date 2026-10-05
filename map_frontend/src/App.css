@@ -298,6 +298,13 @@ html {
 }
 
 /* LAYER STACK */
+/* "Reset all" row above the tray */
+.layer-stack-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.4em;
+}
+
 /* tray the cards sit in */
 .layer-stack {
   margin-bottom: 1em;
@@ -442,6 +449,18 @@ html {
 
 .layer-control-label ~ .layer-control-label {
   margin-top: 0.5em;
+}
+
+/* label + its reset button */
+.layer-control-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+}
+
+/* nothing to reset: dim the glyph only (drop Mantine's grey disabled fill) */
+.layer-reset:disabled {
+  background: transparent;
 }
 
 .layer-control-value {
