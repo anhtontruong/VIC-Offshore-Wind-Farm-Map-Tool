@@ -41,6 +41,16 @@ export type LayerKey = keyof typeof LAYER_INFO;
 
 export const LAYER_KEYS = Object.keys(LAYER_INFO) as LayerKey[];
 
+// # Heatmap Colours (shared by map paint expressions + legends)
+export const HEATMAP_COLORS = {
+  zero: "rgba(255, 0, 0, 0.5)",
+  low: "#ffff3d",
+  high: "#70ff3c"
+};
+export const HEATMAP_THRESHOLD_MW = 15;
+// aggregate heatmap (number of scenarios each cell has a solution in)
+export const AGGREGATE_COLORS = { min: "#fff7a0", max: "#ff2fd0" };
+
 // # Layer Colours (shared by map paint expressions, legends + layer cards)
 export const DEPTH_COLORS = { min: "#96fcff", max: "#00106a" };
 export const WIND_COLORS = { min: "#b8007a" , max: "#ff6f00"};
@@ -54,6 +64,7 @@ export const LAYER_COLORS: Record<LayerKey, { min: string; max: string }> = {
 };
 
 // # Landing Points ([lng, lat])
+export const LANDING_POINT_COLOR = "#facc15";
 export const LANDING_POINTS: { name: string; lngLat: [number, number] }[] = [
   { name: "Loy Yang Power Station", lngLat: [146.577, -38.254] }
 ];

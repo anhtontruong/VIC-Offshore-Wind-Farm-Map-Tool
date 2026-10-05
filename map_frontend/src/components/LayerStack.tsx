@@ -33,6 +33,7 @@ import { LAYER_INFO, type LayerKey } from "../constants/constants";
 
 const VIEWING_LABELS: Record<Viewing, string> = {
   [Viewing.Heatmap]: "Heatmap",
+  [Viewing.Aggregate_Heatmap]: "Aggregate Heatmap",
   [Viewing.Water_Depth]: "Water Depth",
   [Viewing.Wind_Speed]: "Wind Speed",
   [Viewing.Bird_Risk]: "Bird Risk"

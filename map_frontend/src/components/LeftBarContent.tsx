@@ -93,6 +93,16 @@ export default function LeftBarContent() {
 
               <Button
                 className="data-button"
+                variant={
+                  viewing === Viewing.Aggregate_Heatmap ? "filled" : "light"
+                }
+                onClick={() => setViewing(Viewing.Aggregate_Heatmap)}
+              >
+                Aggregate Heatmap
+              </Button>
+
+              <Button
+                className="data-button"
                 variant={viewing === Viewing.Water_Depth ? "filled" : "light"}
                 onClick={() => setViewing(Viewing.Water_Depth)}
               >

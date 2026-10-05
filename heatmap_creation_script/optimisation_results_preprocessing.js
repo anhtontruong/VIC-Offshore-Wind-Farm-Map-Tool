@@ -73,17 +73,6 @@ fs.createReadStream(DATA_CSV_FILE)
 
     fs.writeFileSync(DATA_LDGEOJSON_FILE, output);
 
-    fs.writeFileSync(
-      RANGE_FILE,
-      JSON.stringify(
-        Object.fromEntries(
-          Object.entries(ranges).map(([name, r]) => [name, [r.min, r.max]])
-        ),
-        null,
-        2
-      )
-    );
-
     console.log(
       `SUCCESS! Wrote ${ldgeojsonLine.length} features to ${DATA_LDGEOJSON_FILE}\n`
     );
@@ -152,7 +141,8 @@ fs.createReadStream(DATA_CSV_FILE)
           wind_speed_m_s: props.wind_speed_m_s,
           export_cable_km: props.export_cable_km,
           e_w: props.e_w,
-          n_surveys: props.n_surveys
+          n_surveys: props.n_surveys,
+          n_solutions: 0
         });
 
         gridEntry.matched = true;
@@ -164,16 +154,40 @@ fs.createReadStream(DATA_CSV_FILE)
         `${Math.round(props.lambda3 * 100)}`;
 
       gridEntry.feature.properties[lambdaKey] = props.t_w;
+
+      // count parameter combinations with a non-0 installed capacity
+      if (props.t_w !== 0) gridEntry.feature.properties.n_solutions += 1;
     }
 
     // write output geojsonl
     const out = [];
 
+    // global range of n_solutions (only cells with a cell_id have it)
+    ranges.n_solutions = { min: Infinity, max: -Infinity };
+
     for (const feature of gridFeatures) {
+      const count = feature.properties.n_solutions;
+
+      if (count !== undefined) {
+        ranges.n_solutions.min = Math.min(ranges.n_solutions.min, count);
+        ranges.n_solutions.max = Math.max(ranges.n_solutions.max, count);
+      }
+
       out.push(JSON.stringify(feature));
     }
 
     fs.writeFileSync(OUTPUT_FILE, out.join("\n"));
+
+    fs.writeFileSync(
+      RANGE_FILE,
+      JSON.stringify(
+        Object.fromEntries(
+          Object.entries(ranges).map(([name, r]) => [name, [r.min, r.max]])
+        ),
+        null,
+        2
+      )
+    );
 
     console.log(
       `SUCCESS! Wrote ${gridFeatures.length} features to ${OUTPUT_FILE}\n`

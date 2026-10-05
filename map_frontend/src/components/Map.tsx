@@ -9,8 +9,12 @@ import heatmapLdGeoJson from "../../../heatmap_creation_script/heatmap.ldgeojson
 import rangeJSON from "../../../heatmap_creation_script/range.json";
 import { useAppContext, type OpenCell } from "../hooks/useAppContext";
 import {
+  AGGREGATE_COLORS,
   BIRD_COLORS,
   DEPTH_COLORS,
+  HEATMAP_COLORS,
+  HEATMAP_THRESHOLD_MW,
+  LANDING_POINT_COLOR,
   LANDING_POINTS,
   LAYER_COLORS,
   LAYER_INFO,
@@ -22,16 +26,30 @@ interface MapProps {
   mapRef: React.RefObject<mapboxgl.Map | null>;
 }
 
-// # Layer Colours (shared by paint expressions + legend)
-const HEATMAP_COLORS = {
-  zero: "rgba(255, 0, 0, 0.5)",
-  low: "#ffff3d",
-  high: "#70ff3c"
-};
-const HEATMAP_THRESHOLD_MW = 15;
+// # Aggregate Heatmap (number of scenarios each cell has a solution in)
+// gradient covers cells with a solution, 0 gets the heatmap's zero colour
+const AGGREGATE_RANGE = [
+  Math.max(rangeJSON.n_solutions[0], 1),
+  rangeJSON.n_solutions[1]
+];
+const AGGREGATE_FILL_COLOR = [
+  "case",
+  ["==", ["get", "n_solutions"], null],
+  "rgba(0, 0, 0, 0)",
+  ["==", ["get", "n_solutions"], 0],
+  HEATMAP_COLORS.zero,
+  [
+    "interpolate",
+    ["linear"],
+    ["get", "n_solutions"],
+    AGGREGATE_RANGE[0],
+    AGGREGATE_COLORS.min,
+    AGGREGATE_RANGE[1],
+    AGGREGATE_COLORS.max
+  ]
+] satisfies mapboxgl.Expression;
 
 // # Landing Point Star (shared by marker + legend, 24x24 viewBox)
-const LANDING_POINT_COLOR = "#facc15";
 const STAR_PATH =
   "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z";
 
@@ -542,6 +560,11 @@ export default function Map({ mapRef }: MapProps) {
       map.setPaintProperty("heatmap-fill", "fill-color", GRID_FILL_COLOR);
     }
 
+    // CASE: Viewing Aggregate Heatmap
+    else if (viewing === Viewing.Aggregate_Heatmap) {
+      map.setPaintProperty("heatmap-fill", "fill-color", AGGREGATE_FILL_COLOR);
+    }
+
     // CASE: Viewing Water Depth
     else if (viewing === Viewing.Water_Depth) {
       map.setPaintProperty("heatmap-fill", "fill-color", [
@@ -656,6 +679,34 @@ export default function Map({ mapRef }: MapProps) {
               style={{ backgroundColor: HEATMAP_COLORS.zero }}
             />
             <span>0 MW</span>
+          </div>
+        </div>
+      );
+    }
+
+    // CASE: Gradient for cells with a solution + discrete zero
+    if (viewing === Viewing.Aggregate_Heatmap) {
+      return (
+        <div className="map-legend">
+          <div className="map-legend-title">Aggregate Heatmap</div>
+          <div className="map-legend-gradient-row">
+            <div
+              className="map-legend-gradient"
+              style={{
+                background: `linear-gradient(to right, ${AGGREGATE_COLORS.min}, ${AGGREGATE_COLORS.max})`
+              }}
+            />
+            <div className="map-legend-labels">
+              <span>{AGGREGATE_RANGE[0]}</span>
+              <span>{AGGREGATE_RANGE[1]}</span>
+            </div>
+          </div>
+          <div className="map-legend-row">
+            <span
+              className="map-legend-swatch"
+              style={{ backgroundColor: HEATMAP_COLORS.zero }}
+            />
+            <span>0 scenarios</span>
           </div>
         </div>
       );

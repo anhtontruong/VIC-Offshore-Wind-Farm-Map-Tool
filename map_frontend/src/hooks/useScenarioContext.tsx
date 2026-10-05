@@ -9,6 +9,7 @@ import { LAYER_INFO, LAYER_KEYS, type LayerKey } from "../constants/constants";
 
 export const Viewing = {
   Heatmap: "HEATMAP",
+  Aggregate_Heatmap: "AGGREGATE_HEATMAP",
   Water_Depth: "WATER_DEPTH",
   Wind_Speed: "WIND_SPEED",
   Bird_Risk: "BIRD_RISK"
