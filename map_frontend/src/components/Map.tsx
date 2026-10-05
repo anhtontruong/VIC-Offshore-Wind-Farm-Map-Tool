@@ -688,7 +688,7 @@ export default function Map({ mapRef }: MapProps) {
     if (viewing === Viewing.Aggregate_Heatmap) {
       return (
         <div className="map-legend">
-          <div className="map-legend-title">Aggregate Heatmap</div>
+          <div className="map-legend-title">Number of Solutions</div>
           <div className="map-legend-gradient-row">
             <div
               className="map-legend-gradient"
@@ -706,7 +706,7 @@ export default function Map({ mapRef }: MapProps) {
               className="map-legend-swatch"
               style={{ backgroundColor: HEATMAP_COLORS.zero }}
             />
-            <span>0 scenarios</span>
+            <span>0 scenario solutions</span>
           </div>
         </div>
       );

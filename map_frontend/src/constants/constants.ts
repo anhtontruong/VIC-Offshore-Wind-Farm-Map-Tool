@@ -49,7 +49,7 @@ export const HEATMAP_COLORS = {
 };
 export const HEATMAP_THRESHOLD_MW = 15;
 // aggregate heatmap (number of scenarios each cell has a solution in)
-export const AGGREGATE_COLORS = { min: "#fff7a0", max: "#ff2fd0" };
+export const AGGREGATE_COLORS = { min: "#fd5400", max: "#89ff52" };
 
 // # Layer Colours (shared by map paint expressions, legends + layer cards)
 export const DEPTH_COLORS = { min: "#96fcff", max: "#00106a" };
