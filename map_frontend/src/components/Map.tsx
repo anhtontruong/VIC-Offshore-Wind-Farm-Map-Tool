@@ -58,6 +58,7 @@ export default function Map({ mapRef }: MapProps) {
   const prevSelectedRef = useRef<number | null>(null); // last selected id this screen applied to feature-state
   const popupsRef = useRef<Record<number, mapboxgl.Popup>>({});
   const landingPopupsRef = useRef<mapboxgl.Popup[]>([]); // local to this screen
+  const cellCentersRef = useRef<Record<number, [number, number]>>({}); // cell id -> [lng, lat]
 
   // true once this screen's map has finished loading the heatmap source/layers
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -137,6 +138,16 @@ export default function Map({ mapRef }: MapProps) {
       if (!mapRef.current) return;
 
       const heatmap = ldGeoJSONToGeoJSON(heatmapLdGeoJson);
+
+      // cell centres (average of the 4 corners), used as popup anchors
+      for (const feature of heatmap.features) {
+        const corners: [number, number][] =
+          feature.geometry.coordinates[0].slice(0, 4);
+        cellCentersRef.current[feature.properties.id] = [
+          corners.reduce((sum, corner) => sum + corner[0], 0) / corners.length,
+          corners.reduce((sum, corner) => sum + corner[1], 0) / corners.length
+        ];
+      }
 
       mapRef.current.addSource("heatmap", {
         type: "geojson",
@@ -291,6 +302,13 @@ export default function Map({ mapRef }: MapProps) {
         if (!e.feature || !mapRef.current || !e.lngLat) return;
 
         const props = e.feature.properties as Record<string, any>;
+        const id = props.id;
+
+        // clicking a cell with an open popup closes it (on every screen)
+        if (popupsRef.current[id]) {
+          closeCell(id);
+          return;
+        }
 
         // don't open a popup (anywhere) if this screen's weighting has no
         // capacity for the clicked cell — matches the previous behaviour
@@ -298,11 +316,9 @@ export default function Map({ mapRef }: MapProps) {
           return;
         }
 
-        const id = props.id;
-
         openCell({
           id,
-          lngLat: [e.lngLat.lng, e.lngLat.lat],
+          lngLat: cellCentersRef.current[id] ?? [e.lngLat.lng, e.lngLat.lat],
           props
         });
         setSelectedCellId(id);
@@ -346,7 +362,9 @@ export default function Map({ mapRef }: MapProps) {
       element.addEventListener("click", (e) => {
         e.stopPropagation(); // don't also open the cell underneath
         hoverPopup.remove();
-        if (!pinnedPopup.isOpen()) pinnedPopup.addTo(map);
+        // click again to close
+        if (pinnedPopup.isOpen()) pinnedPopup.remove();
+        else pinnedPopup.addTo(map);
       });
 
       landingPopupsRef.current.push(hoverPopup, pinnedPopup);

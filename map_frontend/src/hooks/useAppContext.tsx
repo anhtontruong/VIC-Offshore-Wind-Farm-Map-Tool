@@ -20,7 +20,7 @@ type ScreenMode = (typeof ScreenMode)[keyof typeof ScreenMode];
 // Cell user clicked, shared by every screen
 export type OpenCell = {
   id: number;
-  lngLat: [number, number]; // exact click point, used as popup anchor
+  lngLat: [number, number]; // cell centre, used as popup anchor
   props: Record<string, any>; // properties with all slider weightings
 };
 
