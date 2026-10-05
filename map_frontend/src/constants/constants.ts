@@ -43,9 +43,9 @@ export const LAYER_KEYS = Object.keys(LAYER_INFO) as LayerKey[];
 
 // # Layer Colours (shared by map paint expressions, legends + layer cards)
 export const DEPTH_COLORS = { min: "#96fcff", max: "#00106a" };
-export const WIND_COLORS = { min: "#65006a", max: "#ffa13d" };
-export const BIRD_COLORS = { min: "#ffecb7", max: "#ff3939" };
-const SHORE_COLORS = { min: "#d9f99d", max: "#0f5257" };
+export const WIND_COLORS = { min: "#b8007a" , max: "#ff6f00"};
+export const BIRD_COLORS = { min: "#f5dd9a", max: "#ff3939" };
+const SHORE_COLORS = { min: "#d9f99d", max: "#145e00" };
 export const LAYER_COLORS: Record<LayerKey, { min: string; max: string }> = {
   depth_m: DEPTH_COLORS,
   wind_speed_m_s: WIND_COLORS,
