@@ -3,18 +3,22 @@ import { useExpandedContext } from "../hooks/useExpandedContext";
 import { INITIAL_CENTER, INITIAL_ZOOM } from "../constants/constants";
 import LeftBar from "./LeftBar";
 import Map from "./Map";
-import { useAppContext } from "../hooks/useAppContext";
+import { ScreenMode, useAppContext } from "../hooks/useAppContext";
 
 export default function Scenario() {
   const { expanded } = useExpandedContext();
   const mapRef = useRef<mapboxgl.Map | null>(null); // persists map instance
-  const { center, zoom, clearAllPopups } = useAppContext();
+  const { center, zoom, clearAllPopups, screenMode } = useAppContext();
 
   // # Helper Functions
   const handleButtonClickReset = () => {
+    // split screens are half as wide: one zoom level out shows the same area
+    const resetZoom =
+      screenMode === ScreenMode.One_Screen ? INITIAL_ZOOM : INITIAL_ZOOM - 1;
+
     mapRef.current?.flyTo({
       center: INITIAL_CENTER,
-      zoom: INITIAL_ZOOM
+      zoom: resetZoom
     });
   };
 
