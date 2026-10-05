@@ -14,9 +14,13 @@ export default function Scenario() {
 
   // # Helper Functions
   const handleButtonClickReset = () => {
-    // split screens are half as wide: one zoom level out shows the same area
+    // split screens are narrower (same height): zoom out more per extra screen
     const resetZoom =
-      screenMode === ScreenMode.One_Screen ? INITIAL_ZOOM : INITIAL_ZOOM - 1;
+      screenMode === ScreenMode.One_Screen
+        ? INITIAL_ZOOM
+        : screenMode === ScreenMode.Two_Screen
+          ? INITIAL_ZOOM - 0.5
+          : INITIAL_ZOOM - 1;
 
     mapRef.current?.flyTo({
       center: INITIAL_CENTER,
