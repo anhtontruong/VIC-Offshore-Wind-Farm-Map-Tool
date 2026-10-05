@@ -8,6 +8,12 @@ import Map from "./Map";
 import { ScreenMode, useAppContext } from "../hooks/useAppContext";
 import { useScenarioContext } from "../hooks/useScenarioContext";
 
+const LAMBDA_LABELS = [
+  "Total Lifetime Cost",
+  "Seabird Exposure",
+  "Annual Wind Energy Production"
+] as const;
+
 export default function Scenario() {
   const { expanded } = useExpandedContext();
   const mapRef = useRef<mapboxgl.Map | null>(null); // persists map instance
@@ -73,7 +79,7 @@ export default function Scenario() {
         <div className="lambda-bar">
           {([0, 1, 2] as const).map((i) => (
             <div className="lambda-cell" key={i}>
-              <span className="lambda-label">{`Lambda${i + 1}`}</span>
+              <span className="lambda-label">{LAMBDA_LABELS[i]}</span>
               <span className="lambda-value">{getParam(i).toFixed(2)}</span>
             </div>
           ))}

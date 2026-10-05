@@ -575,7 +575,7 @@ html {
   white-space: nowrap;
 
   font-family: var(--font-family-base);
-  font-size: 13px;
+  font-size: 10.4px;
   line-height: 1.4;
   color: #111827;
 
@@ -587,8 +587,8 @@ html {
 .lambda-cell {
   display: flex;
   align-items: baseline;
-  gap: 8px;
-  padding: 8px 14px;
+  gap: 6.4px;
+  padding: 6.4px 11.2px;
 }
 
 .lambda-cell + .lambda-cell {
