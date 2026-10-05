@@ -1,4 +1,6 @@
 import { useRef } from "react";
+import { Tooltip } from "@mantine/core";
+import { IconCurrentLocation, IconEraser } from "@tabler/icons-react";
 import { useExpandedContext } from "../hooks/useExpandedContext";
 import { INITIAL_CENTER, INITIAL_ZOOM } from "../constants/constants";
 import LeftBar from "./LeftBar";
@@ -33,19 +35,25 @@ export default function Scenario() {
             </div>
           </div>
           <div className="left-ui-bottom">
-            <button
-              className={`action-button reset-button ${expanded ? "expanded" : "collapsed"}`}
-              onClick={handleButtonClickReset}
-            >
-              Reset Position
-            </button>
+            <Tooltip label="Reset Position" position="top">
+              <button
+                className={`action-button reset-button ${expanded ? "expanded" : "collapsed"}`}
+                onClick={handleButtonClickReset}
+                aria-label="Reset Position"
+              >
+                <IconCurrentLocation size={22} />
+              </button>
+            </Tooltip>
 
-            <button
-              className={`action-button clear-popup-button ${expanded ? "expanded" : "collapsed"}`}
-              onClick={clearAllPopups}
-            >
-              Clear All Popups
-            </button>
+            <Tooltip label="Clear All Popups" position="top">
+              <button
+                className={`action-button clear-popup-button ${expanded ? "expanded" : "collapsed"}`}
+                onClick={clearAllPopups}
+                aria-label="Clear All Popups"
+              >
+                <IconEraser size={22} />
+              </button>
+            </Tooltip>
           </div>
         </div>
       </div>
