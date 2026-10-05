@@ -27,6 +27,8 @@ export type OpenCell = {
 type AppContextType = {
   screenMode: ScreenMode;
   setScreenMode: (state: ScreenMode) => void;
+  uiHidden: boolean;
+  setUiHidden: (value: boolean) => void;
   center: [number, number];
   setCenter: (center: [number, number]) => void;
   zoom: number;
@@ -75,6 +77,8 @@ export function AppProvider({ children }: AppProviderProps) {
     ScreenMode.One_Screen
   );
 
+  const [uiHidden, setUiHidden] = useState(false);
+
   const [center, setCenter] = useState<[number, number]>(INITIAL_CENTER);
 
   const [zoom, setZoom] = useState(INITIAL_ZOOM);
@@ -110,6 +114,8 @@ export function AppProvider({ children }: AppProviderProps) {
       value={{
         screenMode,
         setScreenMode,
+        uiHidden,
+        setUiHidden,
         center,
         setCenter,
         zoom,

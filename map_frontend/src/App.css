@@ -118,6 +118,11 @@ html {
   align-items: center;
 }
 
+/* Hide UI (top bar toggle): hides the bar and its expand/collapse button */
+.left-bar.ui-hidden {
+  display: none;
+}
+
 .left-bar-container {
   height: 100%;
   overflow: hidden;
@@ -556,6 +561,48 @@ html {
 
   z-index: 1;
   pointer-events: auto;
+}
+
+/* LAMBDA BAR (shown top-centre while Hide UI is on) */
+.lambda-bar {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+
+  display: flex;
+  white-space: nowrap;
+
+  font-family: var(--font-family-base);
+  font-size: 13px;
+  line-height: 1.4;
+  color: #111827;
+
+  background: #ffffff;
+  border-radius: 0px;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 30%);
+}
+
+.lambda-cell {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 14px;
+}
+
+.lambda-cell + .lambda-cell {
+  border-left: 1px solid #e5e7eb;
+}
+
+.lambda-label {
+  color: #484a4f;
+  font-weight: 500;
+}
+
+.lambda-value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ACTION BUTTONS */
