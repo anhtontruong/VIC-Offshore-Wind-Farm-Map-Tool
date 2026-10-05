@@ -637,6 +637,9 @@ html {
   align-items: flex-end;
   gap: 8px;
 
+  /* scales every legend card (text, padding, bars) to 70% */
+  zoom: 0.9;
+
   pointer-events: none;
 }
 
@@ -682,23 +685,23 @@ html {
 
 .map-legend-gradient-row {
   display: flex;
+  flex-direction: column;
   align-items: stretch;
-  gap: 8px;
+  gap: 4px;
 }
 
 .map-legend-gradient {
   flex-shrink: 0;
-  width: 12px;
-  height: 120px;
+  min-width: 120px;
+  height: 12px;
   border: 1px solid rgb(255 255 255 / 40%);
   border-radius: 2px;
 }
 
 .map-legend-labels {
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
-  min-height: 120px;
+  gap: 12px;
 }
 
 /* LANDING POINT */

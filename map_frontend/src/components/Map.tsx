@@ -661,14 +661,12 @@ export default function Map({ mapRef }: MapProps) {
     let unit: string;
     let range: [number, number];
     let colors: { min: string; max: string };
-    let invert = false; // true: min on top, max on bottom
 
     if (viewing === Viewing.Water_Depth) {
       title = "Water Depth";
       unit = "m";
       range = rangeJSON.depth_m as [number, number];
       colors = DEPTH_COLORS;
-      invert = true;
     } else if (viewing === Viewing.Wind_Speed) {
       title = "Wind Speed";
       unit = "m/s";
@@ -687,7 +685,6 @@ export default function Map({ mapRef }: MapProps) {
         unit={unit}
         range={range}
         colors={colors}
-        invert={invert}
       />
     );
   }
@@ -710,7 +707,6 @@ export default function Map({ mapRef }: MapProps) {
                 unit={LAYER_INFO[layer.key].unit}
                 range={rangeJSON[layer.key] as [number, number]}
                 colors={LAYER_COLORS[layer.key]}
-                invert={layer.key === "depth_m"} // same as base depth legend
               />
             ))}
           <div className="map-legend">
@@ -741,22 +737,17 @@ interface GradientLegendProps {
   unit: string;
   range: [number, number];
   colors: { min: string; max: string };
-  invert?: boolean; // true: min on top, max on bottom
 }
 
 function GradientLegend({
   title,
   unit,
   range,
-  colors,
-  invert = false
+  colors
 }: GradientLegendProps) {
   const [min, max] = range;
-  const topValue = invert ? min : max;
-  const bottomValue = invert ? max : min;
-  const gradient = invert
-    ? `linear-gradient(to bottom, ${colors.min}, ${colors.max})`
-    : `linear-gradient(to top, ${colors.min}, ${colors.max})`;
+  // min on left, max on right
+  const gradient = `linear-gradient(to right, ${colors.min}, ${colors.max})`;
   const formatValue = (value: number) =>
     unit ? `${value.toFixed(2)} ${unit}` : value.toFixed(2);
 
@@ -766,8 +757,8 @@ function GradientLegend({
       <div className="map-legend-gradient-row">
         <div className="map-legend-gradient" style={{ background: gradient }} />
         <div className="map-legend-labels">
-          <span>{formatValue(topValue)}</span>
-          <span>{formatValue(bottomValue)}</span>
+          <span>{formatValue(min)}</span>
+          <span>{formatValue(max)}</span>
         </div>
       </div>
     </div>
