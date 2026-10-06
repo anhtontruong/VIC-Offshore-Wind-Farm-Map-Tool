@@ -91,7 +91,7 @@ export default function LayerStackTutorial({
           fontWeight: 600,
           fontSize: "clamp(22px, min(2vw, 3.5vh), 40px)",
           letterSpacing: "-0.01em",
-          color: "var(--mantine-color-blue-filled)"
+          color: "var(--mantine-color-blue-9)"
         },
         // no padding so the separator lines reach the popup edges
         body: { padding: 0 }
