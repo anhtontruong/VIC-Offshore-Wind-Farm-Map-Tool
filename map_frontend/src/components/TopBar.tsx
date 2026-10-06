@@ -1,9 +1,21 @@
 
-import { Button, Group, Menubar, Switch } from "@mantine/core";
+import { useState } from "react";
+import {
+  ActionIcon,
+  Button,
+  Group,
+  Menubar,
+  Switch,
+  Tooltip
+} from "@mantine/core";
+import { IconHelp } from "@tabler/icons-react";
 import { ScreenMode, useAppContext } from "../hooks/useAppContext";
+import LayerStackTutorial from "./LayerStackTutorial";
 
 export default function TopBar() {
   const { screenMode, setScreenMode, uiHidden, setUiHidden } = useAppContext();
+  // starts open: the tutorial shows on every page load
+  const [tutorialOpened, setTutorialOpened] = useState(true);
 
   return (
     <Menubar
@@ -29,6 +41,24 @@ export default function TopBar() {
 
       {/* Right side */}
       <Group gap={4}>
+        <Tooltip label="Layer Stack tutorial">
+          <ActionIcon
+            size={36} // same height as the size="sm" buttons
+            radius="sm"
+            variant="subtle"
+            color="dark"
+            aria-label="Layer Stack tutorial"
+            onClick={() => setTutorialOpened(true)}
+          >
+            <IconHelp size={20} />
+          </ActionIcon>
+        </Tooltip>
+        {/* rendered in a portal, so it takes no space in the bar */}
+        <LayerStackTutorial
+          opened={tutorialOpened}
+          onClose={() => setTutorialOpened(false)}
+        />
+
         <Button
           size="sm"
           radius="sm"

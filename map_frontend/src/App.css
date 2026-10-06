@@ -519,6 +519,182 @@ html {
   background-color: #f8fafc;
 }
 
+/* LAYER STACK TUTORIAL (popup opened from the top bar) */
+/* sidebar (overview + controls) | masking workflow */
+.tutorial {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3.6fr);
+
+  /* tracks the popup width (~92.6em wide) so the em-sized layout below
+     keeps its proportions at any window size */
+  font-size: clamp(10px, min(0.95vw, 1.69vh), 20px);
+  line-height: 1.4;
+  color: #111827;
+}
+
+/* the popup body has no padding: the text is inset here instead, so the
+   separator lines run edge to edge */
+.tutorial-sidebar {
+  padding: 1.1em 0 0;
+  /* same 2px line the left bar uses between its sections (.section-divider) */
+  border-right: 2px solid #5c5c5c;
+}
+
+.tutorial-overview {
+  padding: 0 1.25em;
+}
+
+/* 1.25em of the base size, in the heading's larger font */
+.tutorial-sidebar .tutorial-heading {
+  padding: 0 0.7em;
+}
+
+.tutorial-workflow {
+  padding: 1.1em 1.25em 1.25em;
+}
+
+.tutorial-divider {
+  margin: 1.2em 0 1em;
+  border-top: 2px solid #5c5c5c;
+}
+
+/* same look as the left bar's "Parameters / Data / Layer Stack" headings */
+.tutorial-heading {
+  margin: 0 0 0.4em;
+  font-size: 1.8em;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.tutorial-overview {
+  margin: 0;
+  font-size: 0.9em;
+}
+
+/* yellow marker behind key words */
+.tutorial-highlight {
+  padding: 0 0.15em;
+  color: inherit;
+  background-color: #ffee33;
+}
+
+/* one ruled row per control: icon | name + note */
+.tutorial-control {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7em;
+  padding: 0.6em 1.25em;
+  border-top: 1px solid #d1d5db;
+}
+
+.tutorial-control:last-child {
+  border-bottom: 1px solid #d1d5db;
+}
+
+/* fixed width (fits the eye pair) so every name lines up */
+.tutorial-control-icon {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 0.15em;
+
+  width: 2.7em;
+  height: 1.3em;
+
+  color: #374151;
+}
+
+.tutorial-control-name {
+  font-size: 0.9em;
+  font-weight: 600;
+}
+
+/* grey italic note, like the info line under each parameter slider */
+.tutorial-control-text {
+  font-size: 0.8em;
+  font-style: italic;
+  color: grey;
+}
+
+/* "Let's say we want to ..." line above the steps */
+.tutorial-goal {
+  margin: 0 0 1.2em;
+  font-size: 0.95em;
+}
+
+.tutorial-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.tutorial-step {
+  padding: 0.8em;
+}
+
+/* every second step is shaded to keep the columns apart */
+.tutorial-step:nth-child(even) {
+  background-color: #e2e8f0;
+}
+
+/* numbered rail: each line runs through the step padding to the next number */
+.tutorial-step-rail {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.4em;
+}
+
+.tutorial-step-number {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 2em;
+  height: 2em;
+
+  font-weight: 700;
+  color: var(--mantine-color-white);
+  background-color: var(--mantine-color-blue-filled);
+  border-radius: 50%;
+}
+
+.tutorial-step-rail::after {
+  content: "";
+  flex: 1;
+  margin-right: -1.6em;
+  border-top: 2px solid var(--mantine-color-blue-filled);
+}
+
+.tutorial-step:last-child .tutorial-step-rail::after {
+  display: none;
+}
+
+.tutorial-step-title {
+  font-weight: 600;
+}
+
+/* layer card screenshots have different shapes: same height box for all,
+   bottom-aligned so each card sits just above its map */
+.tutorial-stack-image {
+  display: block;
+  width: 100%;
+  height: 11em;
+  margin: 0.6em 0 0.6em;
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+.tutorial-map-image {
+  display: block;
+  width: 100%;
+  height: auto;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 3px;
+}
+
 /* UI LEFT */
 .left-ui {
   display: flex;
