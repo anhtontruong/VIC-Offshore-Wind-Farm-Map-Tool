@@ -1,0 +1,72 @@
+/* LANDING POINT */
+.landing-point-marker {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.landing-point-marker svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* POPUP */
+.cell-popup {
+  width: 240px;
+  font-family: var(--font-family-base);
+  font-size: 11px;
+  line-height: 1.3;
+  color: #111827;
+}
+
+/* Header */
+.cell-popup-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Rows */
+.cell-popup-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.cell-popup-label {
+  color: #5f636b;
+  font-weight: 400;
+  flex: 1;
+  min-width: 0;
+}
+
+.cell-popup-value {
+  color: #111827;
+  font-weight: 500;
+  text-align: right;
+  flex: 0 0 auto;
+  max-width: 110px;
+  word-break: break-word;
+}
+
+/* Additional information section */
+.cell-popup-section {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.cell-popup-section-title {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}

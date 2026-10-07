@@ -1,0 +1,47 @@
+.map-container {
+  height: 100%;
+  width: 100%;
+  /* temporarily set the background color so we can tell where the map container is positioned */
+  background-color: rgb(177, 177, 177);
+}
+
+.map-panel {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  min-width: 0;
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+.map-grid {
+  flex: 1;
+
+  display: grid;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+
+  gap: 2px;
+
+  overflow: hidden;
+}
+
+.map-grid.ONE_SCREEN {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+.map-grid.TWO_SCREEN {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: 1fr;
+}
+
+.map-grid.FOUR_SCREEN {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}

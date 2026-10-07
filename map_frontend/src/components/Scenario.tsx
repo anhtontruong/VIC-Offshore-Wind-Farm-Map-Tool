@@ -4,7 +4,7 @@ import { IconCurrentLocation, IconEraser } from "@tabler/icons-react";
 import { useExpandedContext } from "../hooks/useExpandedContext";
 import { INITIAL_CENTER, INITIAL_ZOOM } from "../constants/constants";
 import LeftBar from "./LeftBar";
-import Map from "./Map";
+import Map from "./Map/Map";
 import { ScreenMode, useAppContext } from "../hooks/useAppContext";
 import { useScenarioContext } from "../hooks/useScenarioContext";
 

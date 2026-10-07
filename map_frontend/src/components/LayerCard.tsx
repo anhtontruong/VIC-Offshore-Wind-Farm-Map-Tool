@@ -140,7 +140,7 @@ export default function LayerCard({
                 <ActionIcon
                   size="sm"
                   variant={layer.masking ? "light" : "subtle"}
-                  // matches the masking slider colour in App.css
+                  // matches the masking slider colour in styles/layer-stack.css
                   color={layer.masking ? "#334155" : "gray"}
                   aria-label="Mask out layers below"
                   aria-pressed={layer.masking}

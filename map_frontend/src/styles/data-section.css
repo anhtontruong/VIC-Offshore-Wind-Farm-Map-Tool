@@ -1,0 +1,39 @@
+/* DATA BUTTONS */
+.data-section {
+  margin: -1em -0.75em 0 -1em;
+  padding: 1em 0.75em 1em 1em;
+
+  background-color: #e9ecef;
+}
+
+.data-section .data-buttons {
+  margin-bottom: 0;
+}
+
+/* unselected buttons: Mantine's translucent light-blue turns muddy on the grey band, use white instead */
+.data-section .data-button[data-variant="light"] {
+  background: var(--mantine-color-white);
+  border: 1px solid var(--mantine-color-blue-2);
+}
+
+.data-section .data-button[data-variant="light"]:hover {
+  background: var(--mantine-color-blue-0);
+}
+
+.data-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  width: 100%;
+  margin-bottom: 1em;
+}
+
+.data-button {
+  width: 100%;
+}
+
+/* negative side margins cancel .left-bar-inner padding so the line spans the whole left bar */
+.section-divider {
+  margin: 0 -0.75em 1em -1em;
+  border-top: 2px solid #5c5c5c;
+}

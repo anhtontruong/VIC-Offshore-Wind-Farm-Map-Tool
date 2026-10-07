@@ -1,0 +1,48 @@
+/* SLIDER */
+.slider {
+  margin: 0 0 1em 0;
+}
+
+.slider-flex {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  width: 100%;
+}
+
+.param-slider {
+  flex: 1;
+  min-width: 0;
+}
+
+.slider-value {
+  width: 2ch;
+  flex-shrink: 0;
+}
+
+/* SUM 1 STATUS */
+.sum-one-message {
+  margin-top: 0.1em;
+  margin-bottom: 0.6em;
+  width: 100%;
+
+  align-self: center;
+  text-align: center;
+
+  font-size: small;
+  color: rgb(0, 100, 187);
+  font-weight: 500;
+
+  background-color: rgb(232, 231, 231);
+}
+
+.sum-one-status {
+  font-size: xx-large;
+  text-align: center;
+  align-self: center;
+}
+
+.sum-one-status p {
+  margin-top: 0.1em;
+  margin-bottom: 0.5em;
+}

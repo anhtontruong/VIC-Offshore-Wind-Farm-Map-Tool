@@ -44,10 +44,10 @@ export const LAYER_KEYS = Object.keys(LAYER_INFO) as LayerKey[];
 // # Heatmap Colours (shared by map paint expressions + legends)
 export const HEATMAP_COLORS = {
   zero: "rgba(255, 0, 0, 0.5)",
-  low: "#ffff3d",
-  high: "#70ff3c"
+  low: "rgb(255, 227, 41)",
+  high: "#44ff00"
 };
-export const HEATMAP_THRESHOLD_MW = 15;
+export const HEATMAP_RANGE_MW = [10, 15]; // gradient runs low -> high
 // aggregate heatmap (number of scenarios each cell has a solution in)
 export const AGGREGATE_COLORS = { min: "#fd5400", max: "#89ff52" };
 

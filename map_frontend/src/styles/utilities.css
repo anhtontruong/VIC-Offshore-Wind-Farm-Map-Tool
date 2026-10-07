@@ -1,0 +1,12 @@
+.nomp {
+  margin: 0;
+  border: 0;
+}
+
+.valid {
+  color: green;
+}
+
+.invalid {
+  color: red;
+}
