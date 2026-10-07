@@ -74,7 +74,7 @@ html {
   grid-template-rows: 1fr;
 }
 
-.map-grid.THREE_SCREEN {
+.map-grid.FOUR_SCREEN {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-rows: repeat(2, minmax(0, 1fr));
 }

@@ -34,6 +34,12 @@ interface LayerCardProps {
   handleListeners?: DraggableSyntheticListeners;
 }
 
+// ================ //
+//     COMPONENT
+// ================ //
+/**
+ * Card for a single layer in the Layer Stack.
+ */
 export default function LayerCard({
   name,
   info,
@@ -46,20 +52,25 @@ export default function LayerCard({
   handleAttributes,
   handleListeners
 }: LayerCardProps) {
+  // # Context
   const { expanded } = useExpandedContext();
 
+  // # Layer Info (null for the fixed base layer)
   const layerInfo = layer ? LAYER_INFO[layer.key] : null;
   const unit = layerInfo?.unit ? ` ${layerInfo.unit}` : "";
   const formatValue = (value: number) =>
     layerInfo ? value.toFixed(layerInfo.decimals) : "";
 
+  // # JSX
   return (
     <div
       ref={cardRef}
-      style={{
-        ...style,
-        ...(layer && { "--layer-color": LAYER_COLORS[layer.key].max })
-      } as CSSProperties}
+      style={
+        {
+          ...style,
+          ...(layer && { "--layer-color": LAYER_COLORS[layer.key].max })
+        } as CSSProperties
+      }
       className={`layer-card ${layer ? "" : "base"} ${
         layer && !layer.visible ? "hidden-layer" : ""
       } ${layer?.masking ? "masking-layer" : ""} ${dragging ? "dragging" : ""} ${
@@ -93,6 +104,7 @@ export default function LayerCard({
             )}
           </div>
 
+          {/* ACTIONS */}
           {layer && onChange && (
             <div className="layer-card-actions">
               <Tooltip label={layer.visible ? "Hide layer" : "Show layer"}>
@@ -144,6 +156,7 @@ export default function LayerCard({
         {/* SLIDERS */}
         {layer && layerInfo && onChange && (
           <div className="layer-card-body">
+            {/* RANGE */}
             <div className="layer-control-label">
               <span className="layer-control-name">
                 Range
@@ -177,6 +190,7 @@ export default function LayerCard({
               onChange={(range) => onChange({ range })}
             />
 
+            {/* OPACITY */}
             <div className="layer-control-label">
               <span>Opacity</span>
               <span className="layer-control-value">
@@ -189,6 +203,7 @@ export default function LayerCard({
               max={1}
               step={0.01}
               value={layer.opacity}
+              // a masking layer isn't drawn itself, so its opacity does nothing
               disabled={layer.masking}
               label={(value) => value.toFixed(2)}
               onChange={(opacity) => onChange({ opacity })}

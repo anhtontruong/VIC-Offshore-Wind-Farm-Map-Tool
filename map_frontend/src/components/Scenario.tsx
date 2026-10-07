@@ -8,13 +8,21 @@ import Map from "./Map";
 import { ScreenMode, useAppContext } from "../hooks/useAppContext";
 import { useScenarioContext } from "../hooks/useScenarioContext";
 
+// # Lambda Labels (parameter weights bar, shown when the UI is hidden)
 const LAMBDA_LABELS = [
   "Total Lifetime Cost",
   "Seabird Exposure",
   "Annual Wind Energy Production"
 ] as const;
 
+// ================ //
+//     COMPONENT
+// ================ //
+/**
+ * A single screen: just a map with its left bar and overlaid UI.
+ */
 export default function Scenario() {
+  // # Context + Refs
   const { expanded } = useExpandedContext();
   const mapRef = useRef<mapboxgl.Map | null>(null); // persists map instance
   const { center, zoom, clearAllPopups, screenMode, uiHidden } =
@@ -37,11 +45,14 @@ export default function Scenario() {
     });
   };
 
+  // # JSX
   return (
     <div className="map-panel">
       <div className="left">
+        {/* LEFT BAR */}
         <LeftBar />
         <div className="left-ui">
+          {/* CAMERA INFO */}
           <div className="left-ui-top">
             {!uiHidden && (
               <div className={`info ${expanded ? "expanded" : "collapsed"}`}>
@@ -49,6 +60,7 @@ export default function Scenario() {
               </div>
             )}
           </div>
+          {/* ACTION BUTTONS */}
           {!uiHidden && (
             <div className="left-ui-bottom">
               <Tooltip label="Reset Position" position="top">
@@ -75,6 +87,7 @@ export default function Scenario() {
         </div>
       </div>
 
+      {/* PARAMETER WEIGHTS (replaces the left bar when the UI is hidden) */}
       {uiHidden && (
         <div className="lambda-bar">
           {([0, 1, 2] as const).map((i) => (
@@ -86,6 +99,7 @@ export default function Scenario() {
         </div>
       )}
 
+      {/* MAP */}
       <Map mapRef={mapRef} />
     </div>
   );

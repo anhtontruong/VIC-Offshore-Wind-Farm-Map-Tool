@@ -6,14 +6,23 @@ import { useExpandedContext } from "../hooks/useExpandedContext";
 import { useAppContext } from "../hooks/useAppContext";
 import { useEffect, useRef } from "react";
 
+// ================ //
+//     COMPONENT
+// ================ //
+/**
+ * Scrollable contents of the left bar: the three parameter weight sliders with
+ * their sum-to-one check, the buttons that choose which data the map shows, and
+ * the Layer Stack.
+ */
 export default function LeftBarContent() {
+  // # Context
   const { getParam, setParam, params, viewing, setViewing } =
     useScenarioContext();
   const sum = getParam(0) + getParam(1) + getParam(2);
   const { expanded } = useExpandedContext();
   const { clearAllPopups } = useAppContext();
 
-  // Clear all popups (in every screen) when changing scenario but not on mount (otherwise split screen wipes popups)
+  // clears popups on every screen, but not on mount (otherwise split screen wipes popups)
   const paramsKey = params.join(",");
   const firstRun = useRef(true);
   useEffect(() => {
@@ -24,6 +33,7 @@ export default function LeftBarContent() {
     clearAllPopups();
   }, [paramsKey]);
 
+  // # JSX
   return (
     <div
       className={`left-bar-content ${
@@ -38,6 +48,7 @@ export default function LeftBarContent() {
         scrollbars="y"
       >
         <div className="left-bar-inner">
+          {/* PARAMETERS */}
           <Title order={1} className="sub-heading">
             Parameters
           </Title>
@@ -63,6 +74,7 @@ export default function LeftBarContent() {
             setParam={setParam(2)}
           />
 
+          {/* SUM CHECK */}
           <div
             className={`nomp sum-one-status ${sum === 1 ? "valid" : "invalid"}`}
           >
@@ -77,6 +89,7 @@ export default function LeftBarContent() {
 
           <div className="section-divider" />
 
+          {/* DATA (what the base layer of the map shows) */}
           <div className="data-section">
             <Title order={1} className="sub-heading">
               Data
@@ -129,6 +142,7 @@ export default function LeftBarContent() {
 
           <div className="section-divider" />
 
+          {/* LAYER STACK */}
           <Title order={1} className="sub-heading">
             Layer Stack
           </Title>

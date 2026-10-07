@@ -9,9 +9,11 @@ import {
 } from "@tabler/icons-react";
 import type { ReactNode } from "react";
 
-// em so the icons scale with the popup text (see .tutorial in App.css)
+// # Icon Size
+// em so the icons scale with the popup text
 const ICON_SIZE = "1.2em";
 
+// # Controls
 // same icons as the layer cards (LayerCard.tsx)
 const CONTROLS: { icon: ReactNode; name: string; text: string }[] = [
   {
@@ -51,6 +53,7 @@ const CONTROLS: { icon: ReactNode; name: string; text: string }[] = [
   }
 ];
 
+// # Steps (masking workflow)
 // step n uses public/images/LayerStack{n}.webp + Map{n}.webp
 // highlight = leading word(s) of the title given the yellow marker
 const STEPS = [
@@ -65,10 +68,18 @@ interface LayerStackTutorialProps {
   onClose: () => void;
 }
 
+// ================ //
+//     COMPONENT
+// ================ //
+/**
+ * Modal tutorial for the Layer Stack. Explains the draw order and each layer
+ * card control, then walks through a step-by-step masking example with images.
+ */
 export default function LayerStackTutorial({
   opened,
   onClose
 }: LayerStackTutorialProps) {
+  // # JSX
   return (
     <Modal
       opened={opened}
@@ -76,17 +87,14 @@ export default function LayerStackTutorial({
       centered
       title="Layer Stack Tutorial"
       // as wide as a 16:9 box at 88% of the window, height ends at the content
-      // (wrapped in calc() so Mantine passes it through as-is)
       size="calc(min(88vw, 88vh * 16 / 9))"
       radius={3}
       styles={{
-        // inline so they win over Mantine's stylesheet (imported after App.css)
-        // title bar: Data section grey + the left bar's section line
+        // title bar: data section grey + section line
         header: {
           backgroundColor: "#e9ecef",
           borderBottom: "2px solid #5c5c5c"
         },
-        // scales like .tutorial in App.css, clearly the largest text
         title: {
           fontWeight: 600,
           fontSize: "clamp(22px, min(2vw, 3.5vh), 40px)",
@@ -100,6 +108,7 @@ export default function LayerStackTutorial({
       <div className="tutorial">
         {/* SIDEBAR */}
         <div className="tutorial-sidebar">
+          {/* OVERVIEW */}
           <h3 className="tutorial-heading">Overview</h3>
           <p className="tutorial-overview">
             <b>
@@ -113,6 +122,7 @@ export default function LayerStackTutorial({
 
           <div className="tutorial-divider" />
 
+          {/* CONTROLS */}
           <h3 className="tutorial-heading">Controls</h3>
           {CONTROLS.map((control) => (
             <div className="tutorial-control" key={control.name}>
@@ -133,6 +143,7 @@ export default function LayerStackTutorial({
             shallow and not too deep (25-60 m), and hide everything else.
           </p>
 
+          {/* STEPS */}
           <div className="tutorial-steps">
             {STEPS.map(({ title, highlight }, index) => (
               <div className="tutorial-step" key={title}>

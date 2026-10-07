@@ -12,11 +12,22 @@ import { IconHelp } from "@tabler/icons-react";
 import { ScreenMode, useAppContext } from "../hooks/useAppContext";
 import LayerStackTutorial from "./LayerStackTutorial";
 
+// ================ //
+//     COMPONENT
+// ================ //
+/**
+ * Top menu bar of the app ("Hide UI" switch, tutorial,
+ * 1, 2 and 4 screens).
+ */
 export default function TopBar() {
+  // # Context
   const { screenMode, setScreenMode, uiHidden, setUiHidden } = useAppContext();
+
+  // # State
   // starts open: the tutorial shows on every page load
   const [tutorialOpened, setTutorialOpened] = useState(true);
 
+  // # JSX
   return (
     <Menubar
       w="100%"
@@ -29,7 +40,7 @@ export default function TopBar() {
         borderRadius: 0,
       }}
     >
-      {/* Left side */}
+      {/* LEFT SIDE */}
       <Switch
         label="Hide UI"
         labelPosition="left"
@@ -39,8 +50,9 @@ export default function TopBar() {
         styles={{ label: { fontWeight: 600 } }}
       />
 
-      {/* Right side */}
+      {/* RIGHT SIDE */}
       <Group gap={4}>
+        {/* TUTORIAL */}
         <Tooltip label="Layer Stack tutorial">
           <ActionIcon
             size={36} // same height as the size="sm" buttons
@@ -59,6 +71,7 @@ export default function TopBar() {
           onClose={() => setTutorialOpened(false)}
         />
 
+        {/* SCREEN MODE */}
         <Button
           size="sm"
           radius="sm"
@@ -91,12 +104,12 @@ export default function TopBar() {
           size="sm"
           radius="sm"
           variant={
-            screenMode === ScreenMode.Three_Screen
+            screenMode === ScreenMode.Four_Screen
               ? "filled"
               : "subtle"
           }
           color="dark"
-          onClick={() => setScreenMode(ScreenMode.Three_Screen)}
+          onClick={() => setScreenMode(ScreenMode.Four_Screen)}
         >
           4 Screens
         </Button>

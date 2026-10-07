@@ -65,6 +65,11 @@ const BASE_LAYER_IDS = [
 // ================ //
 //     COMPONENT
 // ================ //
+/**
+ * Mapbox map of a SINGLE scenario. Draws the selected Data, Layer Stack overlays and
+ * masks, landing points and the legend. Keeps the camera, hovered cell,
+ * selected cell and popups in sync with every other screen.
+ */
 export default function Map({ mapRef }: MapProps) {
   // # Refs
   const mapContainerRef = useRef<HTMLDivElement | null>(null); // exposes html
@@ -795,6 +800,10 @@ interface GradientLegendProps {
   colors: { min: string; max: string };
 }
 
+/**
+ * Map legend entry showing a title above a min-to-max colour gradient with its
+ * range labels.
+ */
 function GradientLegend({
   title,
   unit,
@@ -807,6 +816,7 @@ function GradientLegend({
   const formatValue = (value: number) =>
     unit ? `${value.toFixed(2)} ${unit}` : value.toFixed(2);
 
+  // # JSX
   return (
     <div className="map-legend">
       <div className="map-legend-title">{title}</div>

@@ -9,20 +9,32 @@ interface ParameterSliderProps {
   setParam: (value: number) => void;
 }
 
+// ================ //
+//     COMPONENT
+// ================ //
+/**
+ * Labelled slider for one of the three scenario weights. Its maximum is limited
+ * so the weights can never sum to more than 1.
+ */
 export default function ParameterSlider({
   name,
   info,
   param,
   setParam
 }: ParameterSliderProps) {
+  // # Context
   const { expanded } = useExpandedContext();
   const { getParam } = useScenarioContext();
 
+  // SUM CHECK
+  // tolerance absorbs the float error from the 1/3 steps
   const currentSum = getParam(0) + getParam(1) + getParam(2);
   const isSumToOne = Math.abs(currentSum - 1) < 1e-10;
 
+  // # JSX
   return (
     <div className="slider">
+      {/* NAME */}
       <Title
         order={5}
         className={`name ${expanded ? "content-expanded" : "content-collapsed"}`}
@@ -36,11 +48,13 @@ export default function ParameterSlider({
       >
         <i>{info}</i>
       </Title>
+      {/* SLIDER */}
       <div className="slider-flex">
         <div className="param-slider">
           <Slider
             domain={[0, 1]}
             min={0}
+            // max = what's left once the other two weights are taken
             max={1 - currentSum + param}
             step={1 / 3}
             marks={[
@@ -53,6 +67,7 @@ export default function ParameterSlider({
             onChange={setParam}
           />
         </div>
+        {/* VALUE */}
         <p className={`nomp slider-value ${isSumToOne ? "" : "invalid"}`}>
           {param.toFixed(2)}
         </p>

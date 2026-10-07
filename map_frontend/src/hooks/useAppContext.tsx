@@ -12,7 +12,7 @@ import { INITIAL_CENTER, INITIAL_ZOOM } from "../constants/constants";
 export const ScreenMode = {
   One_Screen: "ONE_SCREEN",
   Two_Screen: "TWO_SCREEN",
-  Three_Screen: "THREE_SCREEN"
+  Four_Screen: "FOUR_SCREEN"
 } as const;
 
 type ScreenMode = (typeof ScreenMode)[keyof typeof ScreenMode];

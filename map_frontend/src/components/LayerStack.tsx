@@ -31,6 +31,7 @@ import {
 } from "../hooks/useScenarioContext";
 import { LAYER_INFO, type LayerKey } from "../constants/constants";
 
+// # Viewing Labels (shown on the Base Layer card)
 const VIEWING_LABELS: Record<Viewing, string> = {
   [Viewing.Heatmap]: "Heatmap",
   [Viewing.Aggregate_Heatmap]: "Aggregate Heatmap",
@@ -39,9 +40,21 @@ const VIEWING_LABELS: Record<Viewing, string> = {
   [Viewing.Bird_Risk]: "Bird Risk"
 };
 
+// ================ //
+//     COMPONENT
+// ================ //
+/**
+ * Drag-to-reorder list of the scenario's overlay layers, with a "Reset all
+ * ranges" button and the fixed Base Layer card at the bottom. The top card is
+ * drawn on top on the map.
+ */
 export default function LayerStack() {
+  // # Context
   const { layers, setLayer, reorderLayers, viewing } = useScenarioContext();
 
+  // # Sensors
+  // pointer must move 4px before a drag starts (so plain clicks still work)
+  // touch must be held 150ms (so the list can still be scrolled)
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(TouchSensor, {
@@ -52,14 +65,16 @@ export default function LayerStack() {
     })
   );
 
+  // # Helper Functions
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (!over || active.id === over.id) return;
     reorderLayers(active.id as LayerKey, over.id as LayerKey);
   };
 
+  // # JSX
   return (
     <>
-      {/* resets range + invert on every layer */}
+      {/* RESET (range + invert on every layer) */}
       <div className="layer-stack-toolbar">
         <Button
           size="compact-xs"
@@ -75,7 +90,7 @@ export default function LayerStack() {
       </div>
 
       <div className="layer-stack">
-        {/* sortable layers (top of list = drawn on top) */}
+        {/* SORTABLE LAYERS (top of list = drawn on top) */}
         <div className="layer-stack-sortable">
           <DndContext
             sensors={sensors}
@@ -98,7 +113,7 @@ export default function LayerStack() {
           </DndContext>
         </div>
 
-        {/* base layer, fixed at the bottom */}
+        {/* BASE LAYER (fixed at the bottom) */}
         <LayerCard name="Base Layer" info={VIEWING_LABELS[viewing]} />
       </div>
     </>
@@ -113,7 +128,12 @@ interface SortableLayerCardProps {
   onChange: (patch: Partial<Layer>) => void;
 }
 
+/**
+ * Wraps a LayerCard with the drag-and-drop wiring that makes it sortable within
+ * the LayerStack.
+ */
 function SortableLayerCard({ layer, onChange }: SortableLayerCardProps) {
+  // # Sortable
   const {
     attributes,
     listeners,
@@ -124,6 +144,7 @@ function SortableLayerCard({ layer, onChange }: SortableLayerCardProps) {
     isDragging
   } = useSortable({ id: layer.key });
 
+  // # JSX
   return (
     <LayerCard
       name={LAYER_INFO[layer.key].name}
