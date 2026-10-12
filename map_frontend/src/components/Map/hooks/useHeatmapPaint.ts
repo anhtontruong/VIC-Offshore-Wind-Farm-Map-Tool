@@ -9,14 +9,17 @@ import {
 import { AGGREGATE_FILL_COLOR, type MapRef } from "../mapHelpers";
 
 /**
- * Map Slider + Data Update: repaints the base heatmap when the parameter
- * sliders move or a different Data is selected.
+ * Map Slider + Data + Base Layer Update: repaints the base heatmap when the
+ * parameter sliders move, a different Data is selected or the Base Layer card
+ * changes (opacity, fill, solution outline).
  */
 export function useHeatmapPaint(
   mapRef: MapRef,
-  gridFillColor: mapboxgl.Expression
+  mapLoaded: boolean,
+  gridFillColor: mapboxgl.Expression,
+  paramKey: string
 ) {
-  const { params, viewing } = useScenarioContext();
+  const { params, viewing, baseLayer } = useScenarioContext();
 
   // ===================
   //  Map Slider Update
@@ -39,20 +42,6 @@ export function useHeatmapPaint(
 
     if (!map) return;
     if (!map.getLayer("heatmap-fill")) return;
-
-    // Base layers are fully transparent where the value is 0
-    // (cells with no data have the property missing, which counts as 0)
-    const zeroProp: Partial<Record<Viewing, string>> = {
-      [Viewing.Water_Depth]: "depth_m",
-      [Viewing.Wind_Speed]: "wind_speed_m_s",
-      [Viewing.Bird_Risk]: "e_w"
-    };
-    const prop = zeroProp[viewing];
-    map.setPaintProperty(
-      "heatmap-fill",
-      "fill-opacity",
-      prop ? ["case", ["==", ["to-number", ["get", prop], 0], 0], 0, 0.3] : 0.3
-    );
 
     // CASE: Viewing Heatmap
     if (viewing === Viewing.Heatmap) {
@@ -103,4 +92,53 @@ export function useHeatmapPaint(
       ]);
     }
   }, [viewing]);
+
+  // =====================
+  //  Base Opacity Update
+  // =====================
+  useEffect(() => {
+    const map = mapRef.current;
+
+    if (!map || !mapLoaded) return;
+
+    // fill off = transparent (not hidden, so hover/click on cells still work)
+    const opacity = baseLayer.fill ? baseLayer.opacity : 0;
+
+    // Base layers are fully transparent where the value is 0
+    // (cells with no data have the property missing, which counts as 0)
+    const zeroProp: Partial<Record<Viewing, string>> = {
+      [Viewing.Water_Depth]: "depth_m",
+      [Viewing.Wind_Speed]: "wind_speed_m_s",
+      [Viewing.Bird_Risk]: "e_w"
+    };
+    const prop = zeroProp[viewing];
+    map.setPaintProperty(
+      "heatmap-fill",
+      "fill-opacity",
+      prop
+        ? ["case", ["==", ["to-number", ["get", prop], 0], 0], 0, opacity]
+        : opacity
+    );
+  }, [viewing, baseLayer.opacity, baseLayer.fill, mapLoaded]);
+
+  // ==========================
+  //  Solution Outline Update
+  // ==========================
+  // cells with a solution (> 0 MW) for this screen's weighting, on every Data
+  useEffect(() => {
+    const map = mapRef.current;
+
+    if (!map || !mapLoaded) return;
+
+    map.setFilter("heatmap-solution-line", [
+      ">",
+      ["to-number", ["get", paramKey], 0],
+      0
+    ]);
+    map.setLayoutProperty(
+      "heatmap-solution-line",
+      "visibility",
+      baseLayer.solutionOutline ? "visible" : "none"
+    );
+  }, [paramKey, baseLayer.solutionOutline, mapLoaded]);
 }

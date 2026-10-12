@@ -50,7 +50,8 @@ const VIEWING_LABELS: Record<Viewing, string> = {
  */
 export default function LayerStack() {
   // # Context
-  const { layers, setLayer, reorderLayers, viewing } = useScenarioContext();
+  const { layers, setLayer, reorderLayers, viewing, baseLayer, setBaseLayer } =
+    useScenarioContext();
 
   // # Sensors
   // pointer must move 4px before a drag starts (so plain clicks still work)
@@ -114,7 +115,12 @@ export default function LayerStack() {
         </div>
 
         {/* BASE LAYER (fixed at the bottom) */}
-        <LayerCard name="Base Layer" info={VIEWING_LABELS[viewing]} />
+        <LayerCard
+          name="Base Layer"
+          info={VIEWING_LABELS[viewing]}
+          baseLayer={baseLayer}
+          onBaseChange={setBaseLayer}
+        />
       </div>
     </>
   );

@@ -5,7 +5,13 @@ import {
   type ReactNode
 } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
-import { LAYER_INFO, LAYER_KEYS, type LayerKey } from "../constants/constants";
+import {
+  BASE_LAYER_OPACITY,
+  LAYER_INFO,
+  LAYER_KEYS,
+  LAYER_OPACITY,
+  type LayerKey
+} from "../constants/constants";
 
 export const Viewing = {
   Heatmap: "HEATMAP",
@@ -24,6 +30,13 @@ export type Layer = {
   visible: boolean;
   inverted: boolean;
   masking: boolean;
+};
+
+// controls on the fixed Base Layer card
+export type BaseLayer = {
+  opacity: number;
+  fill: boolean; // cell fill colour shown
+  solutionOutline: boolean; // thick outline on cells with a solution (> 0 MW)
 };
 
 // full range + not inverted (what the layer stack reset buttons restore)
@@ -48,6 +61,8 @@ type ScenarioContextType = {
   layers: Layer[]; // top -> bottom, base heatmap is implicit below
   setLayer: (key: LayerKey) => (patch: Partial<Layer>) => void;
   reorderLayers: (fromKey: LayerKey, toKey: LayerKey) => void;
+  baseLayer: BaseLayer;
+  setBaseLayer: (patch: Partial<BaseLayer>) => void;
 };
 
 export const ScenarioContext = createContext<ScenarioContextType | null>(null);
@@ -83,12 +98,17 @@ export function ScenarioProvider({ children }: ScenarioProviderProps) {
     LAYER_KEYS.map((key) => ({
       key,
       range: [LAYER_INFO[key].min, LAYER_INFO[key].max],
-      opacity: 0.3,
+      opacity: LAYER_OPACITY,
       visible: false,
       inverted: false,
       masking: false
     }))
   );
+  const [baseLayer, setBaseLayerState] = useState<BaseLayer>({
+    opacity: BASE_LAYER_OPACITY,
+    fill: true,
+    solutionOutline: false
+  });
 
   const getParam = (index: 0 | 1 | 2) => params[index];
 
@@ -116,6 +136,10 @@ export function ScenarioProvider({ children }: ScenarioProviderProps) {
     );
   };
 
+  const setBaseLayer = (patch: Partial<BaseLayer>) => {
+    setBaseLayerState((prev) => ({ ...prev, ...patch }));
+  };
+
   return (
     <ScenarioContext.Provider
       value={{
@@ -126,7 +150,9 @@ export function ScenarioProvider({ children }: ScenarioProviderProps) {
         setViewing,
         layers,
         setLayer,
-        reorderLayers
+        reorderLayers,
+        baseLayer,
+        setBaseLayer
       }}
     >
       {children}

@@ -1,9 +1,11 @@
 import { ActionIcon, RangeSlider, Slider, Text, Tooltip } from "@mantine/core";
 import {
+  IconBorderOuter,
   IconEye,
   IconEyeOff,
   IconGripVertical,
   IconMask,
+  IconPaint,
   IconRefresh,
   IconSquareToggle
 } from "@tabler/icons-react";
@@ -16,6 +18,7 @@ import { LAYER_COLORS, LAYER_INFO } from "../constants/constants";
 import {
   fullRange,
   isFullRange,
+  type BaseLayer,
   type Layer
 } from "../hooks/useScenarioContext";
 import { useExpandedContext } from "../hooks/useExpandedContext";
@@ -25,6 +28,9 @@ interface LayerCardProps {
   info?: string;
   layer?: Layer; // omitted for the fixed base layer (no controls)
   onChange?: (patch: Partial<Layer>) => void;
+  // only for the fixed base layer
+  baseLayer?: BaseLayer;
+  onBaseChange?: (patch: Partial<BaseLayer>) => void;
   // sortable wiring (from useSortable), omitted for the fixed base layer
   cardRef?: Ref<HTMLDivElement>;
   handleRef?: Ref<HTMLDivElement>;
@@ -45,6 +51,8 @@ export default function LayerCard({
   info,
   layer,
   onChange,
+  baseLayer,
+  onBaseChange,
   cardRef,
   handleRef,
   style,
@@ -151,6 +159,41 @@ export default function LayerCard({
               </Tooltip>
             </div>
           )}
+
+          {/* BASE LAYER ACTIONS */}
+          {baseLayer && onBaseChange && (
+            <div className="layer-card-actions">
+              <Tooltip
+                label={baseLayer.fill ? "Hide cell fill" : "Show cell fill"}
+              >
+                <ActionIcon
+                  size="sm"
+                  variant={baseLayer.fill ? "light" : "subtle"}
+                  color={baseLayer.fill ? "blue" : "gray"}
+                  aria-label={baseLayer.fill ? "Hide cell fill" : "Show cell fill"}
+                  aria-pressed={baseLayer.fill}
+                  onClick={() => onBaseChange({ fill: !baseLayer.fill })}
+                >
+                  <IconPaint size={16} />
+                </ActionIcon>
+              </Tooltip>
+
+              <Tooltip label="Outline cells with a solution">
+                <ActionIcon
+                  size="sm"
+                  variant={baseLayer.solutionOutline ? "light" : "subtle"}
+                  color={baseLayer.solutionOutline ? "blue" : "gray"}
+                  aria-label="Outline cells with a solution"
+                  aria-pressed={baseLayer.solutionOutline}
+                  onClick={() =>
+                    onBaseChange({ solutionOutline: !baseLayer.solutionOutline })
+                  }
+                >
+                  <IconBorderOuter size={16} />
+                </ActionIcon>
+              </Tooltip>
+            </div>
+          )}
         </div>
 
         {/* SLIDERS */}
@@ -207,6 +250,29 @@ export default function LayerCard({
               disabled={layer.masking}
               label={(value) => value.toFixed(2)}
               onChange={(opacity) => onChange({ opacity })}
+            />
+          </div>
+        )}
+
+        {/* BASE LAYER OPACITY */}
+        {baseLayer && onBaseChange && (
+          <div className="layer-card-body">
+            <div className="layer-control-label">
+              <span>Opacity</span>
+              <span className="layer-control-value">
+                {baseLayer.opacity.toFixed(2)}
+              </span>
+            </div>
+            <Slider
+              size="sm"
+              min={0}
+              max={1}
+              step={0.01}
+              value={baseLayer.opacity}
+              // no fill, nothing for opacity to act on
+              disabled={!baseLayer.fill}
+              label={(value) => value.toFixed(2)}
+              onChange={(opacity) => onBaseChange({ opacity })}
             />
           </div>
         )}

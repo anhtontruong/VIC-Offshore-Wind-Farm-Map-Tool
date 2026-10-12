@@ -59,7 +59,7 @@ export default function Map({ mapRef }: MapProps) {
   useMapResize(mapRef, mapContainerRef, syncingRef);
   useCellHighlight(mapRef, mapLoaded);
   useCellPopups(mapRef, popupsRef, paramKeyRef, mapLoaded);
-  useHeatmapPaint(mapRef, gridFillColor);
+  useHeatmapPaint(mapRef, mapLoaded, gridFillColor, paramKeyRef.current);
   useLayerStack(mapRef, mapLoaded);
 
   // # JSX

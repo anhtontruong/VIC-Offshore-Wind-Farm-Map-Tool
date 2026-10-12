@@ -41,6 +41,10 @@ export type LayerKey = keyof typeof LAYER_INFO;
 
 export const LAYER_KEYS = Object.keys(LAYER_INFO) as LayerKey[];
 
+// default opacities (each card's slider starts here)
+export const BASE_LAYER_OPACITY = 0.3;
+export const LAYER_OPACITY = 0.3;
+
 // # Heatmap Colours (shared by map paint expressions + legends)
 export const HEATMAP_COLORS = {
   zero: "rgba(255, 0, 0, 0.5)",
@@ -50,6 +54,8 @@ export const HEATMAP_COLORS = {
 export const HEATMAP_RANGE_MW = [10, 15]; // gradient runs low -> high
 // aggregate heatmap (number of scenarios each cell has a solution in)
 export const AGGREGATE_COLORS = { min: "#fd5400", max: "#89ff52" };
+// thick outline on cells with a solution (Base Layer card toggle)
+export const SOLUTION_OUTLINE_COLOR = "#fffb00";
 
 // # Layer Colours (shared by map paint expressions, legends + layer cards)
 export const DEPTH_COLORS = { min: "#96fcff", max: "#00106a" };

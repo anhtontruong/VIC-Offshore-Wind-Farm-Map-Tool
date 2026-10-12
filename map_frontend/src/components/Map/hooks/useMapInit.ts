@@ -7,7 +7,8 @@ import {
   LANDING_POINT_COLOR,
   LANDING_POINTS,
   LAYER_COLORS,
-  LAYER_KEYS
+  LAYER_KEYS,
+  SOLUTION_OUTLINE_COLOR
 } from "../../../constants/constants";
 import {
   MAP_BOUNDS,
@@ -111,8 +112,8 @@ export function useMapInit({
         type: "fill",
         source: "heatmap",
         paint: {
-          "fill-color": gridFillColor,
-          "fill-opacity": 0.3
+          "fill-color": gridFillColor
+          // fill-opacity set by useHeatmapPaint (Base Layer card)
         }
       });
 
@@ -125,6 +126,20 @@ export function useMapInit({
           "line-color": "#000000",
           "line-width": 0.5,
           "line-opacity": ["interpolate", ["linear"], ["zoom"], 8, 0, 12, 1]
+        }
+      });
+
+      // SOLUTION OUTLINE (cells with a solution, filter/visibility set by useHeatmapPaint)
+      // not in BASE_LAYER_IDS, so masks don't cut it out
+      mapRef.current.addLayer({
+        id: "heatmap-solution-line",
+        type: "line",
+        source: "heatmap",
+        layout: { visibility: "none" },
+        paint: {
+          "line-color": SOLUTION_OUTLINE_COLOR,
+          // thins out when zoomed out (same zoom range as the grid outline fade)
+          "line-width": ["interpolate", ["linear"], ["zoom"], 8, 1, 12, 3]
         }
       });
 
