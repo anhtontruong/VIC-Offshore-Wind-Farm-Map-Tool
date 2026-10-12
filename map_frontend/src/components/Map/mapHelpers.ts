@@ -1,11 +1,7 @@
 import type { RefObject } from "react";
 import rangeJSON from "../../../../heatmap_creation_script/range.json";
 import type { Layer } from "../../hooks/useScenarioContext";
-import {
-  AGGREGATE_COLORS,
-  HEATMAP_COLORS,
-  HEATMAP_RANGE_MW
-} from "../../constants/constants";
+import { HEATMAP_COLORS, HEATMAP_RANGE_MW } from "../../constants/constants";
 
 // a screen's map instance, passed to every map hook
 export type MapRef = RefObject<mapboxgl.Map | null>;
@@ -14,25 +10,16 @@ export type MapRef = RefObject<mapboxgl.Map | null>;
 //     CONSTANTS
 // ================ //
 // # Aggregate Heatmap (number of scenarios each cell has a solution in)
-// gradient covers cells with a solution, 0 gets the heatmap's zero colour
-export const AGGREGATE_RANGE = [
-  Math.max(rangeJSON.n_solutions[0], 1),
-  rangeJSON.n_solutions[1]
-];
+export const AGGREGATE_RANGE = [0, rangeJSON.n_solutions[1]];
 export const AGGREGATE_FILL_COLOR = [
   "case",
   ["==", ["get", "n_solutions"], null],
   "rgba(0, 0, 0, 0)",
-  ["==", ["get", "n_solutions"], 0],
-  HEATMAP_COLORS.zero,
   [
     "interpolate",
     ["linear"],
     ["get", "n_solutions"],
-    AGGREGATE_RANGE[0],
-    AGGREGATE_COLORS.min,
-    AGGREGATE_RANGE[1],
-    AGGREGATE_COLORS.max
+    ...rampStops(AGGREGATE_RANGE)
   ]
 ] satisfies mapboxgl.Expression;
 
@@ -65,21 +52,21 @@ export function buildGridFillColor(paramKey: string) {
     ["==", ["get", paramKey], null],
     "rgba(0, 0, 0, 0)",
     [
-      "step",
+      "interpolate",
+      ["linear"],
       ["get", paramKey],
-      HEATMAP_COLORS.zero,
-      0.0000001,
-      [
-        "interpolate",
-        ["linear"],
-        ["get", paramKey],
-        HEATMAP_RANGE_MW[0],
-        HEATMAP_COLORS.low,
-        HEATMAP_RANGE_MW[1],
-        HEATMAP_COLORS.high
-      ]
+      ...rampStops(HEATMAP_RANGE_MW)
     ]
   ] satisfies mapboxgl.Expression;
+}
+
+// heatmap ramp colours spread evenly over [min, max], as interpolate stops
+function rampStops([min, max]: number[]) {
+  const ramp = HEATMAP_COLORS.ramp;
+  return ramp.flatMap((color, i) => [
+    min + ((max - min) * i) / (ramp.length - 1),
+    color
+  ]);
 }
 
 export function ldGeoJSONToGeoJSON(ldgeojson: string) {

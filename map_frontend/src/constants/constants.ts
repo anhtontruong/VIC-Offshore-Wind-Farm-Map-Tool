@@ -42,23 +42,26 @@ export type LayerKey = keyof typeof LAYER_INFO;
 export const LAYER_KEYS = Object.keys(LAYER_INFO) as LayerKey[];
 
 // default opacities (each card's slider starts here)
-export const BASE_LAYER_OPACITY = 0.3;
+export const BASE_LAYER_OPACITY = 0.75;
 export const LAYER_OPACITY = 0.3;
 
 // # Heatmap Colours (shared by map paint expressions + legends)
 export const HEATMAP_COLORS = {
-  zero: "rgba(255, 0, 0, 0.5)",
-  low: "rgb(255, 227, 41)",
-  high: "#44ff00"
+  // Phosphor "hot", OKLab, concave up, 32 steps (low -> high)
+  // also used by the aggregate heatmap (number of scenarios each cell has a solution in)
+  ramp: [
+    "#000000", "#000000", "#030000", "#090000", "#130000", "#1e0000", "#290000", "#340000",
+    "#410000", "#4d0000", "#5a0000", "#670000", "#740000", "#820200", "#8d0f00", "#981a00",
+    "#a42400", "#ae2f00", "#b93900", "#c34300", "#cd4d00", "#d75800", "#e26200", "#eb6c00",
+    "#f57601", "#ff8102", "#ff9317", "#ffa426", "#ffb436", "#ffc344", "#ffd253", "#ffe061"
+  ]
 };
-export const HEATMAP_RANGE_MW = [10, 15]; // gradient runs low -> high
-// aggregate heatmap (number of scenarios each cell has a solution in)
-export const AGGREGATE_COLORS = { min: "#fd5400", max: "#89ff52" };
+export const HEATMAP_RANGE_MW = [0, 15]; // gradient runs low -> high
 // thick outline on cells with a solution (Base Layer card toggle)
-export const SOLUTION_OUTLINE_COLOR = "#fffb00";
+export const SOLUTION_OUTLINE_COLOR = "#fff200";
 
 // # Layer Colours (shared by map paint expressions, legends + layer cards)
-export const DEPTH_COLORS = { min: "#96fcff", max: "#00106a" };
+export const DEPTH_COLORS = { min: "#96fcff", max: "#020f5b" };
 export const WIND_COLORS = { min: "#b8007a" , max: "#ff6f00"};
 export const BIRD_COLORS = { min: "#f5dd9a", max: "#ff3939" };
 const SHORE_COLORS = { min: "#d9f99d", max: "#145e00" };

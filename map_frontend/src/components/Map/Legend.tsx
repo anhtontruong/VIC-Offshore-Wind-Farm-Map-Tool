@@ -1,7 +1,6 @@
 import rangeJSON from "../../../../heatmap_creation_script/range.json";
 import { Viewing, type Layer } from "../../hooks/useScenarioContext";
 import {
-  AGGREGATE_COLORS,
   BIRD_COLORS,
   DEPTH_COLORS,
   HEATMAP_COLORS,
@@ -71,7 +70,7 @@ interface DataLegendProps {
  * Map legend entry for the selected Data.
  */
 function DataLegend({ viewing }: DataLegendProps) {
-  // CASE: Gradient for cells with capacity + discrete zero
+  // CASE: Capacity gradient
   if (viewing === Viewing.Heatmap) {
     return (
       <div className="map-legend">
@@ -80,7 +79,7 @@ function DataLegend({ viewing }: DataLegendProps) {
           <div
             className="map-legend-gradient"
             style={{
-              background: `linear-gradient(to right, ${HEATMAP_COLORS.low}, ${HEATMAP_COLORS.high})`
+              background: `linear-gradient(to right, ${HEATMAP_COLORS.ramp.join(", ")})`
             }}
           />
           <div className="map-legend-labels">
@@ -88,18 +87,11 @@ function DataLegend({ viewing }: DataLegendProps) {
             <span>{`${HEATMAP_RANGE_MW[1]} MW`}</span>
           </div>
         </div>
-        <div className="map-legend-row">
-          <span
-            className="map-legend-swatch"
-            style={{ backgroundColor: HEATMAP_COLORS.zero }}
-          />
-          <span>0 MW</span>
-        </div>
       </div>
     );
   }
 
-  // CASE: Gradient for cells with a solution + discrete zero
+  // CASE: Number of solutions gradient
   if (viewing === Viewing.Aggregate_Heatmap) {
     return (
       <div className="map-legend">
@@ -108,20 +100,13 @@ function DataLegend({ viewing }: DataLegendProps) {
           <div
             className="map-legend-gradient"
             style={{
-              background: `linear-gradient(to right, ${AGGREGATE_COLORS.min}, ${AGGREGATE_COLORS.max})`
+              background: `linear-gradient(to right, ${HEATMAP_COLORS.ramp.join(", ")})`
             }}
           />
           <div className="map-legend-labels">
             <span>{AGGREGATE_RANGE[0]}</span>
             <span>{AGGREGATE_RANGE[1]}</span>
           </div>
-        </div>
-        <div className="map-legend-row">
-          <span
-            className="map-legend-swatch"
-            style={{ backgroundColor: HEATMAP_COLORS.zero }}
-          />
-          <span>0 scenario solutions</span>
         </div>
       </div>
     );
