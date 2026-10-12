@@ -1,7 +1,11 @@
 import type { RefObject } from "react";
 import rangeJSON from "../../../../heatmap_creation_script/range.json";
 import type { Layer } from "../../hooks/useScenarioContext";
-import { HEATMAP_COLORS, HEATMAP_RANGE_MW } from "../../constants/constants";
+import {
+  HEATMAP_COLORS,
+  HEATMAP_RANGE_MW,
+  type LayerColors
+} from "../../constants/constants";
 
 // a screen's map instance, passed to every map hook
 export type MapRef = RefObject<mapboxgl.Map | null>;
@@ -60,13 +64,17 @@ export function buildGridFillColor(paramKey: string) {
   ] satisfies mapboxgl.Expression;
 }
 
-// heatmap ramp colours spread evenly over [min, max], as interpolate stops
-function rampStops([min, max]: number[]) {
-  const ramp = HEATMAP_COLORS.ramp;
+// ramp colours (heatmap's by default) spread evenly over [min, max], as interpolate stops
+export function rampStops([min, max]: number[], ramp = HEATMAP_COLORS.ramp) {
   return ramp.flatMap((color, i) => [
     min + ((max - min) * i) / (ramp.length - 1),
     color
   ]);
+}
+
+// a layer's colours as a ramp (its Phosphor steps, else just min -> max)
+export function layerRamp(colors: LayerColors) {
+  return "ramp" in colors ? colors.ramp : [colors.min, colors.max];
 }
 
 export function ldGeoJSONToGeoJSON(ldgeojson: string) {

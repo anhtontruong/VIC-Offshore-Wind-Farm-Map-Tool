@@ -6,7 +6,7 @@ import {
   DEPTH_COLORS,
   WIND_COLORS
 } from "../../../constants/constants";
-import { AGGREGATE_FILL_COLOR, type MapRef } from "../mapHelpers";
+import { AGGREGATE_FILL_COLOR, rampStops, type MapRef } from "../mapHelpers";
 
 /**
  * Map Slider + Data + Base Layer Update: repaints the base heatmap when the
@@ -72,10 +72,7 @@ export function useHeatmapPaint(
         "interpolate",
         ["linear"],
         ["get", "wind_speed_m_s"],
-        rangeJSON.wind_speed_m_s[0],
-        WIND_COLORS.min,
-        rangeJSON.wind_speed_m_s[1],
-        WIND_COLORS.max
+        ...rampStops(rangeJSON.wind_speed_m_s, WIND_COLORS.ramp)
       ]);
     }
 
@@ -85,10 +82,7 @@ export function useHeatmapPaint(
         "interpolate",
         ["linear"],
         ["get", "e_w"],
-        rangeJSON.e_w[0],
-        BIRD_COLORS.min,
-        rangeJSON.e_w[1],
-        BIRD_COLORS.max
+        ...rampStops(rangeJSON.e_w, BIRD_COLORS.ramp)
       ]);
     }
   }, [viewing]);

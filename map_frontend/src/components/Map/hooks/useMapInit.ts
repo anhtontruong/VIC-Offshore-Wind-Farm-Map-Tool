@@ -13,7 +13,9 @@ import {
 import {
   MAP_BOUNDS,
   STAR_PATH,
+  layerRamp,
   ldGeoJSONToGeoJSON,
+  rampStops,
   type MapRef
 } from "../mapHelpers";
 import { buildLandingPointPopupHTML } from "../popupHtml";
@@ -206,10 +208,7 @@ export function useMapInit({
                 "interpolate",
                 ["linear"],
                 ["get", key],
-                rangeJSON[key][0],
-                LAYER_COLORS[key].min,
-                rangeJSON[key][1],
-                LAYER_COLORS[key].max
+                ...rampStops(rangeJSON[key], layerRamp(LAYER_COLORS[key]))
               ]
             }
           },

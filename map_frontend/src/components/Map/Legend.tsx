@@ -8,9 +8,10 @@ import {
   LANDING_POINT_COLOR,
   LAYER_COLORS,
   LAYER_INFO,
-  WIND_COLORS
+  WIND_COLORS,
+  type LayerColors
 } from "../../constants/constants";
-import { AGGREGATE_RANGE, STAR_PATH } from "./mapHelpers";
+import { AGGREGATE_RANGE, layerRamp, STAR_PATH } from "./mapHelpers";
 
 interface MapLegendProps {
   viewing: Viewing;
@@ -116,7 +117,7 @@ function DataLegend({ viewing }: DataLegendProps) {
   let title: string;
   let unit: string;
   let range: [number, number];
-  let colors: { min: string; max: string };
+  let colors: LayerColors;
 
   if (viewing === Viewing.Water_Depth) {
     title = "Water Depth";
@@ -152,7 +153,7 @@ interface GradientLegendProps {
   title: string;
   unit: string;
   range: [number, number];
-  colors: { min: string; max: string };
+  colors: LayerColors;
 }
 
 /**
@@ -167,7 +168,7 @@ function GradientLegend({
 }: GradientLegendProps) {
   const [min, max] = range;
   // min on left, max on right
-  const gradient = `linear-gradient(to right, ${colors.min}, ${colors.max})`;
+  const gradient = `linear-gradient(to right, ${layerRamp(colors).join(", ")})`;
   const formatValue = (value: number) =>
     unit ? `${value.toFixed(2)} ${unit}` : value.toFixed(2);
 
