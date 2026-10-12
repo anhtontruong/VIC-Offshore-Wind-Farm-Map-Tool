@@ -106,6 +106,14 @@ export default function LeftBarContent() {
 
               <Button
                 className="data-button"
+                variant={viewing === Viewing.Heatmap_Old ? "filled" : "light"}
+                onClick={() => setViewing(Viewing.Heatmap_Old)}
+              >
+                Heatmap (Old Colour)
+              </Button>
+
+              <Button
+                className="data-button"
                 variant={
                   viewing === Viewing.Aggregate_Heatmap ? "filled" : "light"
                 }

@@ -15,6 +15,7 @@ import {
 
 export const Viewing = {
   Heatmap: "HEATMAP",
+  Heatmap_Old: "HEATMAP_OLD",
   Aggregate_Heatmap: "AGGREGATE_HEATMAP",
   Water_Depth: "WATER_DEPTH",
   Wind_Speed: "WIND_SPEED",

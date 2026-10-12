@@ -6,7 +6,12 @@ import {
   DEPTH_COLORS,
   WIND_COLORS
 } from "../../../constants/constants";
-import { AGGREGATE_FILL_COLOR, rampStops, type MapRef } from "../mapHelpers";
+import {
+  AGGREGATE_FILL_COLOR,
+  buildOldGridFillColor,
+  rampStops,
+  type MapRef
+} from "../mapHelpers";
 
 /**
  * Map Slider + Data + Base Layer Update: repaints the base heatmap when the
@@ -29,9 +34,16 @@ export function useHeatmapPaint(
 
     if (!map) return;
     if (!map.getLayer("heatmap-fill")) return;
-    if (viewing !== Viewing.Heatmap) return;
 
-    map.setPaintProperty("heatmap-fill", "fill-color", gridFillColor);
+    if (viewing === Viewing.Heatmap) {
+      map.setPaintProperty("heatmap-fill", "fill-color", gridFillColor);
+    } else if (viewing === Viewing.Heatmap_Old) {
+      map.setPaintProperty(
+        "heatmap-fill",
+        "fill-color",
+        buildOldGridFillColor(paramKey)
+      );
+    }
   }, [params]);
 
   // =============
@@ -46,6 +58,15 @@ export function useHeatmapPaint(
     // CASE: Viewing Heatmap
     if (viewing === Viewing.Heatmap) {
       map.setPaintProperty("heatmap-fill", "fill-color", gridFillColor);
+    }
+
+    // CASE: Viewing Heatmap (Old Colour)
+    else if (viewing === Viewing.Heatmap_Old) {
+      map.setPaintProperty(
+        "heatmap-fill",
+        "fill-color",
+        buildOldGridFillColor(paramKey)
+      );
     }
 
     // CASE: Viewing Aggregate Heatmap

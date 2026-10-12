@@ -3,6 +3,8 @@ import rangeJSON from "../../../../heatmap_creation_script/range.json";
 import type { Layer } from "../../hooks/useScenarioContext";
 import {
   HEATMAP_COLORS,
+  HEATMAP_OLD_COLORS,
+  HEATMAP_OLD_RANGE_MW,
   HEATMAP_RANGE_MW,
   type LayerColors
 } from "../../constants/constants";
@@ -60,6 +62,30 @@ export function buildGridFillColor(paramKey: string) {
       ["linear"],
       ["get", paramKey],
       ...rampStops(HEATMAP_RANGE_MW)
+    ]
+  ] satisfies mapboxgl.Expression;
+}
+
+// OLD FILL COLOR ("Heatmap (Old Colour)" Data: discrete zero + low -> high gradient)
+export function buildOldGridFillColor(paramKey: string) {
+  return [
+    "case",
+    ["==", ["get", paramKey], null],
+    "rgba(0, 0, 0, 0)",
+    [
+      "step",
+      ["get", paramKey],
+      HEATMAP_OLD_COLORS.zero,
+      0.0000001,
+      [
+        "interpolate",
+        ["linear"],
+        ["get", paramKey],
+        HEATMAP_OLD_RANGE_MW[0],
+        HEATMAP_OLD_COLORS.low,
+        HEATMAP_OLD_RANGE_MW[1],
+        HEATMAP_OLD_COLORS.high
+      ]
     ]
   ] satisfies mapboxgl.Expression;
 }

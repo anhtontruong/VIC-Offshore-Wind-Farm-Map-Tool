@@ -1,5 +1,9 @@
 import { useEffect } from "react";
 import { useScenarioContext, type Layer } from "../../../hooks/useScenarioContext";
+import {
+  SOLUTION_OUTLINE_COLOR,
+  SOLUTION_OUTLINE_MASKED_COLOR
+} from "../../../constants/constants";
 import { BASE_LAYER_IDS, selectedFilter, type MapRef } from "../mapHelpers";
 
 /**
@@ -50,5 +54,20 @@ export function useLayerStack(mapRef: MapRef, mapLoaded: boolean) {
     for (const id of BASE_LAYER_IDS) {
       map.setFilter(id, baseFilter);
     }
+
+    // solution outline: stays drawn on masked cells, in the masked colour
+    const masks = activeMasks(layers);
+    map.setPaintProperty(
+      "heatmap-solution-line",
+      "line-color",
+      masks.length
+        ? [
+            "case",
+            ["any", ...masks.map(selectedFilter)],
+            SOLUTION_OUTLINE_MASKED_COLOR,
+            SOLUTION_OUTLINE_COLOR
+          ]
+        : SOLUTION_OUTLINE_COLOR
+    );
   }, [layers, mapLoaded]);
 }

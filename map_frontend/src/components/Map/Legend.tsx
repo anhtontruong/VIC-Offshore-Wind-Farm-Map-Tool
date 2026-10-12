@@ -4,6 +4,8 @@ import {
   BIRD_COLORS,
   DEPTH_COLORS,
   HEATMAP_COLORS,
+  HEATMAP_OLD_COLORS,
+  HEATMAP_OLD_RANGE_MW,
   HEATMAP_RANGE_MW,
   LANDING_POINT_COLOR,
   LAYER_COLORS,
@@ -87,6 +89,34 @@ function DataLegend({ viewing }: DataLegendProps) {
             <span>{`${HEATMAP_RANGE_MW[0]} MW`}</span>
             <span>{`${HEATMAP_RANGE_MW[1]} MW`}</span>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // CASE: Old capacity gradient + discrete zero
+  if (viewing === Viewing.Heatmap_Old) {
+    return (
+      <div className="map-legend">
+        <div className="map-legend-title">Heatmap (Old Colour)</div>
+        <div className="map-legend-gradient-row">
+          <div
+            className="map-legend-gradient"
+            style={{
+              background: `linear-gradient(to right, ${HEATMAP_OLD_COLORS.low}, ${HEATMAP_OLD_COLORS.high})`
+            }}
+          />
+          <div className="map-legend-labels">
+            <span>{`${HEATMAP_OLD_RANGE_MW[0]} MW`}</span>
+            <span>{`${HEATMAP_OLD_RANGE_MW[1]} MW`}</span>
+          </div>
+        </div>
+        <div className="map-legend-row">
+          <span
+            className="map-legend-swatch"
+            style={{ backgroundColor: HEATMAP_OLD_COLORS.zero }}
+          />
+          <span>0 MW</span>
         </div>
       </div>
     );

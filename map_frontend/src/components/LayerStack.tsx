@@ -34,6 +34,7 @@ import { LAYER_INFO, type LayerKey } from "../constants/constants";
 // # Viewing Labels (shown on the Base Layer card)
 const VIEWING_LABELS: Record<Viewing, string> = {
   [Viewing.Heatmap]: "Heatmap",
+  [Viewing.Heatmap_Old]: "Heatmap (Old Colours)",
   [Viewing.Aggregate_Heatmap]: "Aggregate Heatmap",
   [Viewing.Water_Depth]: "Water Depth",
   [Viewing.Wind_Speed]: "Wind Speed",

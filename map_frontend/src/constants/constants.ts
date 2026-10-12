@@ -90,8 +90,17 @@ export const HEATMAP_COLORS = {
   ]
 };
 export const HEATMAP_RANGE_MW = [0, 15]; // gradient runs low -> high
+// old heatmap colours ("Heatmap (Old Colour)" Data): discrete zero + low -> high gradient
+export const HEATMAP_OLD_COLORS = {
+  zero: "rgba(114, 0, 0, 0.5)",
+  low: "rgb(255, 227, 41)",
+  high: "#44ff00"
+};
+export const HEATMAP_OLD_RANGE_MW = [10, 15];
 // thick outline on cells with a solution (Base Layer card toggle)
 export const SOLUTION_OUTLINE_COLOR = "#fff200";
+// same outline, on cells cut out by a layer stack mask
+export const SOLUTION_OUTLINE_MASKED_COLOR = "#c800ff";
 
 // # Layer Colours (shared by map paint expressions, legends + layer cards)
 export const DEPTH_COLORS = { min: "#96fcff", max: "#020f5b" };
