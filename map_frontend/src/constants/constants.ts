@@ -227,6 +227,13 @@ export const LAYER_COLORS: Record<LayerKey, LayerColors> = {
   export_cable_km: SHORE_COLORS,
   e_w: BIRD_COLORS
 };
+// layer card accent (grip rail, tint + range bar), same hue as the map ramp but spread apart
+export const LAYER_CARD_COLORS: Record<LayerKey, string> = {
+  depth_m: "#0284c7",
+  wind_speed_m_s: "#7c3aed",
+  export_cable_km: "#15803d",
+  e_w: "#e11d48"
+};
 
 // # Landing Points ([lng, lat])
 export const LANDING_POINT_COLOR = "#facc15";

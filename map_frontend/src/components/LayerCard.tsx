@@ -14,8 +14,7 @@ import type {
   DraggableSyntheticListeners
 } from "@dnd-kit/core";
 import type { CSSProperties, Ref } from "react";
-import { LAYER_COLORS, LAYER_INFO } from "../constants/constants";
-import { layerRamp } from "./Map/mapHelpers";
+import { LAYER_CARD_COLORS, LAYER_INFO } from "../constants/constants";
 import {
   fullRange,
   isFullRange,
@@ -78,7 +77,7 @@ export default function LayerCard({
         {
           ...style,
           ...(layer && {
-            "--layer-color": layerRamp(LAYER_COLORS[layer.key]).at(-1)
+            "--layer-color": LAYER_CARD_COLORS[layer.key]
           })
         } as CSSProperties
       }
