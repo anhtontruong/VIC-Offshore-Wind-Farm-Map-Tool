@@ -1,6 +1,7 @@
 import rangeJSON from "../../../../heatmap_creation_script/range.json";
 import { Viewing, type Layer } from "../../hooks/useScenarioContext";
 import {
+  AGGREGATE_2_COLORS,
   BIRD_COLORS,
   DEPTH_COLORS,
   HEATMAP_COLORS,
@@ -139,6 +140,31 @@ function DataLegend({ viewing }: DataLegendProps) {
             <span>{AGGREGATE_RANGE[1]}</span>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  // CASE: Which of Parameters A / B each cell has a solution in
+  if (viewing === Viewing.Aggregate_Heatmap_2) {
+    const categories = [
+      { color: AGGREGATE_2_COLORS.neither, label: "Not in A or B" },
+      { color: AGGREGATE_2_COLORS.aOnly, label: "In A only" },
+      { color: AGGREGATE_2_COLORS.bOnly, label: "In B only" },
+      { color: AGGREGATE_2_COLORS.both, label: "In both A and B" }
+    ];
+
+    return (
+      <div className="map-legend">
+        <div className="map-legend-title">Aggregate Heatmap (2)</div>
+        {categories.map((category) => (
+          <div className="map-legend-row" key={category.label}>
+            <span
+              className="map-legend-swatch"
+              style={{ backgroundColor: category.color }}
+            />
+            <span>{category.label}</span>
+          </div>
+        ))}
       </div>
     );
   }

@@ -11,6 +11,7 @@ import { INITIAL_CENTER, INITIAL_ZOOM } from "../constants/constants";
 
 export const ScreenMode = {
   One_Screen: "ONE_SCREEN",
+  One_Screen_Aggregate_2: "ONE_SCREEN_AGGREGATE_2", // 1 screen, Parameters A + B
   Two_Screen: "TWO_SCREEN",
   Four_Screen: "FOUR_SCREEN"
 } as const;

@@ -17,6 +17,7 @@ export const Viewing = {
   Heatmap: "HEATMAP",
   Heatmap_Old: "HEATMAP_OLD",
   Aggregate_Heatmap: "AGGREGATE_HEATMAP",
+  Aggregate_Heatmap_2: "AGGREGATE_HEATMAP_2", // only in 1 Screen Aggregate (2 Scenarios)
   Water_Depth: "WATER_DEPTH",
   Wind_Speed: "WIND_SPEED",
   Bird_Risk: "BIRD_RISK"
@@ -57,6 +58,10 @@ type ScenarioContextType = {
   params: number[];
   getParam: (index: 0 | 1 | 2) => number;
   setParam: (index: 0 | 1 | 2) => (value: number) => void;
+  // Parameters B (only used in 1 Screen Aggregate (2 Scenarios), params above are A)
+  paramsB: number[];
+  getParamB: (index: 0 | 1 | 2) => number;
+  setParamB: (index: 0 | 1 | 2) => (value: number) => void;
   viewing: Viewing;
   setViewing: (state: Viewing) => void;
   layers: Layer[]; // top -> bottom, base heatmap is implicit below
@@ -94,6 +99,7 @@ type ScenarioProviderProps = {
 
 export function ScenarioProvider({ children }: ScenarioProviderProps) {
   const [params, setParams] = useState<number[]>([1, 0, 0]);
+  const [paramsB, setParamsB] = useState<number[]>([1, 0, 0]);
   const [viewing, setViewing] = useState<Viewing>(Viewing.Heatmap);
   const [layers, setLayers] = useState<Layer[]>(() =>
     LAYER_KEYS.map((key) => ({
@@ -115,6 +121,16 @@ export function ScenarioProvider({ children }: ScenarioProviderProps) {
 
   const setParam = (index: 0 | 1 | 2) => (value: number) => {
     setParams((prev) => {
+      const next = [...prev];
+      next[index] = value;
+      return next;
+    });
+  };
+
+  const getParamB = (index: 0 | 1 | 2) => paramsB[index];
+
+  const setParamB = (index: 0 | 1 | 2) => (value: number) => {
+    setParamsB((prev) => {
       const next = [...prev];
       next[index] = value;
       return next;
@@ -147,6 +163,9 @@ export function ScenarioProvider({ children }: ScenarioProviderProps) {
         params,
         getParam,
         setParam,
+        paramsB,
+        getParamB,
+        setParamB,
         viewing,
         setViewing,
         layers,

@@ -2,6 +2,7 @@ import type { RefObject } from "react";
 import rangeJSON from "../../../../heatmap_creation_script/range.json";
 import type { Layer } from "../../hooks/useScenarioContext";
 import {
+  AGGREGATE_2_COLORS,
   HEATMAP_COLORS,
   HEATMAP_OLD_COLORS,
   HEATMAP_OLD_RANGE_MW,
@@ -87,6 +88,33 @@ export function buildOldGridFillColor(paramKey: string) {
         HEATMAP_OLD_COLORS.high
       ]
     ]
+  ] satisfies mapboxgl.Expression;
+}
+
+// AGGREGATE (2) FILL COLOR ("Aggregate Heatmap (2)" Data: solution in A, B, both or neither)
+export function buildAggregate2FillColor(paramKeyA: string, paramKeyB: string) {
+  const hasSolution = (paramKey: string) => [
+    ">",
+    ["to-number", ["get", paramKey], 0],
+    0
+  ];
+
+  return [
+    "case",
+    // no data, or A / B doesn't sum to 1 (no such property)
+    [
+      "any",
+      ["==", ["get", paramKeyA], null],
+      ["==", ["get", paramKeyB], null]
+    ],
+    "rgba(0, 0, 0, 0)",
+    ["all", hasSolution(paramKeyA), hasSolution(paramKeyB)],
+    AGGREGATE_2_COLORS.both,
+    hasSolution(paramKeyA),
+    AGGREGATE_2_COLORS.aOnly,
+    hasSolution(paramKeyB),
+    AGGREGATE_2_COLORS.bOnly,
+    AGGREGATE_2_COLORS.neither
   ] satisfies mapboxgl.Expression;
 }
 

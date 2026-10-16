@@ -1,12 +1,12 @@
 import { Slider, Title } from "@mantine/core";
 import { useExpandedContext } from "../hooks/useExpandedContext";
-import { useScenarioContext } from "../hooks/useScenarioContext";
 
 interface ParameterSliderProps {
   name: string;
   info: string;
   param: number;
   setParam: (value: number) => void;
+  sum: number; // sum of all three weights in this slider's parameter set
 }
 
 // ================ //
@@ -20,15 +20,14 @@ export default function ParameterSlider({
   name,
   info,
   param,
-  setParam
+  setParam,
+  sum: currentSum
 }: ParameterSliderProps) {
   // # Context
   const { expanded } = useExpandedContext();
-  const { getParam } = useScenarioContext();
 
   // SUM CHECK
   // tolerance absorbs the float error from the 1/3 steps
-  const currentSum = getParam(0) + getParam(1) + getParam(2);
   const isSumToOne = Math.abs(currentSum - 1) < 1e-10;
 
   // # JSX

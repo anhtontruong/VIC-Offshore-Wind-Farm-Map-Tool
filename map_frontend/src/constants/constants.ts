@@ -97,6 +97,13 @@ export const HEATMAP_OLD_COLORS = {
   high: "#44ff00"
 };
 export const HEATMAP_OLD_RANGE_MW = [10, 15];
+// "Aggregate Heatmap (2)" Data: which of Parameters A / B a cell has a solution in
+export const AGGREGATE_2_COLORS = {
+  neither: "#000000",
+  aOnly: "#3987e5",
+  bOnly: "#e34948",
+  both: "#15ff00"
+};
 // thick outline on cells with a solution (Base Layer card toggle)
 export const SOLUTION_OUTLINE_COLOR = "#fff200";
 // same outline, on cells cut out by a layer stack mask

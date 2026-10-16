@@ -31,7 +31,8 @@
   overflow: hidden;
 }
 
-.map-grid.ONE_SCREEN {
+.map-grid.ONE_SCREEN,
+.map-grid.ONE_SCREEN_AGGREGATE_2 {
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
 }

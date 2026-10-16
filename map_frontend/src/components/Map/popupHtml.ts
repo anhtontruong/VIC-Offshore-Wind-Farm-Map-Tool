@@ -16,9 +16,29 @@ export function buildLandingPointPopupHTML(name: string) {
 // ============
 //  Popup HTML
 // ============
-export function buildPopupHTML(cell: OpenCell, paramKey: string) {
+// paramKeyB given (aggregate mode): capacity rows for Parameters A and B
+export function buildPopupHTML(
+  cell: OpenCell,
+  paramKey: string,
+  paramKeyB?: string
+) {
   const { lngLat, props } = cell;
-  const capacity = props[paramKey];
+
+  const capacityRow = (label: string, capacity: unknown) =>
+    `<div class="cell-popup-row">
+              <span class="cell-popup-label">${label}</span>
+              <span class="cell-popup-value">${
+                typeof capacity === "number"
+                  ? `${capacity.toFixed(2)} MW`
+                  : "No data"
+              }</span>
+            </div>`;
+
+  const capacityRows =
+    paramKeyB === undefined
+      ? capacityRow("Installed Capacity", props[paramKey])
+      : capacityRow("Installed Capacity (A)", props[paramKey]) +
+        capacityRow("Installed Capacity (B)", props[paramKeyB]);
 
   const depth_m = props.depth_m;
   const wind_speed_m_s = props.wind_speed_m_s;
@@ -41,14 +61,7 @@ export function buildPopupHTML(cell: OpenCell, paramKey: string) {
               <span class="cell-popup-value">${lngLat[1].toFixed(6)}</span>
             </div>
 
-            <div class="cell-popup-row">
-              <span class="cell-popup-label">Installed Capacity</span>
-              <span class="cell-popup-value">${
-                typeof capacity === "number"
-                  ? `${capacity.toFixed(2)} MW`
-                  : "No data"
-              }</span>
-            </div>
+            ${capacityRows}
 
             <div class="cell-popup-section">
               <div class="cell-popup-section-title">Additional Information</div>

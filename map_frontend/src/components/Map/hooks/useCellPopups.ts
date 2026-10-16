@@ -1,6 +1,6 @@
 import { useEffect, type RefObject } from "react";
 import mapboxgl from "mapbox-gl";
-import { useAppContext } from "../../../hooks/useAppContext";
+import { ScreenMode, useAppContext } from "../../../hooks/useAppContext";
 import type { MapRef } from "../mapHelpers";
 import { buildPopupHTML } from "../popupHtml";
 
@@ -12,9 +12,11 @@ export function useCellPopups(
   mapRef: MapRef,
   popupsRef: RefObject<Record<number, mapboxgl.Popup>>,
   paramKeyRef: RefObject<string>,
+  paramKeyBRef: RefObject<string>,
   mapLoaded: boolean
 ) {
-  const { openCells, closeCell } = useAppContext();
+  const { openCells, closeCell, screenMode } = useAppContext();
+  const isAggregate2 = screenMode === ScreenMode.One_Screen_Aggregate_2;
 
   useEffect(() => {
     const map = mapRef.current;
@@ -29,7 +31,14 @@ export function useCellPopups(
         maxWidth: "300px"
       })
         .setLngLat(cell.lngLat)
-        .setHTML(buildPopupHTML(cell, paramKeyRef.current))
+        .setHTML(
+          buildPopupHTML(
+            cell,
+            paramKeyRef.current,
+            // capacity for A + B in aggregate mode
+            isAggregate2 ? paramKeyBRef.current : undefined
+          )
+        )
         .addTo(map);
 
       // x button: close this popup on every screen

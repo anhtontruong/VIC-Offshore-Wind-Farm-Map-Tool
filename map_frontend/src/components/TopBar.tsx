@@ -17,7 +17,7 @@ import LayerStackTutorial from "./LayerStackTutorial";
 // ================ //
 /**
  * Top menu bar of the app ("Hide UI" switch, tutorial,
- * 1, 2 and 4 screens).
+ * 1 screen aggregate (2 scenarios), 1, 2 and 4 screens).
  */
 export default function TopBar() {
   // # Context
@@ -72,6 +72,20 @@ export default function TopBar() {
         />
 
         {/* SCREEN MODE */}
+        <Button
+          size="sm"
+          radius="sm"
+          variant={
+            screenMode === ScreenMode.One_Screen_Aggregate_2
+              ? "filled"
+              : "subtle"
+          }
+          color="dark"
+          onClick={() => setScreenMode(ScreenMode.One_Screen_Aggregate_2)}
+        >
+          1 Screen Aggregate (2 Scenarios)
+        </Button>
+
         <Button
           size="sm"
           radius="sm"

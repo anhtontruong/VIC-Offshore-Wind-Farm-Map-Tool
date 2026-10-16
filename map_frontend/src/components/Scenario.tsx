@@ -27,13 +27,22 @@ export default function Scenario() {
   const mapRef = useRef<mapboxgl.Map | null>(null); // persists map instance
   const { center, zoom, clearAllPopups, screenMode, uiHidden } =
     useAppContext();
-  const { getParam } = useScenarioContext();
+  const { getParam, getParamB } = useScenarioContext();
+  const isAggregate2 = screenMode === ScreenMode.One_Screen_Aggregate_2;
+
+  // one row of weights, or A + B rows in 1 Screen Aggregate (2 Scenarios)
+  const lambdaRows = isAggregate2
+    ? [
+        { name: "A", get: getParam },
+        { name: "B", get: getParamB }
+      ]
+    : [{ name: "", get: getParam }];
 
   // # Helper Functions
   const handleButtonClickReset = () => {
     // split screens are narrower (same height): zoom out more per extra screen
     const resetZoom =
-      screenMode === ScreenMode.One_Screen
+      screenMode === ScreenMode.One_Screen || isAggregate2
         ? INITIAL_ZOOM
         : screenMode === ScreenMode.Two_Screen
           ? INITIAL_ZOOM - 0.5
@@ -90,10 +99,19 @@ export default function Scenario() {
       {/* PARAMETER WEIGHTS (replaces the left bar when the UI is hidden) */}
       {uiHidden && (
         <div className="lambda-bar">
-          {([0, 1, 2] as const).map((i) => (
-            <div className="lambda-cell" key={i}>
-              <span className="lambda-label">{LAMBDA_LABELS[i]}</span>
-              <span className="lambda-value">{getParam(i).toFixed(2)}</span>
+          {lambdaRows.map((row) => (
+            <div className="lambda-row" key={row.name}>
+              {row.name && (
+                <div className="lambda-cell">
+                  <span className="lambda-value">{row.name}</span>
+                </div>
+              )}
+              {([0, 1, 2] as const).map((i) => (
+                <div className="lambda-cell" key={i}>
+                  <span className="lambda-label">{LAMBDA_LABELS[i]}</span>
+                  <span className="lambda-value">{row.get(i).toFixed(2)}</span>
+                </div>
+              ))}
             </div>
           ))}
         </div>

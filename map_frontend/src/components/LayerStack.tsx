@@ -36,6 +36,7 @@ const VIEWING_LABELS: Record<Viewing, string> = {
   [Viewing.Heatmap]: "Heatmap",
   [Viewing.Heatmap_Old]: "Heatmap (Old Colours)",
   [Viewing.Aggregate_Heatmap]: "Aggregate Heatmap",
+  [Viewing.Aggregate_Heatmap_2]: "Aggregate Heatmap (2)",
   [Viewing.Water_Depth]: "Water Depth",
   [Viewing.Wind_Speed]: "Wind Speed",
   [Viewing.Bird_Risk]: "Bird Risk"

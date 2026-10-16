@@ -16,7 +16,8 @@ export default function Screens() {
 
   // SCREEN COUNT
   const screenCount =
-    screenMode === ScreenMode.One_Screen
+    screenMode === ScreenMode.One_Screen ||
+    screenMode === ScreenMode.One_Screen_Aggregate_2
       ? 1
       : screenMode === ScreenMode.Two_Screen
         ? 2

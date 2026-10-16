@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import rangeJSON from "../../../../../heatmap_creation_script/range.json";
 import { useScenarioContext, Viewing } from "../../../hooks/useScenarioContext";
+import { ScreenMode, useAppContext } from "../../../hooks/useAppContext";
 import {
   BIRD_COLORS,
   DEPTH_COLORS,
@@ -8,6 +9,7 @@ import {
 } from "../../../constants/constants";
 import {
   AGGREGATE_FILL_COLOR,
+  buildAggregate2FillColor,
   buildOldGridFillColor,
   rampStops,
   type MapRef
@@ -22,9 +24,12 @@ export function useHeatmapPaint(
   mapRef: MapRef,
   mapLoaded: boolean,
   gridFillColor: mapboxgl.Expression,
-  paramKey: string
+  paramKey: string,
+  paramKeyB: string
 ) {
-  const { params, viewing, baseLayer } = useScenarioContext();
+  const { params, paramsB, viewing, baseLayer } = useScenarioContext();
+  const { screenMode } = useAppContext();
+  const isAggregate2 = screenMode === ScreenMode.One_Screen_Aggregate_2;
 
   // ===================
   //  Map Slider Update
@@ -43,8 +48,14 @@ export function useHeatmapPaint(
         "fill-color",
         buildOldGridFillColor(paramKey)
       );
+    } else if (viewing === Viewing.Aggregate_Heatmap_2) {
+      map.setPaintProperty(
+        "heatmap-fill",
+        "fill-color",
+        buildAggregate2FillColor(paramKey, paramKeyB)
+      );
     }
-  }, [params]);
+  }, [params, paramsB]);
 
   // =============
   //  Data Update
@@ -72,6 +83,15 @@ export function useHeatmapPaint(
     // CASE: Viewing Aggregate Heatmap
     else if (viewing === Viewing.Aggregate_Heatmap) {
       map.setPaintProperty("heatmap-fill", "fill-color", AGGREGATE_FILL_COLOR);
+    }
+
+    // CASE: Viewing Aggregate Heatmap (2)
+    else if (viewing === Viewing.Aggregate_Heatmap_2) {
+      map.setPaintProperty(
+        "heatmap-fill",
+        "fill-color",
+        buildAggregate2FillColor(paramKey, paramKeyB)
+      );
     }
 
     // CASE: Viewing Water Depth
@@ -140,20 +160,27 @@ export function useHeatmapPaint(
   //  Solution Outline Update
   // ==========================
   // cells with a solution (> 0 MW) for this screen's weighting, on every Data
+  // (in A or B, in aggregate mode)
   useEffect(() => {
     const map = mapRef.current;
 
     if (!map || !mapLoaded) return;
 
-    map.setFilter("heatmap-solution-line", [
+    const hasSolution = (key: string): mapboxgl.Expression => [
       ">",
-      ["to-number", ["get", paramKey], 0],
+      ["to-number", ["get", key], 0],
       0
-    ]);
+    ];
+    map.setFilter(
+      "heatmap-solution-line",
+      isAggregate2
+        ? ["any", hasSolution(paramKey), hasSolution(paramKeyB)]
+        : hasSolution(paramKey)
+    );
     map.setLayoutProperty(
       "heatmap-solution-line",
       "visibility",
       baseLayer.solutionOutline ? "visible" : "none"
     );
-  }, [paramKey, baseLayer.solutionOutline, mapLoaded]);
+  }, [paramKey, paramKeyB, isAggregate2, baseLayer.solutionOutline, mapLoaded]);
 }
