@@ -2,7 +2,26 @@
 
 # VIC Offshore Wind Farm Map Tool
 
-Interactive mapping tool with heatmap generation for visualising optimisation results.
+<table align="center">
+  <tr>
+    <td>
+      <img src="./docs/images/preview.png"
+           width="600"
+           alt="Map Planning Tool Screenshot">
+    </td>
+    <td>
+      <img src="./docs/images/LayerStackWorkflow.png"
+           width="450"
+           alt="Layer Stack Workflow">
+    </td>
+  </tr>
+</table>
+
+
+A MOO (Multi-Objective Optimisation) visual planning tool, built around helping stakeholders see and explore
+trade-offs between cost, energy production and seabird impact.
+
+Optimisation model is part of a [wider Monash research project](https://www.monash.edu/it/environmental-informatics-hub/projects/bird-sensitive-wind-farm-planning).
 
 </div>
 
