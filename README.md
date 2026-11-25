@@ -21,7 +21,7 @@
 A MOO (Multi-Objective Optimisation) visual planning tool, built around helping stakeholders see and explore
 trade-offs between cost, energy production and seabird impact.
 
-Optimisation model is part of a [wider Monash research project](https://www.monash.edu/it/environmental-informatics-hub/projects/bird-sensitive-wind-farm-planning).
+Optimisation model is through contributions of others as part of a [wider Monash research project](https://www.monash.edu/it/environmental-informatics-hub/projects/bird-sensitive-wind-farm-planning).
 
 </div>
 
